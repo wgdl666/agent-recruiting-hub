@@ -1,0 +1,1291 @@
+[
+  {
+    "batch": "Agent2",
+    "name": "张恒滔",
+    "file": "【Agent 实习生_深圳 400-600元_天】张恒滔 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】张恒滔 28年应届生.pdf",
+    "text": "张恒滔\n18337202956 | 18337202956@163.com\n求职方向: 软件/算法开发（AI 应用方向）\n● 教育背景\n河南大学    (双一流）\n软件学院 网络工程 本科\n2024年09月 - 2028年06月\n开封\n● 专业技能\n熟练使用 C/C++ 编程语言，熟悉面向对象三大特性、内存分布等原理；掌握 STL 常见容器底层数据结构原理，如 vector、map 等；了解\nC++11/14 常用新特性，如智能指针、Lambda 表达式等\n熟练使用 Python，掌握 pandas/numpy 数据处理，了解 numba 性能加速（AOT 编译）、msgpack 序列化等工程优化手段\n掌握 LightGBM/GBDT 原理与应用，熟悉特征工程、交叉验证、评估指标（Precision/Recall/F1）等机器学习基础\n熟悉 LLM 应用开发，了解 SFT/LoRA 微调、RAG、Agent 原理，有 Qwen-VL 多模态模型微调实操经验\n熟悉阿里大数据栈：ODPS/PyODPS、OTS(tablestore)、Stream 流式计算、Lego 任务调度\n深入理解数据结构与算法，如常见排序、滑动窗口、B+ 树、并查集、动态规划、贪心、双指针等\n熟悉网络编程与 Linux，熟悉 I/O 复用、TCP/UDP/HTTP 协议；熟悉多线程编程与操作系统基本知识\n了解 MySQL、Redis（索引/事务/持久化等原理），了解常见设计模式与分布式系统原理（分布式锁、CAP 等）\n使用 LangChain 开发基础 Agent，实现工具调用并存储记忆，了解机器学习、RAG、Agent 的基本原理\n● 实习经历\n阿里巴巴集团 - ATH事业群·千问事业部·AI应用与创新技术部·搜索业务技术·离线系统与策略 - 应用算法实习生 2026年3月 - 至今\n在搜索离线系统与策略团队，为夸克搜索引擎和千问RAG系统提供更好的搜索质量,主导网页聚簇 V2 系统的算法设计与开发，覆盖算法选型、相似度模型、聚簇链\n路、模型训练、上线评估全流程；并参与多模态死链检测模型微调。\n技术栈：Python、LightGBM、numba、Qwen3.5、SFT、GRPO、LoRA、ODPS(HIVE/SPARK)、OTS(HBASE)、Stream(FLINK)\n主要工作\n主导聚簇算法选型，对 16 种聚类算法按 5 条硬约束（真实簇心 / 仅 pairwise 相似度 / 流式 / 未知 K / 簇心可更新）逐一筛选，设计 4 阶段\nLeader 聚类流程：凝聚预选（并查集 N²）-> max-sim 匹配（遍历取最相似，减少顺序依赖）-> 簇内重选最优簇心 -> 簇心复检合并（补漏合并）\n设计网页相似度模型 22 维 pairwise 特征（结构相似度(基于DOM树相似度,CSS Jaccard等) / 文本相似度 / URL路径 / nav面包屑特征），基于集成\n学习 LightGBM 训练，将相似度度量从手工编辑距离升级为数据驱动；经标注数据集测试Precision从0.82提升至0.91\n性能优化：用 numba AOT 编译加速编辑距离 DP 计算，加速约 100 倍（秒级降至亚百毫秒）；用 lru_cache 缓存 OTS 簇特征（maxsize 1000 +\n24h TTL + 后台守护线程清理 + 随机延迟防雪崩）；实现纯 Python 零依赖推理，支撑 QPS 50 实时匹配\n开发 5 个 Stream(Flink) 线上流程及簇心匹配服务(RPC)，覆盖 URL采样 -> OSS获取HTML -> 相似度profile计算 -> 4阶段聚簇 -> 簇特征写回\nOTS全链路；聚簇主流程自适应全量/增量模式（有历史簇心增量匹配、无则全量重建），刷库流水线全自动化（含乐观锁防并发写冲突）\n建设聚簇质量评估与数据统计体系：63 万 pair 双口径评测框架，定义簇覆盖率 / 纯度 / 膨胀率 / cluster_ratio 等指标，收敛性验证（30 host ×\n16 档，cluster_ratio 降幅 13.6 倍）；基于 ODPS 开发 13 个数据报表（5 库簇特征覆盖率 / 索引覆盖率上限 / 表映射 / 数据同步），引入 5% 分位统\n计定位长尾覆盖问题\nV2 系统上线，对比规则基线：夸克网页库 F1 0.865->0.936（+7.05pp）、RAG F1 0.770->0.911（+14.11pp），簇膨胀比 1.20x->0.80x；整体\n簇匹配覆盖率 91.51%，正文抽取业务端到端覆盖率 70%->80%\n基于 Qwen2.5-VL-3B 构建 Soft404 多模态死链检测模型，通过 LoRA SFT 微调，准确率从 zero-shot 62.1% 提升至 90.6%\n基于 Qwen3.5 设计并构建 LLM 辅助簇拆分方案：针对传递性漂移问题（结构相似但语义不同的 URL 经簇心中转产生异质子群），采用\"低置信簇\n识别 + LLM 语义分组 + 模型重归属\"分层架构，低置信簇检出率 100%（11/11），Precision +2.7~5.1pp\n北京经纬恒润科技股份有限公司 - OBD设备自身联网质量检测模块 - 自研项目 - C++开发实习生 2025年9月 - 2026年1月\n在OBD车联网设备网络质量监测项目中，主导基于C++/eBPF的联网质量监测模块开发，完成从架构设计到功能落地的全流程，覆盖eBPF内核编程、DBus服务通\n信、多线程监控等核心模块。\n技术栈：C++11、eBPF、Linux、Netlink、DBus、多线程、网络编程\n主要工作\n实现OBD设备联网质量监测系统设计，实时采集RTT时延、TCP丢包率、WiFi信号强度等多维度网络指标，保障远程诊断和OTA更新的网络可靠性\n基于eBPF实现内核级流量分析，通过kprobe挂载点（ip_queue_xmit/udp_sendmsg）捕获数据包，性能开销小于1%，不影响设备系统运行\n通过Netlink SOCK_DIAG获取内核TCP连接详细统计（tcpi_total_retrans），实现丢包率精确计算\n构建多线程监控架构：独立线程分别负责RTT、TCP丢包、RSSI、流量分析监控，10秒级采样周期，使用mutex保证线程安全\n设计多维度质量评估算法，综合RTT、TCP丢包率、RSSI、流量特征的状态输出质量等级，为OTA/诊断系统提供网络健康度决策依据，将数据传输成\n功率从79%提升至99%\n使用DBus构建服务化架构，为OTA升级系统和远程诊断系统提供网络状态查询接口，支持质量变化信号推送，实现业务解耦\n异常安全设计：各监控线程独立运行，单点故障不影响整体系统，配合事件管理器实现网络变化实时感知\n● 项目经历\n分布式即时通讯系统 2025年6月 - 2025年9月\n技术栈：C++11、asio、gRPC、MySQL、Redis、多线程、CRTP、Linux、网络编程\n项目描述\n该项目为分布式即时通讯系统，后端采用微服务架构设计，拆分网关、聊天、状态、验证四大核心服务，通过 gRPC 实现跨服务通信。基于 asio 网络库构建高性能\nTCP 长连接通信框架，结合多线程与 asio 实现异步消息处理。\n主要工作\n个人心得\n了解了分布式系统设计与高并发网络编程的逻辑，学会应用 asio、gRPC 等技术栈落地异步通信与服务协作；通过单例、代理等设计模式及 RAII 思想实践资源管\n理，并且要提升一个项目的性能，需要广泛使用资源池化技术，同时也需要结合异步的思想，增加回调函数的使用，才能增强并发的性能\n实现了用HTTP协议处理用户的注册、登录等初始连接，用TCP协议与客户端长连接实现处理消息转发，好友申请转发，个人资料推送等功能●\n后端采用分布式架构设计：实现 GateServer 登录 / 注册逻辑及负载均衡策略，基于 asio 开发 CommServer 的 TCP 连接管理与消息转发模块●\n性能优化与资源管理：封装 MySQL/Redis/gRPC 连接池，采用生产者 - 消费者模式构建 IOContext 线程池，设计心跳机制解决僵尸连接问题●\n测试与稳定性保障：参与高并发压力测试，验证单服务1万连接下的收发稳定性，优化断线重连策略确保延迟稳定在 10ms 内●\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg\n6d809f7416036d4e1HN92tm6GFVWwom2VfqZWOekn_fYNhRg",
+    "chars": 3886,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 22,
+      "ownership": 6,
+      "reliability": 9,
+      "api_design": 1
+    },
+    "agent": {
+      "agent_core": 4,
+      "rag": 4,
+      "llm_eng": 6
+    },
+    "metrics": 15
+  },
+  {
+    "batch": "Agent2",
+    "name": "钟嘉漩",
+    "file": "【Agent 实习生_深圳 400-600元_天】钟嘉漩 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】钟嘉漩 27年应届生.pdf",
+    "text": "钟嘉漩简历 \n 13924477001     |     13924477001@163.com \n 出生年月: 2005.05.20     男    2027年度应届生    求职意向:AI应用开发工程师  \n \n广东工业大学 计算机学院                      工业软件(本科)                            2023.09 - 2027.06                                                  \n \n \n·熟练掌握 Python（FastAPI） ，具备扎实的面向对象设计基础 ，了解常见数据结构与算法。 \n·熟悉ReAct，Plan and Solve等Agent核心框架，深入理解Context Engineering，Harness Engineering等Agent工程化理念并具备调优\n经验，熟悉Tool Call、MCP、Skills、Subagent等主流Agent技术。 \n熟悉 RAG 完整链路 ，了解 LangChain 框架的基本应用 ，掌握文本分块策略以及 Milvus 或 Chroma 等向量数据库的日常使\n用。 \n·了解 Linux 常用命令行操作与Git 代码版本控制 ，熟悉 Conda 虚拟环境配置与 Docker 基础容器化部署。 \n·英语CET-6(468分)，具备一定的英语能力 \n \n \nMindBridge智能体                     Agent开发/大模型应用                      2026.03-2026.06 \n项目简介:面向心理场景开发的多Agent智能体平台，支持意图路由、心理知识检索、风险识别与高风险预警闭环。系统基于自研事件驱\n动多Agent runtime实现，并通过Agent Runtime Harness统一处理输入脱敏、agent调用、工具后处理、报告落库与runtrace。 \n技术栈: Python, FastAPI, Harness Engineering, Skill, Redis, Chroma, MCP 、 Docker、 MySQL,RAG、SQLAlchemy、 Basic Auth \n负责功能： \n- 1.Agent Runtime Harness 设计:设计并实现MindBridgeAgentHarness,将Agent Runtime、数据库落库和工具后处理解耦，统一处\n理Agent调用、报告生成、运行trace保存、消息持久化和工具计划生成。 \n- 2.多Agent协作:设计基于CollaborationBlackboard的事件驱动协作机制，由CoordinatorAgent 维护任务板，多Agent根据能力\nclaim任务并发布artifact，并通过SafetyAgent审查后由CoordinatorAgent最终采纳。 \n- 3.Engineering Harness建设:建设一键工程验证Harness覆盖 Risk Safety、Agent Routing、Standard SkilsRAG、APl、Tool. \nQueue六类核心链路。RAG评测HitRate为0.9667，MRR为0.9083。构建100条意图识别评测集，高风险召回率达93%，总体准确率达\n96%. \n- 4.上下文管理与压缩:分层记忆机制，短期上下文优先从Redis读取，缺失时MySQL回填。实现历史窗口裁剪、摘要压缩和最近对话\n保留策略，生成memoryBrief与受限长度的modelHistory，避免长对话下prompt膨胀。 \n- 5.业务Skil:通过 MindBridgeSkilRegistry动态加载SKILL.md。高风险场景强制叠加安全处理计划，生成个案交接摘要，提升回\n复策略的可审计性和可测试性。 \n- 6.MCP与异步任务队列:封装Excel写入、预警发送、备注追加等MCP工具，并实现异步工具队列处理高风险后置任务。队列支持幂\n等创建、限流、失败重试和dead letter，避免工具调用阻塞学生端流式回复。 \nEchoMind 智能客服系统                        独立开源项目                     2025.06 - 2025.12                                              \n项目简介: EchoMind 是一个基于 LLM 的企业级智能客服系统，集成三路融合意图识别、多 Agent 路由编排、动态 Skills 规则\n注入、Redis + ChromaDB 三级记忆、RAG 知识库增强回复、MCP 工具调用优化、Monitor 在线降权闭环和 LLM-as-Judge 端到端\n评测。 \n技术栈：Python / FastAPI / Anthropic Claude / DeepSeek Compatible API / Redis / ChromaDB / Docker / Prometheus  \n技术亮点： \n- 1.三路融合意图识别:实现端到端意图识别器，使用 LLM Few-shot、Embedding 相似度和关键词 Pattern 三路融合，通\n过动态权重和低置信度降级降低误判风险。 \n- 2.MCP工具调用框架:实现 MCP 工具调用框架，封装参数校验、TTL 缓存、超时控制、熔断器和 fallback，并通过查询改写\n、并行召回和 LLM 重排优化 RAG 知识库检索质量。 \n- 3.三级记忆架构:设计三级记忆架构，使用 Redis 存储 24h 工作记忆，使用 ChromaDB 存储 episodic 历史摘要和\nuser_profile 用户画像，解决多轮对话 context 膨胀问题。 \n- 4.动态Skills加载:实现动态 Skills 加载能力，支持从 Markdown/JSON 文件加载通用客服、技术支持、账单退款规范，按 \nAgent 类型和用户消息关键词注入 system prompt，并通过 `/skills/reload` 热更新。 \n- 5.RAG检索优化链路:设计查询改写 + 并行召回 + 合并去重 + LLM 重排的检索优化链路，解决单查询召回不全和向量相似  \n度排序不等于答案质量的问题。 \n \n \n教育背景 \n专业技能 \n项目经历 \n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n\n \n·具备良好的问题拆解与业务落地能力 ，能精准定位 RAG 场景下的检索与幻觉痛点并落地方案 \n·学习能力与执行力强 ，面对大模型应用开发的复杂场景能快速上手并沉淀经验 \n·具有较好的沟通能力与团队协作精神，严谨的工作态度，抗压能力强，能快速适应并投入团队工作 \n自我评价 \n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg\n3569e869f83904871HN92tm6GVJQxY-8V_OYWOekn_fYNhRg",
+    "chars": 3467,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 22,
+      "ownership": 2,
+      "reliability": 5,
+      "api_design": 5
+    },
+    "agent": {
+      "agent_core": 32,
+      "rag": 21,
+      "llm_eng": 9
+    },
+    "metrics": 4
+  },
+  {
+    "batch": "Agent2",
+    "name": "聂武永",
+    "file": "【Agent 实习生_深圳 400-600元_天】聂武永 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】聂武永 27年应届生.pdf",
+    "text": "姓 名： 聂武永 性 别： 男\n年 龄： 24 岁 经 验： 应届生\n手 机： 18971819485 邮 箱： niewuyong513@gmail.com\n学 历： 硕士 政治面貌： 中共党员\n意向岗位： AI 应用开发工程师\nI I\nI\n教育背景\n2024.09 - 至今 武汉工程大学 电子信息（人工智能方向）/硕士\n主修课程：机器学习，深度学习，智能计算，图像分析与识别，人工智能新技术及应用（专业前 5%）\n奖项荣誉：研究生一等学业奖学金，校优秀研究生，第十六届蓝桥杯 python 研究生组湖北省一等奖及全国优秀\n奖，第十七届蓝桥杯 python 研究生组全国三等奖，中国研究生电子设计大赛全国三等奖（队长）\n2020.09 - 2024.06 武汉工程大学 人工智能（深度学习方向）/本科\n主修课程：C/C++语言，数据结构，计算机组成原理，操作系统，计算机网络，数据库系统原理等\n奖项荣誉：国家励志奖学金，校一等学业奖学金，优秀青年志愿者\n实习经历\n2024.12-2025.04 河北联思软件科技有限公司 python 后端开发实习生\n项目名称：公安智能语音转写与敏感词风控系统（已上线）\n技术栈：FastAPI, vLLM, WebSocket, Python 并发编程, NER\n项目业绩：高并发实时接入： 采用 FastAPI 结合多线程/多进程架构，成功实现 80+ 拾音设备的高并发语音数据\n接入，利用 WebSocket 实现前端数据的毫秒级实时渲染。 风控引擎开发： 结合动态词库匹配与 NER（命名实\n体识别） 技术，开发敏感信息实时检测与入库模块，实现 0 延迟的公安业务风控预警。 AI 提效部署： 引入\nvLLM 推理框架对语言模型进行计算加速与微服务化部署，利用 Uvicorn 保障后端服务的长期稳定运行，该系统\n已在公安业务场景成功上线并投入实战验证。\n2025.05-2025.11 武汉深度求解有限公司 大模型应用开发实习生\n项目名称：智慧人才创新实验系统\n技术栈：RAG, FastAPI, Dify, Nginx, DeepSeek/Claude API\n项目业绩：RAG 匹配与检索： 构建个人信息向量库，利用 RAG 技术精准匹配各大高校课题组，解决跨学科学生\n的导师/项目对接痛点。 大模型作业评估： 后端基于 FastAPI 构建，接入 Claude API 设计自动化审阅逻辑，通\n过深度语义比对实现学生作业与实验结果的智能批改与反馈。 项目路径智能拆解： 利用 LLM 解析复杂交叉学科\n项目，自动生成颗粒度极细的步骤级学习路线，提供定制化导学服务。 AI 助手与架构部署： 结合 Dify 平台与\nDeepSeek 接口搭建全天候智能伴学 Agent，利用 Nginx 完成系统反向代理与高可用部署，提升用户体验与系\n统稳定性。\n项目经历\n2025.12-2026.02 抗美援朝知识图谱系统 系统架构以及后端开发工程师\n项目背景：为抗美援朝纪念馆提供数字化展示支撑，将繁杂的战役、部队、人物等历史数据进行结构化整理与可\n视化图谱展示，以提升公众科普体验。\n架构设计与技术选型：作为系统架构主导，负责整体技术方案设计，打通从数据清洗、图谱构建到后端服务、前\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\n\n端展示的全链路架构。\n知识图谱建模与存储：基于 Neo4j 设计底层图数据库模型，合理定义战役、战斗、部队建制等实体及多维度关\n系。实现海量半结构化/非结构化历史数据的抽取、清洗与结构化批量导入。\n核心查询引擎开发：针对复杂的历史关联信息，编写并深度优化 Cypher 图查询语句。实现图谱的多级关联查\n询、最短路径探索等核心能力，解决多层级节点检索的性能瓶颈。\n后端服务支撑：开发高可用、低延迟的 RESTful API，完美对接前端可视化组件，保障大批量节点渲染时的接口\n响应速度，顺利支撑纪念馆的日常展陈与科普交互。\n2026.02-至今 武汉江夏区亲情江夏政务平台（AI 模\n块）\n后端开发工程师\n项目背景：为提升政务服务效率，降低市民办事门槛，在现有政务平台中引入 AI 能力，实现政务材料自动化预审\n与智能客服问答。\nAI 智能预审系统研发：参与开发材料智能预审功能，利用 AI 技术（大模型信息抽取）自动提取用户上传表单及\n证件中的关键字段，结合政务规则引擎进行自动校验比对，有效降低了人工审核成本和材料退回率。\n政策智能问答与解析：基于大语言模型 (LLM) 与 RAG（检索增强生成）架构，将海量复杂的政务政策文档进行分\n块（语义分块）、BGE 模型向量化处理并接入向量数据库。通过混合检索实现高精度的语义检索并结合 BGE-\nReranker 模型进行检索优化，调整并规范 prompt，设计并实现了高效的会话上下文存储与管理机制（利用\nRedis 缓存历史对话），通过动态滑动窗口处理长文本限制为市民提供准确的政策解读与多轮业务咨询。\n后端集成与性能优化：负责 AI 模块与政务主系统的对接封装。针对 AI 接口调用耗时较长的问题，采用异步任务\n处理与流式输出（SSE）等技术，显著提升了系统的并发处理能力和用户端交互体验。\n专业技能\n编程技能：熟悉运用 python，掌握 Linux 系统操作，掌握 Mysql，redis，elasticsearch，neo4j，达梦等数据\n库的基本操作\nAI 技术栈：熟练掌握 Transformer 等 NLP 算法，Langchain，Langgraph 框架以及智能体构建平台 Dify\n大模型开发：熟悉 Qwen，DeepSeek，ChatGLM 等模型的部署，在线模型 OpenAI 格式以及 Anthropic 格式\n的调用\n应用开发：熟悉 RAG 检索增强技术（不同切分方式，混合检索，Reranker 重排，es 数据库存储）\n知识图谱：熟悉并应用过 Neo4j 数据库，多级查询，以及实体关系抽取能力\n语言能力：英文良好（CET-6）普通话二级乙等\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg\nc5d8d64ce6742ebd1HN92ti8FlpUxYq6WPKfWOekn_fYNhRg",
+    "chars": 3214,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 20,
+      "ownership": 4,
+      "reliability": 5,
+      "api_design": 11
+    },
+    "agent": {
+      "agent_core": 3,
+      "rag": 19,
+      "llm_eng": 2
+    },
+    "metrics": 3
+  },
+  {
+    "batch": "Agent2",
+    "name": "苏志祺",
+    "file": "【Agent 实习生_深圳 400-600元_天】苏志祺 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】苏志祺 28年应届生.pdf",
+    "text": "南京邮 电大学（ 双 一 流 ） 通信 工 程 (本科) 2024.09 - 2028.06\n专业 排 名前 15%           英语 ： CET-4 （ 643 分）  、 CET-6 （ 548 分）全国大学生 英语 竞 赛 国家 级二 等 奖\n健健 哥 创 业 团 队 后 端 研 发 2026.03 - 2026.06\n业务 介 绍 ：这是 一 个 BAT 大 厂 离职 员 工 组 建 的 创 业工作 室 ， 主 营 业务是服务于美国下 沉 市 场 的 恋 爱 社 交 APP ， 基 于 AI Agent 打 造 数\n字 人 聊 天 引 擎 实现 非 真 人社 交 能力 ， 通过 投放 广告 招 募 真 实 男 女 性 ， 构 建真 人社 交 系 统 ， 最后通过 恋 爱场 景 中的 订 阅 机制实现 商 业\n化 盈 利 。\n岗 位 职 责 ：主要 负 责 服务 端 的日 常 需 求 迭 代 和  AI Chat 的 能力 建设\n工作产出 ：\n参 与 Match 模 块 和 PostFeed 模 块 的 需 求 迭 代 ， Like&Visitor 模 块 上线后 AbTest 实 验 ， 用户人 均 付 费 金 额 数 据 上 涨 6%\n在  Mentor 的 指 导 下 参 与了 AI Chat 记 忆 系 统 的 重 构 ， 通过 记 忆 分 层 + 引 入 记 忆 的 “ 生 命状 态 ” ， 模 拟 真 人 记 忆 逻 辑； AbTest 实 验\n用户人 均 付 费 金 额 数 据 上 涨 9% 、 人 均 消 息数数 据 上 涨  11% 。\n在工作 室 内部 做 了 两 次技 术 分 享 ： Agent 记 忆 系 统设计 调 研 ， 定时 任 务方 案总结 （文 章 脱敏 后 已 上 传 至\nhttps://xiaosuzq.github.io/）\n海 外 恋 爱 社 交 平 台 的 后 端 系 统 后 端 研 发\n技 术 栈 ：Java 、 SpringBoot 、 Redis 、 RocketMQ 、 PG 、 Naco 、 Grpc 、 OpenIM\nLike&Visit 模 块 优 化 ：\n需 求 背 景 ：Like&Visit 定时 任 务 存 在 Redis 任 务 堆 积 的 问题 ， 线上 很 多用户在上线 10 分 钟 内收不到 任何 Like&Visit 记 录 影 响 用户 留\n存 和平 台 收 益 。\n技 术 实现 ：抛 弃 任 务 扫 描 入 队 的 冗 余 机制 ， 使 用 游标消费 Zset 的 方式来收 集任 务 ， 减 少 存 储 压 力 ； 多线 程 获 取 数 据 + 批 量 IO+ 消\n息 异 步处 理  提高 单 次 ScheduleTask 的 吞 吐 量 ； 做 好面 向 失 败 设计 ， 兜 底 游标消费 失 败 的 各 种场 景 ， 加入三道 防 线 保证 幂 等 ， 引\n入 重 试 机制 、 降 级 策 略 、 监 控 告 警 来 减 轻 异 常 现 象 的 影 响 。\nmatch 服务 划 卡 匹 配 逻 辑 开发 ：\n需 求 背 景 ：为 D0 冷 启 动用户和 D1 老 用户开发 划 卡 推 荐 队 列\n工作内 容 ：负 责 发 牌模 块 卡 片生成 逻 辑 的 开发 。 开发 每 日 定时 任 务 ， 为 老 用户 基 于  30 天 右 滑 行为 做 偏 好 建 模 与 打 分 排 序 ， 离 线\n预 生成 卡 片 队 列 写 入  Redis ， 划 卡 时 直 接 取 卡 返 回 ， 解 决 实时 召 回 打 分 导 致 的 加 载 慢 问题 ； 以实时 冷 启 动 召 回 解 决 新 用户无 历\n史 ， 卡 片 召 回 质量 差 的 问题 。\nPostFeed 社区 的 代码 开发 ：\n负 责 范围 ：帖 子 的点 赞 接 口 + 评 论 增 删 改 查 接 口 实现\n技 术 亮 点：针 对 爆 款 帖 点 赞 / 评 论 计 数 的 单 行 锁 瓶 颈 ， 使 用 Redis 增 量 累 加 + 定时 批 量 刷 盘 方 案 实现 写 合 并 ； 用 Redis Zset 维护每\n个 帖 子 的 最 新 200 条评 论 窗 口 ， 覆 盖 90% 的 评 论 读流量 ； 发 帖 经 RocketMQ 写 扩 散 到关注者 timeline Zset ， 靠 Zadd 幂 等 语 义 实现\n重投 安全 +DLQ 兜 底 。\nAI-Chat 数 字 人 聊 天系 统\n技 术 栈 ：Java 、 Redis 、 PG 、 ScheduleJob 、 MQ 、 RPC 、 Nacos\n基 于 Agent=LLM+Loop+Tools 的 架 构 思 想 ， 实现了 PreHook->AgentLoop->PostHook 的 运 行时 管 线 ， 循 环 内 零 业务 逻 辑 ， 全部业务\n能力以 Hook 或 者 Tool 可 插 拔 接入\n会话 级并 发 编排 LaneManager ， 同会话内 ReentrantLock 串 行 ， 阅 读 窗 内 连 发 消 息合 并 为 单 次 LLM 调 用 ， 解 决 了 旧 版本版本 中一 次\n消 息 一 次 LLM& 同会话 并 发 写 坏 记 忆 的 问题\n设计  agent 工 具 系 统支 撑 拟 真 ： send_message 作为 唯 一 消 息出 口 ， 赋 予 agent 沉默 能力 ， 同时收 束 所 有 消 息出 口 便 于安 检 ；\nset_follow_up 允 许 agent 自动 设置 定时 任 务 ， 实现 agent 主动 消 息能力 ， 按 触 发类 型 用  phase 字 段按 需 注入 ， 防止 数 字 人 连 续 追 发\n消 息 露 馅 。\n苏 志 祺\n17576837730 | 3050453375@qq.com\n男 Java 后 端 开发实 习 生\n教 育 背 景\n实 习 经 历\n项 目 经 历\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n\n记 忆 系 统重 构 （主要 负 责 ） ：\n调 研  Mem0/Letta/Graphiti 等  6 个开 源记 忆 框 架 ， 结 合人类 记 忆 的 认 知科学理论论文（ 记 忆 分 层 / 遗忘曲 线 / 双 系 统 ） ， 完 成分 层\n方 案 的 选型 论 证\n设计四 层 记 忆 架 构 ： L0 滑 动 窗 口  / L1 关系 状 态 /L2 精 确 事 实（ 结 构 化 常 驻 ） / L3 语 义 召 回（ pgvector 向 量 检 索 ）\n设计  DH 全 局 生活时间线（ LifeEvent ） ： 每 个数 字 人 维护 一 条 全平 台共享 的 生活 状 态 ， LLM 每  7 天 \" 续写 \" （ 而 非 重 写 ） 保证 前后\n一 致 ， 让  DH 像 真 人 一 样 有 自 己 的 生活\n引 入 记 忆 \" 生 命状 态 \" ： 由重 要性（分类 映 射 ） + 情 绪 强 度  + 时间 半 衰 期 + 访 问热度合成  strength ， 参 与  topK 重排 序 ， 让 记 忆 自\n然 遗忘 、 因 被 提 起而 加 固\n设计  L1 关系 状 态 层 ： 核 心人 设 锁 死 、 关系 状 态 （ 阶 段 + 亲 密 度） 独 立 演 化 ， 让  DH 在人 格 不 变 的 前提下 ， 随 情 感 阶 段 自 然 切 换\n语 气 尺 度\nJava 技 术 体系 ：熟练  Java 基 础 、 集 合 、 反 射 与 异 常 机制 ， 掌 握  JVM 内 存模 型 、 类加 载 、 GC 原 理等 ； 熟 悉  JUC 并 发 编程 、 线 程\n池 、 ThreadLocal 、 并 发 锁 ， 具 备高 并 发 编码 能力 ， 熟 悉 常 用 的 开发 框 架 如 SpringBoot 。\n后 端 中 间 件 与工 程 ：熟 悉 MySQL 索 引 、 事 务 、 MVCC 、 锁 机制 ， 具 备  SQL 优 化和 慢 查 询 排查 能力 ； 掌 握 Redis 数 据 结 构 、 持 久\n化 、 分 布 式 锁 及 高 并 发 缓 存 解 决 方 案 ； 了 解 RocketMQ消 息 队 列 的 使 用和 原 理 ， 熟练  Linux 、 Docker 、 Git 常 用工 程 操 作 。\nAI 应 用开发 ：掌 握  Spring AI Alibaba 、 Python 、 LangChain 、 LangGraph 技 术 栈 ， 熟 悉 大 模 型 调 用 、 提 示 词 工 程 、 RAG 检 索 、 对\n话 记 忆 与 节 点 编排 ； 具 备  AI 辅 助 开发能力 ， 可 借 助 智 能工 具 高 效 完 成 编码 、 调试 与 项 目 迭 代 。\n专业技能\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg\n50e075e0ebf798f31HN92tm6GVZQwIi4WfubWOekn_fYNhRg",
+    "chars": 4470,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 13,
+      "ownership": 2,
+      "reliability": 0,
+      "api_design": 0
+    },
+    "agent": {
+      "agent_core": 12,
+      "rag": 1,
+      "llm_eng": 0
+    },
+    "metrics": 5
+  },
+  {
+    "batch": "Agent2",
+    "name": "张尘朴",
+    "file": "【Agent 实习生_深圳 400-600元_天】张尘朴 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】张尘朴 27年应届生.pdf",
+    "text": "张尘朴\n19129514006 1662968917@qq.com | 广东-深圳\n吉林大学 - 985 211 双一流 - 本科 2023-09 ~  2027-06\n教育背景\n技能特长\n具有扎实计算机基础，熟练掌握数据结构与算法、计算机网络、操作系统、面向对象编程等，熟悉C/C++、编译原理、计算机组成原\n理，熟悉各种网络协议以及其底层原理，了解软件工程，有Linux系统下开发的经验，熟悉Docker的使用\n熟练掌握Claude Code，Codex等AI编程工具的使用，有完整的项目级开发经验，具有较好的Prompt编写与调优能力\n熟悉AI大模型相关知识，熟悉MCP、Skill、A2A协议、Transformer架构、RAG调优、KVCahce优化等技术，熟悉向量检索原理、向\n量库底层索引原理与选型，阅读过Claude Code源码，并将设计理念运用到个人Agent项目中，了解SDD架构\n熟悉分布式下常见理论，熟悉Paxos算法、Raft算法、分布式事务、分布式ID使用及其原理等\n熟悉Java基础知识，熟悉JVM、JUC，熟悉Java中各种锁机制、CAS、AQS、线程池，垃圾回收、类加载机制、双亲委派机制等\n熟悉MySQL数据库以及常见优化手段，有慢SQL排查优化经历，深刻理解Redis架构、IO模型、分布式锁的实现原理等\n熟悉SSM、SpringBoot、SpringCloud、LangChain4j等框架，了解IOC、AOP、Bean的生命周期等\n实习经验\n吉林松辽水资源开发有限责任公司                               2026-04~至今\n• 参与水资源领域RAG问答链路设计，将请求处理拆分为意图路由、查询改写、知识检索、结果重排、Prompt组装及答案生成等节点；\n通过条件分支区分问候、越界问题、简单问答与复杂分析，避免无效检索及模型调用。\n• 基于CompletableFuture与受控线程池实现Dense向量检索和BM25关键词检索并行执行，经RRF融合及重排后生成候选证据；记录\n各节点耗时、召回片段和相关度评分，Recall@5由74%提升至88%、nDCG@5由0.74提升至0.84，引用准确率达到92%；在20并发下\n检索P95控制在1.209s、首Token耗时控制在1.8s以内。\n• 面向跨地区、跨主题的复杂水资源问题，设计串并行结合的任务编排机制：串行链执行问题拆解、证据聚合及答案生成，并将相互独\n立的检索与分析任务并发提交至内部多实例模型服务；通过并发上限、节点超时和部分结果降级保障链路稳定性。\n• 基于Redis维护会话摘要、最近消息及省份、流域、年份等业务槽位，通过滑动窗口限制Prompt长度并支持多轮指代补全；基于SSE\n实现答案流式输出，并将生成任务与客户端连接解耦；通过MySQL定时快照与序列号防乱序覆盖，实现断线后后台续写、重连恢复及\n异常回答留存。\n• 抽象ChatModel、Embedding及Rerank统一服务接口，支持开发环境千问服务与单位内部模型服务切换；为外部模型调用增加超\n时、重试、限流和异常降级机制，在模型不可用时保留检索证据并返回可解释结果。\n项目经验\n知映——视频分享社区             个人独立开发　　            https://zhimian.tech\n技术栈：SpringBoot、LangChain4j、Vue3、Vite、RocketMQ、Redis、MySQL、Milvus、Spring Security、Caffeine、\nSentinel、Fluent bit、Loki、Multi-Agent、Docker、Nginx　　　　　　　　　　　　\n项目介绍：基于Spring Boot 3 + 多模态 AI + RAG 技术构建的高并发视频分享社区，支持视频上传转码、多模态内容审核、视频点赞\n评论、用户关注等功能，基于异步事件驱动架构支撑高并发交互场景，为用户提供端到端的视频创作与消费体验。\n个人职责： \n• 基于Spring Security + OAuth 2.0实现微信登录认证体系。JWT 采用 RS256 非对称签名，私钥签发公钥验证，支持微服务独立验\n签。OAuth 2.0 授权流程采用 SecureRandom 生成 state 参数存 Redis 进行一次性校验，防御 CSRF 攻击与重放攻击。双 Token 机\n制实现无感会话管理，Refresh Token 配合 Rotation + SHA-256 哈希重用检测，被盗用时自动熔断全部会话。Redis Token 黑名单实\n现服务端即时注销，微信回调采用一次性授权码交换 Token，杜绝 URL 泄漏\n• 基于阿里云OSS实现视频文件分片+断点续传机制，前端通过预签名URL直传OSS，基于OSS记录上传状态 + 动态分片大小自适应，\n解决不良网络环境下的传输超时问题。基于MD5实现内容级去重，使用Redisson分布式锁+看门狗机制防重复合并，防止并发写入导\n致文件损坏，并基于Apache Tika进行文件内容Magic Number校验防止扩展名伪造，定时任务每小时扫描清理过期会话和 OSS 碎\n片，合并失败时自动调用 abort 清理，彻底解决存储泄漏问题\n• 基于Plan-Execute + Multi-Agent架构实现了多模态视频内容审核Agent，PlannerAgent根据视频时长动态制定抽帧策略，\nVisualAgent、AudioAgent、MetadataAgent 三路并行审核，JudgeAgent进行综合裁决，两层模型通过阿里云内容安全 API 初筛过\n滤 80% 安全内容，仅对疑似违规帧触发 Qwen-VL 深度分析，配合首尾高密度 + 均匀采样 + 疑似区间加密复检的抽帧策略，单视频审\n核成本控制在 ¥0.1 以内，解决人工审核成本高、单一模型覆盖率不足的问题。\n• 基于Redis分片位图+RocketMQ 攒批+Caffeine三级缓存实现点赞功能，点赞事件写入内存队列攒批后发 MQ，针对超高频用户在\n攒批层做去重压缩，消费者端通过 Lua 脚本批量原子操作 Redis 分片位图完成去重判重，最终批量落库 MySQL 位图快照；内置多级\n降级策略+ 三级定时对账+Mmap本地日志容灾，保证数据最终一致且中间件故障时功能不中断\n• 实现了基于滑动窗口计数的热点Key自动探测与本地缓存系统。通过@HotKey注解+AOP拦截的方式，在500ms内自动识别高并发访\n问的热点视频/用户Key，将热Key读取全部路由到Caffeine本地缓存，解决了热点内容的高并发读请求打垮Redis的问题\n• 基于 LangChain4j + qwen大模型构建运维告警自动分析 Agent，感知层自动接收 Grafana 告警并查询 Loki 日志上下文，结合\nRocketMQ 异步削峰、Redis 指纹去重与规则化日志降噪压缩能力，保障系统在告警风暴下稳定运行。采用 RAG 向量检索优先策略，\n依托 Milvus 检索历史故障案例，命中则直接返回分析结果，未命中再调用大模型推理，有效降低 AI 调用频次、提升响应速度与故障分\n析准确率\n• 基于Plan-Execute-Replan 架构实现运维Agent，实现权限分级执行模型，DANGEROUS操作强制人工审批，实现了感知告警信息\n→ 推理 → 调用工具 → 分析结果 → 生成方案的完整业务流程\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg\n56fa2cbd45bbac161HN92tm6EFRSw4m6VPiWWOekn_fYNhRg",
+    "chars": 3520,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 38,
+      "ownership": 1,
+      "reliability": 9,
+      "api_design": 5
+    },
+    "agent": {
+      "agent_core": 16,
+      "rag": 22,
+      "llm_eng": 4
+    },
+    "metrics": 7
+  },
+  {
+    "batch": "Agent2",
+    "name": "夏钰林",
+    "file": "【Agent 实习生_深圳 400-600元_天】夏钰林 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】夏钰林 28年应届生.pdf",
+    "text": "教育背景\n深圳大学 - 人工智能（硕士） 2025.09 - 2028.06（预计）\n硕士GPA：3.75 / 4.00（专业前5%）\n湖南中医药大学 - 计算机科学与技术（本科） 2021.09 - 2025.06\n本科GPA：3.82 / 4.00（专业前3%）\n工作技能\n· LLM应用与Agent：熟悉LangGraph、LangChain、Dify，具备状态管理、工作流编排、路由、Tool  Calling、会话记忆、多轮问询及多Agent协作\n实践。\n· RAG与知识库：具备文档解析、分层切片、FAISS向量索引、混合检索、元数据过滤、重排序及上下文组装经验；使用过Qwen系列Embedding与\nReranker模型，熟悉知识图谱增强检索。\n· 模型与NLP：熟练使用Python、PyTorch\n· 后端与工程：具备Python Web 服务、数据库与Redis状态管理、异步并发、结构化校验、超时重试、异常处理、日志、Linux/Docker部署、接口压\n测及端到端链路联调实践。\n实习经历\n天维尔信息科技股份有限公司 - AI算法实习生 2026.04 - 2026.07\n项目：119消防接警智能问询与要素识别系统\n业务链路：ASR转写 → 场景识别 → 要素抽取 → 下一问推荐 → 警情研判\n· 要素抽取与鲁棒性优化：负责ASR转写后的场景路由与结构化抽取，构建覆盖3类警情、17个场景集、289个具体场景和82类业务槽位的识别体\n系；针对12类ASR噪声设计Few-shot示例、Schema结构化约束与规则校验。将10,906段人工标注数据按完整通话划分开发集与测试集，在约3,272\n段独立测试数据上取得槽位类别Macro-F1 86.2%、样本级必填槽位完整通过率93.96%。\n· 多轮问询Agent：基于LangGraph编排“场景识别—槽位抽取—缺失判断—下一问生成”流程，以CallId标识会话并使用Redis持久化场景、槽\n位、问询历史和任务状态；结合问题模板与LLM动态生成下一问，通过Schema校验、超时重试、失败降级、问题去重、场景切换、最大轮次及终\n止规则保障多轮问询稳定运行。\n· 地址检索服务：独立实现基于Elasticsearch的多区域地址检索服务，面向20,571条标准地址构建区域索引，融合多字段召回、分词检索、拼音/模\n糊匹配及候选重排；以Top-3结果中包含正确标准地址为命中标准，在线测试命中率达到93%。\n· 工程交付与性能验证：完成要素抽取服务接口化及接警业务链路联调；在CPU部署环境下开展20并发、持续10分钟的端到端阶梯压测，请求P99\n延迟为3.09秒。\n深圳飞速创软科技有限公司 - AI实习生 2025.11 - 2026.02\n项目：企业级大模型低代码平台与医疗智能应用\n· 企业RAG知识库：参与约300GB、上万份PDF、Word合同及制度文件的知识库建设，个人负责其中约100GB文档的解析、清洗、元数据提取、分\n层切片及百万级FAISS索引构建；根据标题层级、段落结构和语义边界优化Chunk策略，使用Qwen系列Embedding与Reranker模型完成检索和重\n排。基于约500条客户真实问题及人工标准答案开展端到端评测，LLM回答准确率约70%。\n· 医疗编码审核Multi-Agent：负责系统架构、Agent开发、知识检索、图谱工具、规则校验及评测全流程；构建1个主控Agent和6个子Agent。病历\n处理Agent提取患者病历证据链，主控Agent并行调度临床医师、病理医师、编码医师和医院病案管理医师4类专家Agent；各Agent共享会话状态，\n并调用专属知识库、RAG工具和知识图谱工具检索HIS病历证据及医学指南。专家共识评分达到0.8后进入编码审核Agent；未达阈值时由冲突专家\n继续讨论。在同一1,231份完全独立病案测试集上，相较单LLM工作流基线，将单个ICD编码准确率由75.4%提升至90.2%，提升14.8个百分点。\n· 平台组件开发：开发5个低代码平台组件（含MCP工具），覆盖合同格式化、文档生成、知识检索及外部接口调用；其中合同格式化组件可根据\n模板生成具有固定页眉、字体、编号和段落结构的合同文档，并将相关能力封装为可复用MCP工具，支持Agent工作流调用。\n科研项目\n基于闭环LLM-KG的社交媒体抑郁识别与医学知识扩展 - 学生第一作者（二审） 2026.01 - 2026.07\n· 研究设计：独立负责闭环LLM-KG研究全流程，构建LLM与医学知识图谱协同迭代框架，将实体识别、用户级抑郁风险预测和候选医学知识更新\n纳入闭环；知识图谱更新仅使用训练集信息，避免测试集信息泄漏。\n· 模型与评测：采用LoRA微调DeepSeek-R1-Distill-Llama-8B，联合建模实体识别与抑郁分类；在eRisk2018/2022数据集约186万条Reddit帖子、3,870\n名用户上，按用户维度以6:2:2划分训练集、验证集和测试集，确保同一用户不跨数据集。\n· 实验结果：相较无闭环机制的LLM+KG基线，用户级二分类F1由0.823提升至0.860；知识图谱覆盖5类实体和16类关系，扩展至1,189个节点、\n53,636条边。论文已完成一轮返修，目前处于二审阶段。\n论文与竞赛\n· 论文：参与人工智能、医学信息化及知识图谱相关论文5篇，其中BMC Medical Informatics and Decision Making论文1篇；闭环LLM-KG研究为学生\n第一作者，目前处于二审阶段。\n· 代表方向：LLM医学诊断、抑郁风险预测、医学文本实体识别与知识图谱。\n· 竞赛：获全国大学生数字媒体科技作品及创意竞赛全国一等奖、华教杯全国大学生数学竞赛全国一等奖、中国大学生计算机设计大赛全国三等\n奖、蓝桥杯Python组湖南赛区一等奖；累计获奖8项，其中国家级4项。\n夏钰林\n求职方向：Agent开发 / 大模型应用开发\n17674703883 | xiayulin_boy@163.com | 湖南衡阳 | 中共党员\n2028届硕士 | 日常实习 | 可实习6个月 | 每周5天 | 立即到岗\n，熟悉Transformer、SFT、RLHF、PPO、DPO，具备文本分类、信息抽取及LoRA/QLoRA微调经验。\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg\nce200dd2c315e5a21HN92tm0GVdTx4-7U_6XWOekn_fYNhRg",
+    "chars": 3034,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 7,
+      "ownership": 3,
+      "reliability": 9,
+      "api_design": 7
+    },
+    "agent": {
+      "agent_core": 24,
+      "rag": 25,
+      "llm_eng": 6
+    },
+    "metrics": 15
+  },
+  {
+    "batch": "Agent3",
+    "name": "黄浩翔",
+    "file": "【Agent 实习生_深圳 400-600元_天】黄浩翔 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】黄浩翔 27年应届生.pdf",
+    "text": "黄浩翔\n求职意向：AI工程师\n19925461499\n19925461499@163.com\n2023-09 - 2027-06\n华南师范大学（211）\n人工智能（\n本科\n）\n教育背景\n主修课程:数据结构、操作系统、数据库基础、软件工程、python语言程序设计、神经网络、机器学习\n职业技能\n专业技能：\n大语言模型与Agent：\n熟悉\n大模型应用开发，能够基于\n LangChain、LangGraph\n 完成复杂工作流设计与 Agent 构建。深入理\n解 \nMCP、Function Calling\n 等工具调用机制，了解A2A多智能体通信协议。深入了解\nDify\n功能架构且有开发、维护其竞品的经\n验。熟练运用 \nCursor、Claude Code\n 等前沿 AI 编程工具辅助全栈开发。\n提示词工程：\n熟练掌握各类提示词策略（\nFew-shot， CoT， ReAct\n），有通过优化Prompt设计，将复杂推理任务的准确率提\n升了15%-20%，并有效降低模型幻觉的经验。\n检索增强生成（RAG）：\n具备完整的 RAG 系统落地经验，掌握从\n文档解析、切片、向量化召回、BM25 关键词检索、重排序\n到\n生成约束的全链路技术，熟悉 Milvus、Redis、MySQL 等组件在 RAG 场景下的集成与优化。\n机器学习与深度学习：\n掌握监督学习（KNN、随机森林）、非监督学习（KMeans）及集成学习（XGBoost、AdaBoost）；熟\n悉深度学习基础（CNN、TextCNN、RNN、LSTM）及Word2Vec词嵌入；熟练使用预训练模型（BERT、Qwen、LLaMA等）\n及PyTorch、HuggingFace、Ollama等工具。\n自然语言处理\n：熟悉NLP核心任务（文本分类、机器翻译），\n深入理解Transformer\n与\nAttention机制\n。\n模型优化与评估：\n掌握模型调优策略（优化器选择、学习率预热、正则化、超参数搜索）及梯度裁剪；了解模型压缩技术（量\n化、剪枝、知识蒸馏）；熟练使用评估指标（F1-score、混淆矩阵）及分类报告。\n编程与工程能力：\n熟练使用Python、SQL，掌握Pandas/NumPy进行数据清洗、特征工程与可视化；熟悉Linux环境及常用命\n令；具备MySQL数据库操作能力，了解\nMilvus\n等存储引擎；掌握Flask/Docker基础，能够完成模型服务化部署。\n2026-04 - 2026-08\n深圳飞速创软科技有限公司\nAI Agent平台优化实习生\n实习经历\n1.开发和维护\nAI工作流平台\nFlyGPT（对标\nDify\n），为\n小天才\n（知名儿童智能设备品牌）提供基于低代码 AI 平台的 Agent 工作流\n与知识库检索能力，支撑其内部运营问答、设备文档查询等场景。对Agent平台进行\n系统性功能开发\n和\n核心功能优化。\n独立负责\nAgent 数据库工具、多轮对话记忆管理、知识库检索链路\n等核心模块的优化。\n2.为\n中国电信\n，博彦银行等知名品牌提供基于\nopencode框架+知识图谱\n引擎的数据治理服务，基于本体建模和多用户管理系\n统，为甲方提供数据建模与管理，支持其内部数据查询、业务分类、审核等场景。独立完成了业务核心建模、数据管理模型的建\n立，打通业务流程，并跨部门\n主导\n完成了应用的上线与部署。\n2026-04 - 2026-06\n小天才Agent平台系统优化\n项目经历\n项目介绍：\n深度参与\n小天才\n内部运营问答与设备文档查询场景，为低代码 AI 工作流平台（对标\nDify\n）设计并落地 Agent 核心链\n路的系统性增强方案。独立负责 \n数据库工具输入压缩（压缩率 87%）、多轮记忆污染根治、知识检索耗时降低 75%\n，形成从问\n题发现、方案设计到客户交付的\n完整闭环\n。\n技术栈：opencode能力集成，\nPython (FastAPI)、LangChain、MySQL、向量数据库、Rerank 模型、Vue.js、Docker、Git、\n广度优先搜索\n项目内容：\n1.Agent 数据库工具（Database Tool）输入超限优化：\n针对数据库表结构过大（500+表、99 万字符）导致模型上下文超限的问题，独立设计\n表名智能筛选算法\n（精确/部分匹配用户指\n令），实现按 token 预算的\n原子截断\n（以 \nCREATE TABLE\n 边界拆分，从后向前移除表块），并增加\n字符数双重校验\n。\n2.多轮对话记忆污染修复：\n解决 iframe/调试模式下\n上下文串扰\n（上一轮检索结果污染下一轮回答），对比企微 API 正常调用，定位根因为前端会话 ID 未\n重置及历史消息未清空，强制每次对话生成唯一 \nconversation_id\n 并清空本地缓存。\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\n\n2026-06 - 2026-08\n中国电信工单智策系统\n2025-09 - 2025-11\n多Agent智能就医助手系统\n3.知识库检索链路性能与准确性优化：\n处理检索耗时从 2-3 秒飙升至 20 秒、闲聊误触发、业务文档与测试小说混杂等问题，独立实施意图前置过滤、检索结果数量硬\n限制、相似度阈值过滤、文档类型标签隔离等优化。\n4.Agent 重排分数融合优化：\n修正混合检索误用重排原始分数（0.24）代替融合分数（0.6）阈值过滤 bug，设计新融合公式，提升召回率与排序准确性。\n5.为工作流加入自主推理能力：\n对平台的工作流节点、MCP工具等进行注册，随后把本地\nopencode\n推理能力接入Agent工作流平台，让Agent接收用户需求描\n述，随后进行\n意图识别、提示词优化\n，\n自主搭建、测试工作流\n并完成任务；最总将远端flywork（结合claude code，opencode\n等强力Agent框架打造的自研平台）接入工作流平台，保证稳定的工作流自主推理能力。\n项目成果：\n1.数据库工具输入从\n 99 万字符\n压缩至 \n12 万字符\n，\n压缩率达到 \n87%\n，模型超限错误消除，工具调用成功率 100%。\n2.上下文污染彻底解决，记忆隔离稳定。\n3.\n平均耗时从 20 秒降至 5 秒（\n降幅 75%\n），“答非所问”用户\n反馈归零\n。\n4.重排召回率提升\n20%\n，用户搜索体验改善。\n5.\n独立完成\n所有问题的\n全流程\n（定位、设计、实现、验证、上线、客户对接），方案沉淀为团队 Agent 上下文管理通用模板。\n项目介绍：\n作为AI应用架构设计者，基于\nLLM+OWL本体+Neo4j知识图谱+SWRL规则引擎\n构建Agent协作系统，实现流量超\n量费投诉的分钟级自动判责与诊断报告生成，将工单处理时间从数小时缩短至八分钟内，且支持任务并行处理与多用户管理。\n技术栈：gitlab，CI/CD，opencode框架整合\n，\nFlask后端框架，Neo4j图数据库，Vue3前端，Docker容器化部\n署，OWL/RDF本体建模\n项目内容：\n1.两阶段审查架构设计，确立一阶段进行\n文档规范性审查\n、二阶段进行\n条款内容合规审查\n的核心分层原则，开发端到端审查全流\n程（文档上传→自动解析→图匹配→冲突检测→报告生成），实现从上传到报告的\n完整合规审查链路。\n2.开发10项文档规范性审查规则覆盖4大类（格式规范、结构完整、要素完备、逻辑一致），设计条款级冲突检测5类规则（直接\n冲突/缺失条款/模糊条款/过时条款/逻辑矛盾），结合\nCypher图\n查询实现规则执行，确保审查结论都能\n追溯到具体的文档/条款\n数据。\n3.构建审查服务层实现\n文档解析、图匹配、规范性检查、报告生成\n4大核心模块，集成FastAPI与\nNeo4j知识图谱\n，定义8种关系\n类型,实现从上传文档到审查报告的全自动化。\n4.在gitlab上完成了从仓库搭建,代码推送与分支管理,到\nCI/CD\n构建,\ndocker容器化部署\n的流水线,并跨部门合作部署K8s集群,完\n整主导让项目从创建到部署客户端全流程。\n项目成果：\n构建10个OWL本体实体类、共计\n2764+节点\n的Neo4j知识图谱，定义15种语义关系类型，为规则推理提供统一语义基础，允许\n应用在接入强力Agent框架的情况下以不到十分钟的时长进行深度精准审核，并且通过\n提示词工程、skill设计\n让AI输出查询的\n真\n实数据、推理具体过程\n，减少幻觉并增强输出稳定性。架构复用至\n华为\n数据管理,博彦银行合同合规审核等多场景扩展 。\n项目背景：\n针对传统就医流程繁琐、信息分散的问题，设计并实现了一个多 Agent 协作的智能就医助手。系统基于 MCP 统一封\n装服务接口，通过 A2A 协议实现 Agent 间协同，并引入\n思维队列架构\n，支持复杂就医任务的多步推理与自主执行。\n技术栈：\nFastAPI、LangChain、OpenAI、MCP / A2A 多 Agent 架构、\nReAct + ThoughtQueue\n、Text-to-SQL (MySQL)\n项目内容：\n1.实现 Agent 核心执行器：\n设计 \nSimpleAgent\n 主控类，维护对话历史、工具注册表和 LLM 客户端，实现 \n外层（步骤级）+ 内\n层（推理级）\n 双循环架构；开发 \nThoughtQueue\n 思维队列，支持任务步骤的动态追加（append）、插入（prepend）和替换\n（replace），并设置最大循环次数防止死循环。\n2.基于 MCP 协议集成外部工具：\n使用 MCP Server 封装医院挂号查询、医保政策检索、费用计算等工具，通过 MCP Client 实\n现 Agent 与工具的标准化交互。在医保 Agent 中集成\n Text-to-SQL\n 能力（LangChain + ChatOpenAI），用户可直接提\n问“在职职工去三甲医院看门诊能报销多少”，Agent 动态生成 SQL 并查询医保规则数据库。\n3.构建多 Agent 协作机制（A2A）\n设计主控 Agent 与领域 Agent（挂号、医保、科室推荐）的通信协议，主控 Agent 负责 \n意图解析 \n与任务分解，领域 Agent 专\n注执行。基于 A2A 协议实现 Agent 间的请求/响应与结果聚合，支持超时重试和错误回退。\n4.完善前端与部署\n使用 Streamlit 构建聊天界面，实时展示 Agent 的思考步骤与工具调用链。基于 FastAPI + Uvicorn 部署 Agent 服务端，提供\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\n\n2024-10 - 2024-12\n文本分类项目\n2025-07 - 2025-09\nRAG智能咨询系统构建\nHTTP 与 WebSocket 接口，支持流式输出。\n项目成果：\n完成了一个可自主执行多步骤任务的就医助手，能处理任务复杂链路。通过 ThoughtQueue 实现动态重规划，支\n持在用户中途改变需求，系统能自动插入新步骤并调整后续计划。\n意图准确率\n达到93%，\n端到端成功率\n达到91%。\n项目背景：\n电商平台海量用户评论需实时识别情感倾向与细粒度方面（物流、质量、服务），人工分类效率低成本高，需构建自\n动分类系统实现高效评论洞察。\n技术栈：\nPython, PyTorch, Scikit-learn, FastText, Transformers (Bert), 模型量化, 知识蒸馏, Docker, Flask\n项目内容：\n1.数据预处理：\n清洗海量用户点击日志与资讯标题，完成分词、去停用词、文本截断等操作；针对类别不平衡问题，采用重采样\n与数据增强策略，提升小样本类别表现。\n2.模型选型与迭代优化：\n（1）首先使用随机森林（RF）构建\n基线模型\n跑通流程，发现其对语义理解有限；\n（2）引入FastText，利用层次Softmax与N-gram特征，在保证推理速度的同时将准确率提升至91%；\n（3）采用Bert微调，准确率达到94%，但模型体积大、延迟高；\n（4）通过知识蒸馏，以Bert为教师、FastText为学生，将知识迁移至轻量模型，蒸馏后准确率回升至93%，兼顾精度与效率。\n3.模型压缩：\n对Bert进行INT8量化，减少显存占用；通过知识蒸馏得到轻量学生模型，压缩模型体积，提升推理速度。\n4.模型部署：\n封装模型推理接口，基于Flask搭建RESTful API服务；使用Docker容器化部署，实现环境隔离与快速扩缩容，保障\n服务稳定性。\n项目成果：\n构建了一套覆盖从数据清洗、模型选型到压缩部署的全链路文本分类系统。最终线上模型在保持超出标准线的\n准确\n率\n的同时，极大提升推理速度。\n项目背景：\n公司咨询业务中，高频问题占比高、人工响应慢，且因数据私有无法直接使用公有大模型，需基于私有知识库构建\nRAG系统实现准确、低延迟的自动答疑。针对复杂问题、结构化文档等难点，设计了\n多阶段优化策略\n。\n技术栈：\n混合检索与重排序、LangChain、Qwen2.5-7B-Instruct（通义千问）、MySQL（问答缓存）、Redis（热点缓存）、\nMilvus（向量数据库）、BM25\n项目内容：\n1.设计两级检索架构\n：第一级基于 \nMySQL+Redis \n的问答缓存，通过 \n相似度匹配 \n直接返回高频问题的预存答案，避免大模型调\n用，降低延迟；未命中时触发RAG流程，进入第二级检索，使用LangChain整合Qwen2.5-7B-Instruct大模型，从本地文档库中\n检索增强生成。\n2.开发文档处理流水线\n：支持PDF/Word/Markdown等多格式文档的加载、清洗、智能切分，并利用Sentence-Transformers\n生成向量，存入Milvus向量数据库。\n3.\n多阶段查询优化与混合检索\n：\n引入查询优化机制，对复杂、多意图问题，通过\n子查询拆分、假设文档嵌入（HyDE）、回溯提\n示\n等策略，提升查询表达的精确度；\n采用\n向量检索 + BM25 稀疏检索 + Rerank 重排序\n的三阶段召回策略，\n提升召回准确率。\n4.封装FastAPI服务\n：提供RESTful API与WebSocket流式输出，集成日志监控与Locust压力测试，确保系统稳定性。\n项目成果：\n高频问题响应速度提升，降低了平均响应时间降。提高了问答准确率，有效减少模型幻觉、人工客服咨询量。\n答案相\n关性\n达到94%。\n2025-09 - 2026-06\n面向开放世界的多模态意图认知建模与持续学习研究\n算法实现负责人\n科研经历\n研究背景：\n 基于智能客服等场景下音频意图识别模型存在无法适应未知意图且难以持续学习的状况，通过构建音频理解系统，要\n达到为跨行业语音交互提供实时、低成本智能化支持的目标。\n研究内容：\n数据预处理：\n采集多行业客服通话音频，\n搭建自动工作流\n，建造Agent节点、集成音频识别功能进行批量音频转写；采用利用\nWhisper提取声学与文本特征的方式，进行数据的清洗与标准化。\n特征与建模：\n设计多模态语义表征，将意图抽象为可解释“概念”的方式，进行计算特征与概念一致性实现已知/未知意图判别；\n持续学习框架：\n通过引入概念记忆回放与概念图谱扩散，结合Learngene范式（集体模型+LoRA轻量化适配）的方式，进行新知\n识学习与旧知识防遗忘。\n评估验证：\n通过在自建多行业测试集上，划分已知/未知任务双轨评测，对比传统基线方法的方式，进行效果验证。\n研究成果：\n获得\n国家级立项、专项培育大创立项\n，成功输出完整技术方案、核心算法代码库，验证了方法的创新性与落地潜力\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg\nf8d8aaa63d5c7a381HN92tu6ElVTwIu8V_qfWOekn_fYNhRg",
+    "chars": 7491,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 40,
+      "ownership": 8,
+      "reliability": 8,
+      "api_design": 14
+    },
+    "agent": {
+      "agent_core": 62,
+      "rag": 40,
+      "llm_eng": 7
+    },
+    "metrics": 26
+  },
+  {
+    "batch": "Agent3",
+    "name": "林嘉翰",
+    "file": "【Agent 实习生_深圳 400-600元_天】林嘉翰 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】林嘉翰 28年应届生.pdf",
+    "text": "林嘉翰\n 深圳 |  18824263887 |  2322054624@qq.com |  github.com/Fragmentaim\n教育背景\n深圳技术⼤学 \u0000\u0000\u0000\u0000.\u0000\u0000 - \u0000\u0000\u0000\u0000.\u0000\u0000\n计算机科学与技术 | 本科 专业排名：14 / 139 | GPA：\u0000.\u0000\u0000 / \u0000.\u0000\n个⼈技能\n编程语⾔： 熟悉 Java 基础、集合、多线程及常⽤数据结构；了解 Python、C++。\n后端开发： 熟悉 Spring Boot、MyBatis-Plus、MySQL、Redis；了解 RocketMQ，具备 RESTful API 开发经验。\nAI 应⽤： 使⽤ Spring AI、FastAPI 开发 RAG / Agent 应⽤，具备 Qdrant、Docling、Function Calling 等实践经验。\n基础与⼯具： 了解 HTTP/TCP、进程线程等计算机基础；能够使⽤ Git、Linux、Docker、Postman、JMeter。\n项⽬经历\n实验室资源预约系统 | 后端开发 \u0000\u0000\u0000\u0000.\u0000\u0000 - \u0000\u0000\u0000\u0000.\u0000\u0000\n    \n独⽴设计并开发实验室资源预约系统，实现资源与时段管理、预约、取消、签到及记录查询，并构建预约创建、确认、取消\n和过期的 完整状态流转。\n针对资源⾸⻚读多写少场景，采⽤ Redis Cache-Aside 缓存；基于 Redisson RRateLimiter 对预约接⼝实施限流。\n针对热⻔时段集中抢占，设计 RocketMQ 事务消息 + Redis Lua 原⼦预占 + MySQL 异步确认 链路，结合 requestId、数据\n库唯⼀约束及条件更新实现幂等与防超卖。\n基于 Outbox 本地消息表 可靠驱动预约提醒、超时取消等后台任务，投递失败⾃动重试，避免业务事务成功但任务消息丢\n失。\n系统部署于阿⾥云 ECS，通过 PTS 模拟 500名⽤⼾并发抢占20个名额；相较 MySQL 同步事务⽅案，TPS由170.59提升⾄\n268.24（+57.2%），P\u0000\u0000由2.57秒降⾄1.50秒（-41.7%），最终⽣成 20条有效预约，⽆超卖、⽆重复预约。\n实验室知识库与智能预约助⼿ | 后端开发 2026.04 - ⾄今\n    \n在既有预约系统上扩展 Agent / RAG 智能助⼿，基于 Spring AI 统⼀编排模型、会话上下⽂、知识检索及预约业务⼯具，实\n现制度问答、资源查询与预约操作。\n基于 Docling 解析 PDF、Word、Excel、Markdown 及图⽚等多格式⽂档，通过 RocketMQ + Outbox 异步完成分块、向量\n化与索引，并结合⽂档版本与幂等消费保障索引⼀致性。\n针对知识问答场景，设计 Embedding 向量检索 + BM\u0000\u0000 + RRF + Rerank 混合检索链路，结合⽂档级 ACL 权限过滤与原⽂\n引⽤，提升检索准确性与访问安全性。\n基于 LLM Function Calling + Run / Step 持久化模型 编排知识检索与预约⼯具，⽀持任务恢复与 Step 幂等；对预约变更\n操作增加预检、⼈⼯确认与操作审计。\n建⽴ 19题 Gold 测试集与8组⻓会话进⾏端到端评测，⽬标⽂档命中率 94.7%、答案准确率 84.2%；通过会话摘要压缩将历\n史 Token 降低 40.0%，关键约束保留率 88.2%。\nRoboMaster 雷达站定位系统 | 视觉组 \u0000\u0000\u0000\u0000.\u0000\u0000 - \u0000\u0000\u0000\u0000.\u0000\u0000\n     \n负责雷达站⼩地图定位模块，基于⾼台相机视⻆建⽴场地坐标到⼩地图坐标的 映射关系，实现机器⼈位置可视化。\n基于 YOLO + TensorRT + ByteTrack 完成机器⼈检测、推理加速、跟踪与⾝份关联，并参与通信解调和⾃瞄模块联调。\n荣誉奖项\nRoboMaster \u0000\u0000\u0000\u0000 机甲⼤师（南部赛区）⼀等奖 \u0000\u0000\u0000\u0000.\u0000\u0000\n全国⼤学⽣数学建模竞赛（⼴东省赛区）⼆等奖 \u0000\u0000\u0000\u0000.\u0000\u0000\nSpring Boot\n MyBatis-Plus\n MySQL\n Redis\n RocketMQ\nSpring Boot\n Spring AI\n FastAPI\n Qdrant\n RocketMQ\nPython\n C++\n OpenCV\n YOLO\n TensorRT\n ByteTrack\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg\n505cfd3b42ce75551HN92tu6EltVx4S3V_qWWOekn_fYNhRg",
+    "chars": 2207,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 25,
+      "ownership": 1,
+      "reliability": 2,
+      "api_design": 4
+    },
+    "agent": {
+      "agent_core": 6,
+      "rag": 13,
+      "llm_eng": 1
+    },
+    "metrics": 7
+  },
+  {
+    "batch": "Agent2",
+    "name": "何鑫奎",
+    "file": "【Agent 实习生_深圳 400-600元_天】何鑫奎 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】何鑫奎 27年应届生.pdf",
+    "text": "何鑫奎        大模型应用开发 | Agent Engineer \n手机: 18211306275  |  邮箱: hexinkui_hitsz@163.com \n教育经历 \n哈尔滨工业大学（深圳） 通信工程  本科 2020.09 – 2024.06 \n哈尔滨工业大学（深圳） 通信工程  硕士 2024.09 – 至今 \n• 脑影像机器学习共一作论文（在投）：为刻画自闭症患者个体差异下的脑结构异常，基于 2965 例人脑核磁共振影像开展\n个体化结构偏差研究（独立负责医学影像预处理、特征提取、特征工程与机器学习建模，完成实验设计与论文撰写）。 \n• 图神经网络疾病分类实验：基于脑结构网络构建图数据，采用 PyTorch 实现 GCN/GAT 等模型进行自闭症患者与健康对\n照分类，评估图拓扑特征对分类性能的影响；负责特征构建、模型训练与实验对比。 \n项目经历 \n智能数据查询分析系统                 项目链接：Github 角色：全栈开发 2025 年 11 月 - 2026 年 02 月 \n• 项目介绍：面向电商数据分析场景设计的自然语言问数智能体系统，用户通过中文提问即可自动完成元数据检索、SQL\n生成、校验执行与结果展示，解决业务人员无法直接查数仓的痛点。 \n• 技术栈：LangGraph、LangChain、MySQL、Qdrant、Elasticsearch、FastAPI、SSE、React、Redis \n• 核心技术实现： \n- 元数据知识库构建：通用 LLM 直接生成 SQL 易因缺乏表结构信息导致幻觉。设计 MySQL+Qdrant+Elasticsearch 三层\n知识底座，融合结构化元数据、语义向量和字段检索能力，支撑 5 张核心业务表、24 个字段及 2 类业务指标的语义映\n射，为 SQL 生成提供精准上下文。 \n- 多路召回与 LangGraph 工作流编排：基于 LangGraph 编排\"关键词抽取 → 多路召回 → 合并召回信息 → 过滤补全上\n下文 → SQL 生成 → 校验 → 纠错 → 执行\"的完整流水线。关键词抽取与多路并行召回将用户自然语言问题精准映射到\n表字段与指标，解决大模型盲写 SQL 带来的表名/字段名误用问题，多轮测试中 SQL 执行成功率达 90%以上。 \n- 工程化实现与实时交互：基于 FastAPI 异步架构+SSE 流式推送，实现 LangGraph 各阶段状态实时回传前端，支持用户\n观察完整执行链路。基于 LLM 查询补全机制支持多轮对话，会话状态通过 Redis 持久化；前端采用\nReact+Vite+Tailwind CSS，并结合 SQLAlchemy ORM、Loguru 完成系统配置管理、日志追踪与生命周期管控。 \nMulti-Agent 智能研究助手           项目链接：Github 角色：全栈开发 2026 年 03 月 - 2026 年 06 月 \n• 项目介绍：面向复杂调研场景设计的 Multi-Agent 系统，用户输入任务或上传文件后，自动完成任务拆解、信息检索、结\n果聚合与报告生成，支持网络搜索、数据库、知识库及本地文件多源协同。 \n• 技术栈：LangGraph、LangChain、DeepAgent、Tavily、MySQL、RAGFlow、FastAPI、WebSocket、React \n• 核心技术实现： \n- 层级式多智能体架构：采用\"主 Agent 统筹 + 专家子 Agent\"的分层架构，由主 Agent 负责任务理解与调度，网络搜索、\n数据库查询、知识库检索（RAGFlow）三个子 Agent 分别负责对应领域信息获取。通过 Tool 隔离和上下文裁剪降低单\nAgent 复杂度，基于 LangGraph checkpointer（SQLite 持久化）实现多轮会话记忆，服务重启后上下文不丢失。 \n- 长任务实时推送与稳定性处理：基于 FastAPI + ContextVar 构建异步任务调度框架，实现请求级上下文隔离。支持\n1000+任务并发提交和异步调度，thread_id 独立管理会话状态与输出目录，避免并发串扰；基于 WebSocket 实现 Agent\n执行过程实时推送，并加入心跳保活、自动重连及资源清理机制。 \n- 上下文工程与评测体系： 自建 token 用量计量与成本核算，裁剪无用工具 schema 使静态底座降低 32%，利用上下文\n缓存使多轮命中率提升至 80%；构建 5 层 Agent 评测体系（链路/工具/任务成功/质量/效率），基于 WebSocket 轨迹采\n集与 LLM Judge 量化评分，驱动迭代优化。 \n专业技能 \n• 大模型/Agent 开发：具备大模型应用与 Agent 系统开发实践经验，熟悉 LangGraph 多智能体编排、RAG 检索增强、Tool \nCalling 及 LLM 应用工程。具备本地大模型部署及 LoRA 参数微调实践经验，熟练掌握 Linux 开发环境及 Docker 部署。 \n• 模型与算法基础： 掌握 Transformer 架构原理及大模型训练/ 推理流程，具备机器学习、深度学习算法复现能力，熟悉\nPyTorch 模型开发与训练，掌握图神经网络（GCN/GAT ）建模，可处理知识图谱等图结构数据，能够开展论文复现、实\n验验证与算法分析。 \n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg\n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg\n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg\n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg\n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg\n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg\n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg\n59389ac0409a18731HN92ti8F1ZUxY-6VfOYWOekn_fYNhRg",
+    "chars": 2648,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 21,
+    "total": 96,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 15,
+      "ownership": 1,
+      "reliability": 1,
+      "api_design": 7
+    },
+    "agent": {
+      "agent_core": 29,
+      "rag": 14,
+      "llm_eng": 11
+    },
+    "metrics": 3
+  },
+  {
+    "batch": "Agent2",
+    "name": "陈阳",
+    "file": "【Agent 实习生_深圳 400-600元_天】陈阳 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】陈阳 28年应届生.pdf",
+    "text": "2028.07毕业时间：\n男性别：\n13851318059电话：姓名：陈阳\n邮箱：3418786206@qq.com\nGitHub：https://github.com/\ndaniel20060210\n南京西序科技有限公司\n视界之外\n字节跳动\n南京信息工程大学\n至今-2026.04\n   \n \n  \n \n实习经历\n•Skill热插拔 ：进程池配合 RPC实现跨服务注册 skill，每个 skill对应一个进程，实现 skill\n•进程池复用：针对extension provider进程频繁 创建销毁 ，基于Rust研发进程池，降低extension provider进程\n创建销毁 的资源\n2026.04- 2026.0至今\nTutti-os（ 3.4k star） ——研发实习生\n•Agent Host 可靠性：构建 Provider 无关的 Agent 生命周 期核心，统一 Session/Turn/Goal 状态、事件归 一化、\n幂 等提交及 SQLite 持久化与重启恢 复，保障多 Agent 长链路 任务的一致性和可恢 复性\n消耗\n•ACP标准化接入 ：基于  Standard ACP（JSON-RPC 2.0）和声明式 Agent Extension构建统一接入层 ，统一会\n话 /模型 /权限 /工具调用与事件流，，新增  Agent 的接入由定制开发收敛为“ 标准协议  + 配置化扩展\n•Big@：基于实体 ID/URI 实现 @Agent/@会话/@任务/@应用 的统一引用与能力路由 ，支持上下文按 需解析、\n跨 Agent handoff 与工作产物共享 ，构建共享  multi-agent 工作空 间\n”\n的热插拔\n项目 经历\n实现端到端交付的超级个体\n•幻觉的确定性防御体系：设计三层防御（Prompt、正则确定性检测器、自修复循环）将总幻觉漏过率从原始的无\n防御状态下的约 30%降低到约 2%\n•事件溯源式Pipeline持久化：把 Pipeline 当作可审计的持久化状态机来设计；每个阶段的输入、产出、审查决策\n都以不可变事件和快照的形式持久化到 SQLite，支持从任意历史快照回滚、修改参数后重放下游，以及跨会话断点\n续跑。\nOPCX——Agent全栈开发\n教育经历\n2024.09 - 2028.07 \n软件工程 | 本科\n•主修课程：Java/C++程序设计,数据结构,计算机网络,计算机组成原理，系统设计与分析\n•专业排名：前3%\n•Skill检索：基于 RAG+skill-Agent的 skill检索，在上下文控制和筛选精准度两方面 平衡取舍\n•上下文工程：采用 LLM-as-a-Judge 交叉验证和 结构化元数据 约束保证减轻有损压缩； 状态回滚 和 熔断机制 避免约束\n损失\nhttps://github.com/tutti-os/tutti\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\n\nOCampusX（已上线）——CT\n证书与其他\n相关技能\n等CLI编程工具Claude Code，Open Code；熟练使用MCP服务 和搭建skills现复杂智能体的编排开发，会编写 实\n检索epG/GrRA，上下文工程 ，提示词工程 进行智能体开发，了解并能灵活运用LangChain4j熟练使用AI技能：•\n实现Git常用命令e e\ncetrsour原理，熟练使用OPing IOC/ASpr进行开发，了解atis-plusBoot、Myb ingSpr熟练使用框架与工具：•\n有深入研究一致性和可靠性，对ch ticSear s\nRabbitMQ，Ela解决方案及分布式锁原理；熟练掌握存穿透/击穿/雪崩edis核心数据结构，熟悉缓精通R中间件：•\n及JVM内存模型；有一定的手撕能力（如布隆过滤器、Geo哈希、一致性哈希等） 制）\n（线程池参数，AQS锁机JUC多线程， a集合（HashMap原理）avJa核心知识，深入理解av掌握J基础核心：\n•数据库：熟练掌握MySQL ，理解B+树索引原理，事务隔离级别及MVCC机制；具备一定的SQL调优意识。\n•\n相关信息实时推荐自主分类帖子，权重线性函数记录用户喜好，Single-Agent使用推荐算法设计：•\n障\n实现安全保零业务侵入）、线程池压力侧雪崩问题（随机过期时间），逻辑过期+DoubleCheck）、击穿（值哨兵\n布隆过滤器+空解决缓存穿透（OPingASpredis与MySQL数据一致性和安全问题，基于为解决Redis架构设计：R•\n，大大提高系统可靠性三阶段幂等等技巧实现支付到业务投递消费的DoubleCheck、态机\n状、单向分布式锁edisson、R联合索引基于汇付和MQ搭建支付流程，使用汇付唯一ID、MySQL支付幂等保证：•\n大学英语6级、计算机二级\n联智云 AI监测系统——南京团达科技有限公司——全栈开发 （实习） —— 2025.11—— 2026.04\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg\ned027f7a0711e8e81HN92ti9EVVTwoq8VP6XWOekn_fYNhRg",
+    "chars": 2772,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 21,
+    "total": 96,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 11,
+      "ownership": 1,
+      "reliability": 0,
+      "api_design": 1
+    },
+    "agent": {
+      "agent_core": 14,
+      "rag": 4,
+      "llm_eng": 5
+    },
+    "metrics": 3
+  },
+  {
+    "batch": "Agent2",
+    "name": "屈玉超",
+    "file": "【Agent 实习生_深圳 400-600元_天】屈玉超 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】屈玉超 27年应届生.pdf",
+    "text": "• AI应用开发\n•  熟悉Python，C++，java等主流语言\n• 使用SpringAI，LangChain4j 等AI开发架构，独立开发过涉及RAG，工具调用，MCP，企业微信长连接的企业\n级AI智能体应用\n• 掌握Prompt 工程和优化技术，基于PGvector向量数据库构建RAG知识库，向量检索，项目跟踪，连接本地git\n• 能利用 Claude Code | Codex | Cursor 等AI编程工具开发全栈项目，熟悉Vibe Coding，Harness Engineering\n等多种AI编程模式。\n腾讯广告推荐算法大赛 | 腾讯青科实训广告算法进阶证书 | 腾讯AI-HR培训生线上实战营\n2025.04 - 2027.06\n• 独立完成从需求分析，架构设计，后端开发到部署上线的全流程，并搭建企业微信监控异常提醒。\n• 主导数据采集平台从0到1设计和开发，数据采集平台搭建工作流，进行工作流模块封装，可以根据客户不同需\n求，选择后处理功能模块，如针对数据视频采集进行智能子任务标注手部骨骼识别，手部轨迹识别，AI智能标\n注，导出Lerobot格式，兼容3.0，2.1，还有HDF5格式需求\n• 主导AI 智能体方向技术选型和落地，使用LangCHain4j，如RAG知识库问答，AI项目进度跟进，自定义定时任\n务功能，身份权限内容风控审核。\n• 企业内部数据库，基于Odoo二次开发，开发质检端，根据生产部需求，开发质量质检功能，以及硬件部门库\n存管理模块，跟结构部门库存管理模块。\n2026.05 - 至今\n2026.04 - 2026.05\n屈玉超 意向岗位: 后端开发\n18302427391 男 22\n本科 github.com/quyuchao\n相关技能\n教育经历\n实习经历\n项目经历\n深圳大学\n计算机科学与技术 | 本科\n深圳视塔机器人(Python后端 + AI应用全栈开发) \n负责产品: 视塔采集平台(机器人数据采集自动化平台)，视塔助手(本地智能体)，视塔数据库\nAI 超级规划智能体(AI Agent)\nGithub开源：github.com/quyuchao/-agent\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\n\n• 项目介绍: 基于Spring AI + RAG + 工具调用的高考支援，考研规划智能体，支持多轮对话，记忆持久化，RA\nG知识库检索，基于ReAct模式能够自主思考并调用工具完成复杂任务，如利用联网搜索，PDF生产工具制定计\n划并生成文档。\n• 利用Spring AI框架接入DeepSeek，通义，等5中AI大模型，封装统一调用接口实现灵活切换，API调用成本降\n低。\n• 使用SeeRmitter 6 ComplateFuture 实现SEE流式 AI接口，将推理任务异步化，实时输出智能体思考和执行过\n程，用户等待感知时间减少80%。\n• 利用Spring AI的 @Tool注解实现了联网搜索，网页抓取，PDF生成等工具调用。\n具备AI Agent 全栈开发能力，从需求分析，架构设计，AI应用开发，前端界面到部署运维均能独立完成。\n热爱开源，自主学习能力强，能独立阅读LangChain4j，python，C++等官方文档快速掌握新技术；善于利用Clua\nde，Codex，等AI工具辅助学习。\n自我评价\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg\ndc8e8bbc5caa42651HN92ti9E1RUyo66Wf-ZWOekn_fYNhRg",
+    "chars": 2109,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 17,
+    "total": 92,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 7,
+      "ownership": 4,
+      "reliability": 1,
+      "api_design": 3
+    },
+    "agent": {
+      "agent_core": 10,
+      "rag": 11,
+      "llm_eng": 2
+    },
+    "metrics": 1
+  },
+  {
+    "batch": "Agent2",
+    "name": "黄建洪",
+    "file": "【Agent 实习生_深圳 400-600元_天】黄建洪 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】黄建洪 28年应届生.pdf",
+    "text": "黄建洪\n男/2001.03 | 18979264763 |h2400517@163.com\n求职意向：AI Agent开发工程师（实习）\n教育经历\n南昌大学(211/双一流) 计算机技术 2025年09月 - 2028年06月\n萍乡学院 数据分析与大数据 2020年09月 - 2024年06月\n项目经历\nMedCode-面向消费医疗研发任务演练的终端 AI Coding Agent | 主导开发\n项目简介：面向消费医疗研发任务演练场景，设计并实现本地终端 AI Coding Agent，支持在工作区内连续完成代码检索、逻\n辑理解、修改方案生成与结果汇总。\n技术栈：TypeScript / Node.js /Tool Calling / MCP / Prompt Engineering / Context Engineering / JSONL\n· Agent Loop：围绕“模型→工具→模型”的主循环设计多轮执行流程，将模型推理、工具调用、结果回填与终止判断组织为统一\n链路，支持 Agent 在本地工作区内连续完成研发任务拆解与执行。\n· 提示词装配与权限感知：构建系统提示词装配机制，将权限上下文、可用 Skills 摘要、MCP 服务状态、记忆摘要与响应协议动态\n注入单次运行，并结合 diff review、路径校验和命令权限检查，约束 Agent 的读写边界与输出格式，降低误修改与越权执行风险。\n· 上下文治理：针对长会话中日志、搜索结果、字段说明和代码片段持续累积导致的上下文膨胀问题，实现分层上下文压缩与会话\n持久化机制，按 token 使用压力自动触发 compact、折叠与摘要处理，提升复杂研发任务在长会话下的连续执行稳定性。\n· MCP 工具接入：集成 MCP 工具发现与调用适配，统一封装外部 stdio/HTTP MCP Server 工具并通过命名空间隔离冲突，为文\n档检索、接口排查、配置检查等研发辅助能力提供统一接入入口。\n· Skills 渐进加载：设计 Skills 按需加载机制，初始仅暴露技能名称与描述，任务命中后再加载完整 SKILL.md，支持将字段排查、\n脚本生成、报表说明等研发流程沉淀为可复用模板。\nNoteBook 智能知识管理系统 | 主导开发\n项目简介：基于 FastAPI + LangChain 构建的 AI 知识管理系统，融合私有知识库、个人笔记和 RAG 智能问答能力，支持多格式文档\n上传、语义检索、上下文增强生成、AI 笔记辅助和流式对话。\n技术栈：Python + FastAPI + LangChain + ChromaDB + SQLite + Redis + React + TypeScript\n· RAG 检索链路：设计并实现 HyDE 查询扩展 + BM25/向量混合检索 (加权RRF融合) + CrossEncoder 重排序的多阶段检索流程，\n问答时联合检索文档知识库与个人笔记库，对召回内容标记来源并合并重排，提升复杂问题下的召回质量与回答相关性。\n· 知识库管理：支持 PDF / Markdown / DOCX / TXT 等多格式文档上传、解析、切片、Embedding 向量化、MD5 去重和文档删\n除，构建用户私有知识库。\n· 笔记系统整合：采用 MySQL + ChromaDB 双层存储方案，MySQL 负责笔记 CRUD、标签、分类等结构化数据，\nChromaDB 负责笔记向量存储和语义检索。\n· 检索质量评测体系：自建检索评测框架，设计含核心 / 负向 / 鲁棒性三类场景的评测集（query + 相关chunk的ground\ntruth），实现 recall@k、hit@k、MRR、nDCG@k 等指标与 Top-K、重排开关消融对比；通过评测定位并修复了混合检\n索中 BM25 中文分词缺陷（接入 jieba），使目标 chunk 命中率显著提升，形成「评测 → 定位 → 修复 → 复测」的闭环。\n· 工程化优化：使用 SSE 实现流式问答和写作输出，结合异步任务、模型懒加载、Redis 限流和 RAG 路由判断，优化系统响\n应速度和调用成本。基于 JWT与 ChromaDB metadata filter 实现用户级数据隔离。\n专业技能\n· AI & RAG：熟悉 LangChain / LangGraph、Prompt Engineering、Tool Calling、MCP；掌握 RAG 全链路，包括文档解析、\n文本切片、Embedding、向量检索、HyDE、BM25 混合检索与 CrossEncoder 重排序。\n· Agent 工程：具备 AI Coding Agent 开发经验，熟悉 Agent Loop、工具调用、上下文压缩、会话持久化、权限控制与多轮任\n务执行流程。\n· 数据与存储：熟悉 MySQL、Redis、ChromaDB，具备结构化数据存储、缓存设计、向量检索、metadata 数据隔离实践经验。\n· 前端与工程化：熟悉 React / TypeScript / Tailwind CSS，掌握 Docker、Git、Linux 常用命令及基础 CI/CD。\nab6e25585c3bcebb1HN92tm6F1RRx4i4VPOZWOekn_fYNhRg\nab6e25585c3bcebb1HN92tm6F1RRx4i4VPOZWOekn_fYNhRg\nab6e25585c3bcebb1HN92tm6F1RRx4i4VPOZWOekn_fYNhRg\nab6e25585c3bcebb1HN92tm6F1RRx4i4VPOZWOekn_fYNhRg\nab6e25585c3bcebb1HN92tm6F1RRx4i4VPOZWOekn_fYNhRg\nab6e25585c3bcebb1HN92tm6F1RRx4i4VPOZWOekn_fYNhRg\nab6e25585c3bcebb1HN92tm6F1RRx4i4VPOZWOekn_fYNhRg",
+    "chars": 2509,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 15,
+    "total": 90,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 12,
+      "ownership": 2,
+      "reliability": 1,
+      "api_design": 4
+    },
+    "agent": {
+      "agent_core": 23,
+      "rag": 31,
+      "llm_eng": 14
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "傅鸿东",
+    "file": "【Agent 实习生_深圳 400-600元_天】傅鸿东 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】傅鸿东 28年应届生.pdf",
+    "text": "傅鸿东\n\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000｜\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000@qq.com\n教育背景\n⼴东⼯业⼤学 - 本科 - 软件⼯程 \u0000\u0000\u0000\u0000.\u0000\u0000 - \u0000\u0000\u0000\u0000.\u0000\u0000\n个⼈博客：120.77.157.175/blogger/\nGithub：github.com/qwuiy\u0000uihsdh\n校园经历：⼴东⼯业⼤学⼩A创新创业团队后端组组⻓\n项⽬经历\n云藏搜索⸺藏⽂检索系统（团队外接项⽬，内测中） \u0000\u0000\u0000\u0000.\u0000\u0000 - \u0000\u0000\u0000\u0000.\u0000\u0000\n项⽬介绍：多语⾔智能搜索引擎，为 PC、Java、App 三端提供 10 类内容的全⽂检索服务，覆盖搜索、管理、监\n控、任务调度全链路，基于 Go 与 Elasticsearch 构建，⽀持中⽂、藏⽂、英⽂检索\n基于 Go + Gin 搭建 API 与 Admin 双模块应⽤，遵循 Controller → Service → Repository 三层架构，通过\nGoogle Wire 编译期依赖注⼊完成模块组装，实现 10 类内容检索的横向解耦。\n封装 Elasticsearch 客⼾端，实现索引管理、⽂档 CRUD、⾼亮、聚合与多索引搜索；基于配置驱动构建查询\nDSL，⽀持字段权重、排序策略与 SearchAfter 深度分⻚，检索响应时间稳定在 150ms 以内。\n针对中⽂、藏⽂、英⽂实现差异化查询词处理，封装 tibetan 藏⽂⼯具包（⾳节切分、字符提取、智能截取），\n解决藏⽂特殊分隔符下的检索与摘要展⽰问题，藏⽂⻓查询截取后召回率保持 90% 以上，摘要完整性较截断式\n处理提升约 15%。\n实现词组纠错、补全、相关搜索推荐、热词统计、敏感词过滤（软删除）等搜索辅助能⼒，构建完整的搜索⾏\n为埋点与⽇志体系并异步落库 MongoDB。\n采⽤ ES、MongoDB、MySQL、Redis、爬⾍ MongoDB多级存储架构，合理规划各数据⽣命周期与访问路径。\n接⼊ Prometheus + Pushgateway 双通道监控，⾃定义中间件按⼩时/天/⽉统计请求量与耗时，集成 Jaeger\n链路追踪，为性能分析与故障定位提供完整数据⽀撑。\n构建 Admin 管理后台，覆盖同义词、停⽤词、词典版本、索引模板、数据同步、新词发现、Grafana 看板等管\n理功能，并通过 Docker 脚本实现开发/⽣产环境⼀键构建部署。\n个⼈博客⽹站\n使⽤AI辅助开发，项⽬中90%代码由AI⽣成，项⽬完成从0到上线只耗时2⼩时，⼤幅提⾼效率\n基于 GitHub Actions 搭建 CI/CD 流⽔线，实现代码推送后⾃动完成 Docker 镜像构建、推送⾄GHCR，并通过\nSSH 远程执⾏ docker compose 完成服务器⾃动部署，发布流程从⼿动操作缩短为全⾃动化\n专业技能\nGo 语⾔：深⼊理解 slice/map 底层、GMP 调度、channel、GC 三⾊标记与混合写屏障；熟练使⽤ pprof/trace\n定位性能瓶颈；掌握 context 并发控制与 sync 并发原语。\nMySQL：深⼊理解 InnoDB 引擎、MVCC、Buﬀer Pool、B+树索引（覆盖索引/索引下推）、锁机制（⾏锁/间\n隙锁）及 redo/binlog 两阶段提交。\nRedis：深⼊理解数据结构底层编码、单线程 IO 多路复⽤、持久化（RDB/AOF）、主从复制、哨兵与集群模\n式，熟悉缓存⾼可⽤⽅案。\n微服务与中间件：熟练使⽤ Gin/GORM，理解中间件洋葱模型与 gRPC 通信；熟悉 RocketMQ/Kafka 消息模\n型、事务消息与幂等消费；掌握熔断限流与服务治理。\n⼯程与架构：熟悉 Docker 容器化、CI/CD 流程；掌握常⽤设计模式及 Go 选项模式；具备 Linux 下问题排查能\n⼒。\nAI编程：能利⽤ Cursor / Claude Code / GitHub Copilot 等 AI 编程⼯具⾼效开发全栈项⽬。\n运维：熟悉 Prometheus + Grafana + 阿⾥云 ARMS 监控告警体系，能构建从⽹关到数据库的全链路追踪\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg\n88923f39d9cb52841HN92tm6FltXxIW6UfqaWOekn_fYNhRg",
+    "chars": 2091,
+    "eng_score": 40,
+    "agent_score": 26,
+    "depth_score": 22,
+    "total": 88,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 27,
+      "ownership": 1,
+      "reliability": 3,
+      "api_design": 6
+    },
+    "agent": {
+      "agent_core": 0,
+      "rag": 8,
+      "llm_eng": 1
+    },
+    "metrics": 5
+  },
+  {
+    "batch": "Agent3",
+    "name": "黄世宏",
+    "file": "【Agent 实习生_深圳 400-600元_天】黄世宏 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】黄世宏 28年应届生.pdf",
+    "text": "2021.09-2025.06 广东技术师范大学 数据科学与大数据技术\nGPA：4.14/5（专业前1%）\n教育背景\n构建本地文档 RAG 问答系统，支持 PDF / Word / Markdown / TXT 文档解析、文本切分、向量化建库、知识库检索和引\n用来源展示。\n实现 Chroma 向量检索 + BM25 关键词检索的混合检索方案，对两路检索结果进行 Min-Max 归一化和加权融合重排序，\n兼顾语义相关性与专业术语/关键词匹配；编写 RAG 评测脚本，支持统计来源命中率与回答关键词覆盖率。\n基于 LangGraph / LangChain 构建 Agent 工具调用流程，封装知识库问答、原文检索、Web Search、Weather、\nCalculator、Stock、文件写入/追加等工具；针对文件操作通过 interrupt + thread_id 实现 Human-in-the-loop 审批与\n中断恢复。\n为文件类高风险工具增加安全边界，限制写入目录、文件类型及路径穿越；使用 FastAPI + Streamlit 提供 API 与可视化\n交互页面，通过 Docker Compose 完成服务部署，并记录 Tool Call、人工审批及异常日志。\nRAG Agent 智能文档助手系统\n项目经历\n年龄：23岁  手机号码：15112199144   \n实习意向：AI 应用开发实习  邮箱：2686073400@qq.com\n2025.09-2028.06 华南师范大学 人工智能\n硕士研究方向：多模态情感分析和情绪识别\n黄世宏\n专业技能\n语言层面：熟悉Mysql和python，掌握常用数据结构、函数封装、异常处理、文件读写、路径管理和虚拟环境管理；能\n够基于业务需求完成脚本开发、接口开发和项目模块化设计。\n大模型应用开发：熟悉大模型应用开发流程，掌握 Prompt 设计、API 调用、多轮对话、结构化输入输出等能力；具备基\n于 DashScope / OpenAI Compatible API 接入大模型和 Embedding 模型的项目经验。\nAgent 智能体开发：熟悉 LangChain / LangGraph 基础使用，能够将知识库问答、文件写入等能力封装为 Agent 工具；\n理解 Tool Calling、工具选择、工具返回结果处理和多轮任务执行流程。\n机器学习与深度学习基础：掌握分类、回归、聚类等机器学习基础算法，还了解Transformer、CNN、残差网络等主流深\n度学习算法了解模型评估指标如 Accuracy、F1-score、AUC 等；熟悉 PyTorch 基础训练流程，具备多模态情感识别和模\n型实验调优经验。\n数据处理与分析： 熟悉 Pandas、NumPy 等数据处理工具，能够完成数据清洗、格式转换、统计分析和实验结果整理；\n了解 SQL 基础查询、聚合、关联和数据分析常用方法。\n自研轻量级 Agent\n不依赖 LangGraph 等 Agent 框架，从零实现 Reason → Act → Observe Agent Loop，直接对接 OpenAI-\ncompatible Chat Completions / Function Calling；设计 Tool Registry + JSON Schema 机制，实现工具描述、参\n数校验与执行逻辑解耦，支持 Calculator、Search、Read Docs、Todo、Weather 等 5 类工具。\n完善 Agent Runtime 的执行保护与容错机制，实现 最大 Step、单步工具预算、重复 Tool Call 检测、工具超时与有\n限重试、LLM 响应格式重试及结构化错误处理，避免模型死循环和不可控工具执行。\n基于 SQLite 实现 (user_id, session_id) 级会话隔离，持久化 User / Assistant / Tool 消息、Context Summary 与\nRuntime Trace，支持进程重启后恢复会话；实现基于 Token 水位的 Context 压缩机制，保留最近完整 Turn，同时\n保留原始消息记录用于回放。\n基于 FastAPI + SSE 构建 Web 交互与实时执行 Trace，加入 Trace 脱敏/限长及 Prompt Injection 对抗测试。\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n\n⾃我评价\n 拥有较好的⾃学能⼒和抗压能⼒，有阅读技术书籍、技术⽂档的爱好。\n 团队协作能⼒较强，在本科期间担任过实验室技术负责人，有团队协作能⼒和调控能⼒，在活动中与同事、队友保持良\n好关系。\n获奖经历\n2023年广东省大中小学生车辆、航海、航空模型锦标赛\n2023年全国数学建模比赛省级\n2023年五一数学建模比赛省赛\n2023年互联网+校赛\n2022年全国数学建模省级\n2022年五一数学建模省赛\n2021年校ACM程序设计大赛\n2022年创新创业比赛校级立项\n校级三好学生\n二等奖\n一等奖\n二等奖\n银奖\n三等奖\n二等奖\n三等奖\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg\n8c751fc9e7ed23731HN92tu6ElNSw4u8VPyWWOekn_fYNhRg",
+    "chars": 2837,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 13,
+    "total": 88,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 5,
+      "ownership": 2,
+      "reliability": 8,
+      "api_design": 8
+    },
+    "agent": {
+      "agent_core": 17,
+      "rag": 15,
+      "llm_eng": 5
+    },
+    "metrics": 1
+  },
+  {
+    "batch": "Agent3",
+    "name": "彭泰烨",
+    "file": "【Agent 实习生_深圳 400-600元_天】彭泰烨 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】彭泰烨 27年应届生.pdf",
+    "text": "全国计算机设计大赛 | NativeSpeaker 智能英语学（H5 + Axios + Python(Flask) + Opencv + ChatTTS + ONNX Runtime + YOLOv8）\n项目概述：多模态英语口语辅助工具，支持地道英语话术生成、语音合成及物品图像分割与英文标注，获国赛三等奖并完成全流程演示。\n基于H5/CSS/JS、结合Vue-cdn 搭建界面，使用 Python封装大模型接口并约束结构化输出，集成ChatTTS实现地道语音语料生成，\n基于ONNX Runtime部署YOLOv8模型完成图像分割与结合 OpenCV 完成物品英文批注，搭建Flask服务并配置CORS配合Axios保障联调。\n全国计算机设计大赛 | Citywalker 旅行小程序（Vue 3 + Vite + Axios + Pinia+ 地图API + Python(Flask) + geopy）\n项目概述：城市徒步路线生成小程序，支持定位、路线规划及社区路线复用，获省赛二等奖并完成小程序部署。\n基于 Vite+Vue搭建前端界面，使用 Python+Flask集成高德地图API实现定位、路径可视化及景点批量渲染，基于Pinia 管理跨页状态；对\n接大模型实现流式响应提供出行建议，协同后端通过TSP结合贪心算法完成路线规划，实现用户交互、数据存储、API 对接\n个人全栈项目｜大模型 Agent 应用 （React + FastAPI + WebSocket + Docker + LangChain + LangGraph + FAISS向量数据库）\n项目概述：构建RAG Agent应用，实现本地知识库导入、多轮记忆对话和不同身份 Prompt 与技能组合，全流程跑通并完成容器化部署。\n基于 React + Vite 提供聊天、配置页（知识库上传与管理等）FastAPI + WebSocket 提供前后端交互；用 LangGraph 把流程拆成「路\n由是否走 RAG → 可选向量检索 → 生成回复」；通过LangChain接入大模型；RAG 侧对上传文本做分块、FAISS + 向量嵌入入库，并支持按\n会话配置限定知识库来源；MySQL 持久化多会话历史、身份区分、技能开关；与 Docker Compose 一键拉起前端、后端、MySQL环境\n项目经历\n教育背景\n院校：深圳大学\n邮箱：2650374468@qq.com\n手机号码：18476993696\n姓名：彭泰烨\n个人简历\n专业技能\n专业学科竞赛&个人项目\n全栈开发\n2024-2025\n专业：通信工程（本科）\n2023.9-2027.6\n奖项荣誉：全国大学生计算机设计大赛 （国级三等奖 1 项 、省级二等奖 1 项）、蓝桥杯（人工智能赛道）国级二等奖、全国大学生\n电子设计大赛省级三等奖、中国国际“互联网 +” 大学生创新创业大赛（产业赛道）校级银奖、\n深圳大学优秀学生干部一等奖学金、深圳大学双创之星三等奖学金\n前端：熟练运用H5、CSS3、ES6、Vue 3，掌握Next.js、React、TypeScript、Tailwind CSS，具备微信小程序适配、地图API集成\n        掌握流式文本渲染、多模态交互实现。\n后端：精通Python（Flask、FastAPI）、Node.js，熟练使用SQLAlchemy ORM框架，掌握MySQL、Oracle数据库开发与适配，具备\nNumpy、Pandas数据处理及接口封装能力。\n工具与运维：熟练使用Git进行版本控制、分支管理及冲突合并；熟悉高德地图API、ONNX Runtime部署；了解Docker容器使用、\nRedis缓存应用及Nginx反向代理配置。\n个人能力：具备前后端联调、项目部署与问题排查能力，可独立完成全栈项目从需求落地到部署上线的完整开发流程，熟悉多模态、\n大模型应用相关开发。学习能力强，善于团队合作，适应性强，乐于沟通。\n深圳大学信息中心软件开发先锋队\n全栈开发岗\n2025入岗至今\n深圳大学信息中心 · 校园考勤签到系统｜全栈开发（H5 +ES6+ Flask + MySQL+ SQLAlchemy + 地图API + CAS登录 + Nginx + Waitress）\n项目概述：面向师生考勤应用，已上线供 1500+ 师生使用；基于地理位置与接入课表完成签到与统计，便于教务与管理侧掌握出勤情况。\n项目亮点：\n集成地图API完成定位并导入校园建筑信息，实现所在建筑识别与有效签到半径可视化，设计API加载异常降级策略（企业微信SDK定\n位兜底）；对接CAS单点登录与企业微信JS-SDK，实现师生身份校验防止越权访问与防代签安全签到；\n设计MySQL数据表结构，结合SQLAlchemy ORM建立用户、课程、考勤流水等核心实体，配置外键关联与高频查询字段索引，实现课\n表周次多格式解析、时段匹配及考勤规则落地，接入实际学生课表实现缺勤/逃课统计、出勤率统计功能\n基于Flask模块化架构，按职责拆分Blueprint（业务API、CAS认证、管理端API），通过RESTful JSON实现前后端交互，Service层封\n装核心业务逻辑。配置Nginx+Waitress部署架构，优化HTTPS、请求大小及超时参数，保障系统稳定运行。\n深圳大学信息中心 · 人事劳务费处理Web｜全栈开发（Next.js + TypeScript + FastAPI + SQLAlchemy + Oracle + uvicorn）\n项目概述：校内人事劳务费名单清洗、多维度统计及批量Excel生成下载工具。\n项目亮点：\n基于FastAPI构建RESTful后端接口，集成CAS单点登录保障权限安全。通过SQLAlchemy以Instant Client厚模式适配Oracle数据库，\n利用Pandas解析Excel文件，采用TRUNCATE清空+参数化批量写入方案，优化数据库交互效率；封装多维度可配置统计SQL，实现\nExcel批量生成与ZIP打包下载，显著减少减轻人事/财务重复清洗与制表。\n基于Next.js App Router + TypeScript搭建前端页面，结合Tailwind CSS与组件库开发业务UI，封装多baseURL请求基座，完成文件\n上传、统计维度选择等核心流程（可勾选配置项，由页面动态组装 SQL 维度请求发送到 FastAPI），提高了业务灵活性。\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg\ne9df59c8c502c5ff1HN92tu6ElZVwYq8Vf2eWOekn_fYNhRg",
+    "chars": 3076,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 12,
+    "total": 87,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 34,
+      "ownership": 2,
+      "reliability": 2,
+      "api_design": 21
+    },
+    "agent": {
+      "agent_core": 9,
+      "rag": 12,
+      "llm_eng": 1
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "周泽鹏",
+    "file": "【Agent 实习生_深圳 400-600元_天】周泽鹏 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】周泽鹏 27年应届生.pdf",
+    "text": " 教育经历\n兰州理工大学 2020.09 - 2024.06\n自动化 本科 自动化与电气工程学院 全日制 甘肃兰州\n相关课程：C语言程序设计、单片机原理、Python程序设计、控制系统软件设计\n荣誉奖项：CET-4、CET-6、甘肃省蓝桥杯单片机类竞赛二等奖、2022-2023校二等奖学金\n \n兰州理工大学 2024.09 - 2027.06\n自动化与控制理论 硕士 自动化与电气工程学院 全日制 甘肃兰州\n论文发表：《一种基于Transformer结构的多传感器目标跟踪与状态融合的估计架构》\n发明专利：《基于自蒸馏算法优化的MAAC多目标跟踪方法》\n 个人优势\n熟练使用Codex、ClaudeCode。日常开发使用Codex做方案决策以及代码审核，使用ClaudeCode搭\n配CCSwtich调用DeepSeek-V4pro模型作为方案执行，能够结合开发需求完成方案分析，代码生成、\nBug定位以及性能调优，有Vibe Coding项目的经验。\n长期使用AI辅助编程，善于利用Claudecode等AI管理代码与项目，有意识地制定AI对项目管理与代码\n生成的规则。\n热衷探索与学习新知识，有了解linuxdo、github等社区最新技术的习惯，关注AI发展动向。\n 项目经历\nmoonbird23-AI智能图库 Agent\ngithub:https://github.com/moonbirds23/ai-agent\n项目介绍：基于 Java 21、Spring Boot 3.5、Spring AI 构建的 AI 智能图库 Agent 项目，面向图片管\n理、图片理解、AI 生图、图库检索和多轮对话场景。项目接入智谱 GLM / Embedding 模型，结合\nPostgreSQL、PGVector、Redis、Flyway、Reactor Flux、Spring AI Tool Calling 和 Advisor 机\n制，实现了一个具备对话记忆、图库工具调用、RAG 检索增强和流式响应能力的 AI 应用后端。\n实现 AI 对话接口，支持普通响应和 Flux 流式响应，能够推送 chatId、工具调用、token、done、\nerror 等事件，提升 AI 对话交互体验。\n实现 Redis + PostgreSQL 的对话记忆管理，支持会话 TTL、消息数量限制、Redis 优先读取、数据\n库持久化和缓存恢复。\n构建图库 RAG 检索链路，支持显式参考图、查询重写、混合检索、向量检索、关键词/元数据加权、\n重排序和上下文压缩。\n使用 PGVector + Spring AI VectorStore 存储图片语义向量，实现基于图片描述、风格、颜色、构\n图等维度的语义检索。\n周泽鹏\n15798057735 |  1715346490@qq.com |  江西萍乡\nhttps://github.com/moonbirds23\n应届生 |  Java后端工程师\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n\n开发图库工具集，支持搜索图库、获取图片详情、图片分析、AI 生图、收藏管理、元数据更新、删除\n图片等 Tool Calling 能力。\n集成 WebSearch、Pexels、网页抓取、图片下载与导入能力，使 Agent 能够根据用户需求搜索网络\n图片并保存到图库。\n设计 WorkflowEngine 工作流引擎，对搜索图库、获取图片信息、分析图片、生成图片、搜索网络图\n片等意图进行路由和执行。\n \nmoonbird23-协同云图库后端\ngithub：https://github.com/moonbirds23/Picture-Backend\n项目介绍：基于 Java 8、Spring Boot 2.6 开发的在线图片管理与多人协同云图库系统，支持用户管\n理、图片上传、图片审核、空间管理、团队协作和空间数据分析等功能。项目使用 MySQL 存储业务数\n据，Redis 实现分布式 Session 和缓存，腾讯云 COS 作为对象存储，并通过 WebSocket 实现多人实时\n协同编辑。\n负责用户模块开发，支持注册、登录、注销、管理员用户管理，并基于 Redis + Spring Session 实现\n分布式会话。\n使用 Sa-Token、自定义权限注解和 AOP 实现用户角色、空间角色双维度权限控制，支持 viewer、\neditor、admin 等空间角色。\n设计图片上传模块，基于模板方法模式抽象本地文件上传和 URL 远程抓取上传流程，对接腾讯云 COS\n完成图片存储。\n实现图片压缩、缩略图生成、图片基础信息提取、主色提取、图片 CRUD、批量编辑和审核流程。\n使用 Caffeine + Redis 设计多级缓存，优化图片分页查询等高频接口的响应性能。\n基于 Spring WebSocket 实现多人实时图片编辑，支持连接握手鉴权、进入编辑、退出编辑、编辑操\n作广播和在线协作同步。\n使用 MyBatis-Plus 完成 ORM、分页查询、条件构造和逻辑删除，结合 Knife4j 生成接口文档。\n 专业技能\n熟悉 Java 后端开发，掌握 Java 8 / Java 21、集合、泛型、异常处理、Stream、并发基础及面向对象\n设计，能结合 Lombok、Hutool 等工具库提升开发效率。\n了解 Prompt 工程、Few-shot、RAG、Tool Calling、CoT/ReAct、MCP、本地大模型部署等 AI 应\n用开发理念，能够根据业务场景选择合适方案。\n掌握 RAG 知识库构建流程，熟悉向量化、PGVector、VectorStore、混合检索、查询重写、重排序、\n上下文裁剪和 Prompt 增强等技术。\n熟悉 Spring Boot 2.x / 3.x 项目开发，掌握 Controller、Service、Repository/Mapper 分层设计，\n能够搭建 RESTful API、全局异常处理、统一响应、参数校验和接口文档。\n熟悉 MySQL、PostgreSQL、Redis 的使用，掌握 MyBatis-Plus、JDBC、Flyway 数据库迁移、逻辑\n删除、分页查询、缓存设计和分布式 Session。\n熟悉 Spring AI 应用开发，掌握 ChatClient、Advisor、ChatMemory、Tool Calling、结构化上下\n文、流式响应等能力，能够构建具备对话记忆和工具调用能力的 AI 智能体。\n熟悉 Redis 会话记忆持久化设计，能够实现对话历史缓存、TTL 控制、消息数量限制及 PostgreSQL\n降级/恢复机制。\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg\n84836ef51bce74061HN92tm1FFBUxYS3U_ydWOekn_fYNhRg",
+    "chars": 3493,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 10,
+    "total": 85,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 30,
+      "ownership": 1,
+      "reliability": 1,
+      "api_design": 8
+    },
+    "agent": {
+      "agent_core": 13,
+      "rag": 16,
+      "llm_eng": 4
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "钱亮亮",
+    "file": "【Agent 实习生_深圳 400-600元_天】钱亮亮 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】钱亮亮 27年应届生.pdf",
+    "text": "钱亮亮 北京大学联培\n电话：(+86) 18856249468 | 邮箱：18856249468@163.com 个人主页：\n教育背景\n哈尔滨工程大学 | 计算机科学与技术 | 硕士在读 | 2024.09 – 2027.07\n北京大学联培：代码大模型推理能力、长上下文压缩、Agentic RL\n核心研究方向：LLM Post-training (GRPO/DAPO)、Agent Long-context Management、Agentic RL\n科研/项目经历\nDySDCodeZip: 复杂度感知的代码长上下文压缩框架 | 项目负责人 & 第一作者 (PKU Lab)| 2025.11 –\n2026.06\n项目概述：针对现有代码压缩方案忽视样本复杂度与语义依赖的缺陷，提出无训练、跨模型强泛化的\n分层压缩框架，解决代码大模型长窗口瓶颈。\n核心算法：设计复杂度感知门控机制结合模型置信度判别复杂度；创新分组归因检索器捕捉深层语义\n依赖；构建不确定性信息饱和触发器，通过监控全局系统困惑度及信息论单侧集中界理论自适应筛选\n冗余；提出类奖励语义块迭代优化机制进行预算外剪枝。\n性能突破：在 LCC 代码补全、RepoQA、Long Module Summarization 等基准上实现最高 6.5 倍上下文\n压缩比，综合信息密度指标 ACU 提升 63%；显存与耗时显著优于 LongCodeZip 等 SOTA 方法，构建\n了更优的压缩率-性能帕累托前沿。\nSearch-R1: 基于主动探索的 Agentic Search QA 系统 | 项目负责人 | 2026.05 – 2026.07\n架构创新：基于 Qwen2.5-1.5B 及 Search-R1 基线，提出主动式探索 Query 生成方法，显著提升生成\n查询的质量与覆盖率。\nRL 优化：引入 Step-level 归因分析解决 Agentic RL 中的信用分配难题，优化多步推理策略。\n效果验证：在 HotpotQA、2Wiki 等复杂问答数据集上，最终指标平均提升近 20%，有效增强了开放\n域检索增强生成的准确性。\nMFISNet: 轻量化多特征协同医学图像分割网络 | 项目负责人 & 第一作者 (PRCV) | 2025.04 –\n2025.08\n模型设计：针对多模态影像分割特征异构瓶颈，提出统一轻量化框架，全模型仅 0.8M 参数（1.9G\nFLOPs），参数量较主流重模型降低超 97%。\n技术创新：设计频-空-时序三维交互机制，融合 DTCWT 多频多尺度块与双向状态空间扫描，实现线\n性复杂度全局建模；提出自适应跨域融合模块(AHDF)，利用自衍生结构先验引导注意力。\nSOTA 性能：在 5 类模态、10 个公开基准上取得 SOTA 分割精度，具备模态自适应能力与端侧临床\n部署潜力。\n实习经历\n西湖大学 | 扩散模型 AIGC 研究实习生 | 2024.11 – 2025.06\n视频一致性研究：研究基于预训练文生图/视频大模型的无训练编辑方法，重点解决视频生成的时间\n一致性问题，提出基于 Feature Correspondence 的可控性增强方案。\n理论创新：探索扩散模型在潜在空间的可控生成理论，完善文生图下游应用的生成质量评估体系。\n上海龙旗科技 (百强企业) | 见习大模型工程师 (LLM 算法) | 2025.08 – 2025.11\nRL 后训练优化：调研并复现 GRPO、DAPO、GSPO、GFPO 等前沿强化学习算法，基于 Verl 框架对\nQwen 系列模型进行微调，显著提升数学与代码推理能力。\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n\nBenchmark 评估：在 AIME24/25、GSM8k、LiveCodeBench 等权威榜单上完成模型推理性能评估与\n调优。性能平均提升 30%\n成都晓多科技 (智能客服 Top 企业) | 大模型预研实习生 | 2024.05 – 2024.07\nRLHF/DPO 对齐：使用 Llama-factory 对行业及政务偏好数据进行 DPO 微调，海信客服机器人应答准\n确率提升至 83%，用户满意率提升 7.9%。\nAgent 开发：基于 LangChain/LangGraph 搭建智能客服机器人，集成 RAG 检索、多轮对话记忆、\nMCP 协议及多智能体协作功能。\n神经元挖掘：开展单语义神经元挖掘实验，通过增量学习 Partial Fit 情感数据，分析 LLM Head 隐层\n权重对情感极性的分类影响。\n竞赛荣誉\n第九届百度网盘 AI 大赛 (图像修复) | Team Leader | 第六名 (2023.11)\n采用 NAFNet 基线+可变形 LKA 大核注意力机制，云上测试 PSNR 达 50.96，单张推理 58ms。\nKaggle 消费产出能源预测 | Team Leader | Top 6% (336/2731, 2024.01)\n构建 LightGBM/CatBoost/DNN 集成模型，挖掘时序与滞后特征，Stacking 融合预测。\n2023 CCF BDCI 大奖赛 (时序人口预测) | Team Leader | 三等奖/第五名 (2024.01)\n融合自回归、LSTM 及先验统计学习算法，解决城市人口时序变化预测难题。\n技能与作品\n编程语言/框架：Python, PyTorch, Pandas, OpenCV, Transformers, VeRL, LangChain/LangGraph\n英语能力：CET-4, 考研英语一 70+\nNLP 作品：网易云音乐情感分析及歌曲歌手统计舆情分析系统\n个人优势\n1. 拥有顶尖科研平台（北京大学联培）的算法研究经验，主导完成代码大模型长上下文压缩、轻量\n化医学图像分割等创新项目，在多个 SOTA 基准上取得突破性成果，具备扎实的科研创新能力与\n工程实现能力。\n2. 深入掌握大模型全链路技术，包括预训练、SFT、RLHF/DPO 对齐、长上下文优化及 Agentic 推\n理，并成功将 RLHF/DPO 技术应用于工业级智能客服项目，核心业务指标（应答准确率、用户满\n意度）获得显著提升。\n3. 具备出色的多模态算法研究与落地能力，研究范围覆盖代码、文本、图像、视频，在扩散模型编\n辑、长视频理解、检索增强生成等前沿方向有深入探索和实战经验，能快速适应不同模态的算法\n挑战。\n4. 拥有丰富的 AI 竞赛实战经验，作为队长在 CCF BDCI、百度 AI 大赛、Kaggle 等顶级赛事中排名\ntop，展现了卓越的问题拆解、方案设计、团队协作与在高压环境下交付高精度解决方案的能力。\n5. 精通大模型及深度学习主流框架与工具链（PyTorch, LangChain, Llama-Factory, Transformers），\n具备从数据 Pipeline 构建、模型训练优化到系统部署上线的完整项目落地经验。\n6. 具备优秀的学术视野与快速学习能力，能系统性跟踪并理解领域最新进展（如 GRPO, Long\nContext Compression, Agentic RL），并将前沿论文思想转化为可行的技术方案与实验验证。\n7. 在跨学科团队中表现出优秀的沟通与协作能力，能清晰阐述复杂技术方案，并推动研究成果向实\n际应用转化，对提升 AI 模型的效率、性能及可靠性有强烈的热情与追求。\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg\n2414d4e27cf0f5961HN92tm1FFJXxI28V_OZWOekn_fYNhRg",
+    "chars": 3795,
+    "eng_score": 24,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 84,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 2,
+      "ownership": 2,
+      "reliability": 1,
+      "api_design": 2
+    },
+    "agent": {
+      "agent_core": 14,
+      "rag": 5,
+      "llm_eng": 9
+    },
+    "metrics": 9
+  },
+  {
+    "batch": "Agent2",
+    "name": "马誉轩",
+    "file": "【Agent 实习生_深圳 400-600元_天】马誉轩 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】马誉轩 28年应届生.pdf",
+    "text": "马誉轩\n电话：18936888211 | 邮箱：18936888211@163.com | 出生年月：2004 年 6 月\n教育背景\n2026.09-2028.02（预计） 香港城市大学（QS51） 计算机科学| 硕士\n2022.09–2026.06 南京师范大学（211、双一流） 计算机科学与技术 本科\n 主修课程：数据结构(84)、操作系统(82)、计算机网络(93)、离散数学（95）、编译原理(90)、计算机组成原理(82)等。\n实习经历\n2026.05-2026.7 江 苏 鲲 鹏 昇 腾 生 态 创 新 中 心 现场技术支持实习生\n 参与 DeepSeek-V4 模型在昇腾集群上的部署与压力测试，基于 vLLM 框架进行参数调优，收集并分析延迟、吞吐、并发等核\n心性能指标。\n 针对 DeepSeek-V4 的 DSA 稀释注意力等特性，调整推理参数配置；实操投机解码与预测模块的启用流程，观察对解码效率的\n影响；配合完成 MoE 架构下的通信优化参数设置及 CANN 编译器相关内存优化选项的配置，验证官方提供的调优策略在真实\n负载下的效果。\n 参与昇腾内部算子调优 Agent 的 Skill 设计工作。基于对算子调优流程的理解，协助设计针对特定算子的 Skill 逻辑，包括定\n义性能诊断步骤、工具调用接口及优化方案生成规则，深入理解了 Agent 中 Skill 的模块化设计、规划-执行-反馈机制。\n项目/校园经历\n2026.04-2026.06 Reactor-agent 多智能体协同平台\n项目围绕复杂任务拆解、多 Agent 协同执行、工具编排、RAG 检索增强、会话记忆、执行账本与 SSE 流式交互等能力，构建了一\n套可追踪、可复用、可扩展的 Agent 工程化落地框架，支持深度搜索、数据分析、报告生成、图像生成、多模态知识库问答等场景。\n 技术栈：JAVA,Spring boot,Spring AI,MyBatis,MySQL,Qdrant,RAG,MCP,React\n 构建多 Agent 协同调度机制，通过统一调度层按任务类型动态选择 ReAct、PlanSolve、Workflow 等执行策略，并支持子智\n能体远程挂载，实现主 Agent 与搜索、报告、代码解释器、图像生成等能力的协作。\n 设计并实现 SOP 语义召回机制，在任务规划阶段基于历史相似任务检索可复用执行流程，为 Plan-Execute 规划提供步骤参考，\n降低复杂任务中的模型跑偏、步骤遗漏和交付不一致问题，提升多步骤任务执行稳定性与完成度。\n 基于 Qdrant 构建多模态混合检索体系，融合语义向量召回、BM25 关键词召回、文本到图片/页面跨模态召回，并结合查询重\n写、子问题扩展、多轮检索与 Rerank 机制，提升图文混合知识问答场景下的证据召回质量与结果相关性。\n2026.06-2026.08 自进化命令行 coding Harness Agent\n集成自主会话记忆折叠、Skills 自进化、MCP 与子 Agent 的自进化 Harness Agent\n 技术栈：Python、OpenAI SDK、Anthropic SDK、MCP、JSON-RPC、Docker、Skills\n 自研 Python Agentic Harness，统一编排模型推理、工具调用、权限控制、会话恢复、自主会话记忆折叠、Skills、MCP 和子\nAgent。\n 构建 Skills 自进化质量评测机制，基于来源追踪构造 replay 样本池，结合规则评测、LLM judge、候选版本试跑和优胜版本\n登记，保证能力沉淀可回放、可比较、可审计。\n 实现 Memory + Skills 分层长期上下文，Memory 保存项目事实和用户偏好，Skills 保存可复用任务流程，并支持 BM25-lite\n检索、inline / fork 执行和长期记忆召回。\n技能/优势\n 后端开发：熟悉 Java（精通集合框架、多线程、IO 流、JVM 基础调优），Python，熟练使用 Spring Boot，MyBatis\n框架\n 数据库：熟练使用 MySQL，掌握事务管理、SQL 优化、索引设计，了解分表分库基本思路。\n Agent 开发：理解 Agent 基本架构（规划、状态管理、工具调用），熟悉 Agent 相关架构，了解 RAG 以及 MCP 协议\n 英语能力：CET6（518），雅思（6.5）\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg\n3cba5d34874785df1HN92tm6GFdSwYy9V_ibWOekn_fYNhRg",
+    "chars": 2268,
+    "eng_score": 35,
+    "agent_score": 35,
+    "depth_score": 12,
+    "total": 82,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 8,
+      "ownership": 1,
+      "reliability": 1,
+      "api_design": 1
+    },
+    "agent": {
+      "agent_core": 26,
+      "rag": 11,
+      "llm_eng": 3
+    },
+    "metrics": 1
+  },
+  {
+    "batch": "Agent2",
+    "name": "梁贤云",
+    "file": "【Agent 实习生_深圳 400-600元_天】梁贤云 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】梁贤云 28年应届生.pdf",
+    "text": "教育背景\n实习经历\n项目经历\nAI 效能工具：熟练使用 Claude Code、OpenCode 等 AI 辅助编码工具，深入实践 Plugin、Skill、MCP\n等扩展机制，构建个性化AI 编码工作流\nJava 与 Spring：扎实 Java 基础，熟练使用 Spring Boot 3，独立完成业务模块开发\n数据存储：熟悉 MySQL、PostgreSQL、Elasticsearch、StarRocks、Redis、MinIO/OSS\n DevOps：熟悉 服务器与跳板机操作，熟练使用 Kubernetes，了解 CI/CD 流水线\n 工程素养：熟悉完整研发流程，对整体项目架构有清晰认知，能从业务视角理解技术方案选型\n热爱技术，热爱生活：在视频网站分享简单计算机编程技术\n专业技能\n个人信息\n项目描述：作为项目负责人，主导并协调团队开发了一款基于Spring Boot与Vue的前后端分离校园小程序。\n该平台深度融合了二手交易与兴趣社交需求，已成功在南海大学城上线运营，日活50人次。\n技术栈：Spring Boot + MyBatis + MySQL + Redis + WebSocket + JWT\n主要工作内容：\n团队管理与项目推进：负责项目整体架构设计、技术选型与任务拆解。制定团队协作规范与代码审查流\n程，引导成员分工合作，确保前后端接口高效对接与项目进度可控\n成就系统设计与改进：初期引入RabbitMQ解耦用户达成成就后的一系列逻辑。后经实际运行，针对项目\n并发量适中的特点，弃用了重量级的RabbitMQ，改用Spring事件机制解耦业务逻辑。此举在保证响应速\n度不变的前提下，使服务器内存负担降低了约25%\n认证授权体系 实时通信模块设计，redis缓存优化等，\n华南师范大学  211  双一流 2024年9月 – 2028年6月软件工程\n合丰智慧物流 2025年3月 – 2026年3月后端开发实习生\n主要职责：\n数据采集与清洗：基于Java开发网络爬虫，从多源采集商家及商品数据，比最先的人工处理快了至少10\n倍；设计数据清洗流程实现去重、格式化与异常过滤，保障数据质量\nAPI集成与数据同步：封装HTTP客户端调用后端API接口，开发商家信息批量导入模块\n业务数据分析与可视化报表开发：编写Python脚本对月均数万条订单数据进行聚合分析，提取业务关键\n指标；自动化生成结构化报表，为运营决策提供实时数据支撑。\nwhite cloud校园平台 2025年6月 – 至今全栈开发\n姓名：梁贤云                                      年龄：21岁\n性别：男                                           手机号码：13427026426\n个人博客： h537.xyz                    邮箱：3168347190@qq.com\n小鹏汇天 2026年4月 – 2026年8月自动驾驶部大数据组          全栈开发实习生\n主要职责：\n数据平台功能开发：参与数据资产管理平台后端开发，基于 Elasticsearch 倒排索引 + path_levels 路径\n分层设计，为分布在 MinIO HDD/SSD 与阿里云 OSS三套对象存储中的亿级文件提供统一的目录式浏\n览、关键词搜索、登记状态过滤与统计能力；设计\"文件索引 +目录索引\"双索引架构，将大目录浏览响应\n从 6s+ 优化至 < 10ms\nmr代码审查agent开发：基于 LangChain4j 实现 GitLab MR 自动化 AI 审查，Webhook 触发后对变更\ndiff 做质量检查、潜在 Bug 识别与改动摘要生成，自动回写评论供 reviewer 参考，针对大 diff 与模型抖\n动，设计 10 级指数退避重试 + 5 段 prompt/diff 梯度降级。为代码评审节省大量人工阅读与排查时间，\n显著提升团队 Code Review 效率\n接口调优：通过业务理解，排查索引、ES 游标分页改造、Redis 缓存与异步化等手段，将多个常年 20s+\n的核心接口优化至 200ms 级别\nBug 排查与线上问题定位：负责前后端联调与 Bug 排查，熟悉日志/链路追踪定位问题；参与 K8s 部署\n与 CI/CD流水线建设，支撑功能快速迭代与上线\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg\nb02ea1d1c973446a1HN92tm0FFtQx4i5WP-cWOekn_fYNhRg",
+    "chars": 2220,
+    "eng_score": 40,
+    "agent_score": 24,
+    "depth_score": 17,
+    "total": 81,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 19,
+      "ownership": 4,
+      "reliability": 3,
+      "api_design": 6
+    },
+    "agent": {
+      "agent_core": 4,
+      "rag": 2,
+      "llm_eng": 1
+    },
+    "metrics": 3
+  },
+  {
+    "batch": "Agent3",
+    "name": "Junyang Zhao",
+    "file": "【Agent 实习生_深圳 400-600元_天】Junyang Zhao 26年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】Junyang Zhao 26年应届生.pdf",
+    "text": "香港中文大学（深圳）  本科  计算机科学与技术 2024-2026\n香港中文大学（深圳）数独社  社长 2025.09-至今\n北京大学计算机学院  大模型算法 2025.07-2025.08\n高维经验风险最小化中的高斯普适性研究  论文复现 2026.08-2026.08\n自适应RAG检索与评估Agent  独立开发者 2026.08-2026.08\nJunyang Zhao\n男 | 年龄：20岁 | \n 15380861035 | \n 124090987@link.cuhk.edu.cn\n求职意向：机器学习 | 期望城市：深圳\n个人优势\n学习能力强，可以很好借助外部资源。具备数学功底，在香港中文大学Cosme Louart教授团队参与机器学习理论的数学推导。\n适应全英文教学科研环境。学校氛围自由，每周可保证有至少四天到岗。\n教育经历\npython Java C++编程基础，计算机系统，数据库系统，数据结构与算法，数字图像处理。\n数学分析，实分析，泛函分析，优化理论与应用，概率论，随机过程，随机模拟，机器学习，高维概率统计。\n社团经历\n开展活动，设计数独小程序，向全体学生推广数独文化。\n实习经历\n大一期间主动学习高年级成员与教师的项目开展方式，了解资料阅读、问题讨论、任务推进及团队协作等基本流程，逐步培养严\n谨的分析方法与逻辑思维能力。\n项目经历\n1. 研读论文《Characterization of Gaussian Universality Breakdown in High-Dimensional Empirical Risk\nMinimization》，梳理论文的研究问题、核心假设、主要定理及证明框架。\n2. 围绕高维经验风险最小化问题，研究具有相同均值与协方差的非高斯数据和高斯代理数据在模型估计量、测试得分及泛化表现\n上的一致性与失效条件。\n3. 以Ridge Regression为基础案例，从目标函数出发推导闭式解，并结合强凸性、单样本替换稳定性、Taylor展开与前两阶矩匹\n配，理解Gaussian Replacement的基本证明思路。\n4. 重点分析预测量分解、信息子空间及高斯噪声项等结论，理解数据的非高斯结构为何可能在高维比例极限下保留，并导致\nGaussian Universality失效。\n5. 对论文涉及的KKT条件、Lagrangian、CGMT及高维渐近分析等工具进行分类整理，将复杂定理拆分为假设、结论、证明路线\n和统计含义四个部分。\n1. 使用机器学习、优化与概率论等个人课程资料构建轻量级知识库，完成文档清洗、文本切分、索引建立及测试问题设计。\n2. 分别实现TF-IDF稀疏检索、Sentence Transformer语义检索及混合检索，通过余弦相似度计算查询与知识片段之间的相关程\n度。\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\n\n数独推理Agent与难度预测  独立开发者 2026.08-2026.08\n3. 设计自适应检索Agent，根据事实查询、概念解释和数学推导等问题类型选择检索策略，并生成带有资料来源的回答。\n4. 构建检索评估数据集，使用Recall@k、MRR及回答依据充分性等指标评估系统效果，并记录检索失败、回答不完整及引用错\n误等典型问题。\n1. 独立设计并实现数独推理Agent，将候选数查询、落子验证、矛盾检测及状态回退封装为可调用工具，使Agent能够根据当前\n棋盘状态规划解题步骤。\n2. 将数独建模为约束满足问题，依次实现普通回溯、约束传播及MRV启发式搜索，并对不同算法的求解效率进行对比。\n3. 基于候选集合大小与信息熵刻画局部不确定性，提取空格数量、平均候选熵、搜索深度、回溯次数及搜索节点数等特征。\n4. 使用Logistic Regression与Random Forest建立数独难度分类模型，预测简单、中等和困难等难度等级，并通过可视化界面\n展示解题过程与模型结果。\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg\ne6d47eaad6948f021HN92tu6E1FYw4S4Uf2aWOekn_fYNhRg",
+    "chars": 2360,
+    "eng_score": 20,
+    "agent_score": 35,
+    "depth_score": 15,
+    "total": 70,
+    "tier": "优先面试",
+    "reason": "工程+深挖+Agent",
+    "flags": [],
+    "eng": {
+      "backend_stack": 1,
+      "ownership": 3,
+      "reliability": 0,
+      "api_design": 1
+    },
+    "agent": {
+      "agent_core": 5,
+      "rag": 10,
+      "llm_eng": 0
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "王哲",
+    "file": "【Agent 实习生_深圳 400-600元_天】王哲 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】王哲 28年应届生.pdf",
+    "text": "王哲\n意向岗位：AI应⽤开发/后端开发\n \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000｜  \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000@\u0000\u0000\u0000.com\n教育背景\n中国地质⼤学（武汉） 硕⼠                            电⼦信息(计算机)                \u0000\u0000\u0000\u0000.\u0000\u0000-\u0000\u0000\u0000\u0000.\u0000\u0000\n江西师范⼤学 本科 软件⼯程 \u0000\u0000\u0000\u0000.\u0000\u0000-\u0000\u0000\u0000\u0000.\u0000\u0000\n项⽬经历\n校园⼼理关怀平台                                                                                                                        \u0000\u0000\u0000\u0000.\u0000\u0000-\u0000\u0000\u0000\u0000.\u0000\u0000\n项⽬描述： ⾯向⾼校⼼理陪伴与⻛险⼲预场景，开发学⽣端 AI 对话助⼿和后台⻛险处置系统。系统能够识别咨询、\n情绪疏导和⾼⻛险求助等不同意图，结合⼼理知识库⽣成回复，并对⾼⻛险对话⾃动⽣成报告和处置记录。\nAgent 编排：针对⼼理对话中意图识别、⻛险评估、上下⽂检索和回复⽣成分散在不同链路，导致单轮对话难统\n⼀编排和追踪的问题，设计 Agent Runtime Harness，并基于CollaborationBlackboard、任务 claim 和\nartifact 机制拆分 Understanding、Safety、Context、Response 等 Agent，统⼀管理单轮对话主链路。\n检索优化：针对⼼理知识库单⼀路径检索导致召回不稳定、相关⽚段排序靠后的问题，先基于问题类型进⾏领域\nquery 扩展，再融合 Chroma 向量检索与 BM\u0000\u0000 关键词检索召回候选结果，最后知识源匹配和答案相关性提升重\n排序稳定性；基于60条样本评测验证效果， Recall@\u0000 达到 96.67%，MRR 达到 0.9417。\n模型路由：针对不同复杂度和⻛险等级的请求统⼀调⽤⼤模型，导致成本增加、时延波动的问题，设计基于任务\n类型与⻛险等级的分层路由策略；在50次请求测试中，将 P\u0000\u0000 响应时间由 29.2 秒降⾄ 18.3 秒，降低 37.2%，单\n次调⽤成本降低 32%。\n安全闭环：针对⾼⻛险识别、报告落库和后台处置分散在不同模块，导致⻛险流程难追踪的问题，将输⼊脱敏、\n⻛险评估、报告落库、⼯具计划和 run trace 收⼝到 Harness，⽀持⼼理⻛险报告、⼯具计划和 Agent 运⾏轨迹\n⾃动⽣成。\nAutoSite                                                                                                                                               \u0000\u0000\u0000\u0000.\u0000\u0000-\u0000\u0000\u0000\u0000.\u0000\u0000\n项⽬描述： ⾯向⾃然语⾔建站与⽹站快速搭建场景，开发 AI 零代码 Web 应⽤⽣成平台。系统能够根据⽤⼾的⼀句\n话需求⽣成⽹站，并⽀持多轮修改、历史版本查看和⼀键回滚，解决 AI ⽣成⽹站难维护、修改后难恢复的问题。\n性能优化：针对每次⽣成都重复创建⼯程⻣架，导致⽣成耗时和 Token 消耗偏⾼的问题，构建模板匹配与占位符\n替换链路，复⽤后端完整模板、局部替换和构建校验能⼒；⾸ Token 时间约 4510ms，⽣成时间从42秒降⾄22\n秒，⽣成耗时降低约 47.61%，Token 消耗降低约 30%\n版本管理：针对多轮⽣成只保留最新结果，导致历史版本难追溯、误操作后恢复成本⾼的问题，基于版本记录和\n内容 Hash 追踪代码⽂件变更，⽀持历史版本预览、差异恢复和⼀键回滚，平均回滚时间约 3179ms。\n限流隔离：针对 AI ⽣成请求并发进⼊同⼀模型链路，导致请求堆积和会话上下⽂串扰的问题，基于 Redisson +\nAOP 实现⽤⼾级、接⼝级限流，并结合 Caﬀeine 缓存复⽤模型服务实例，提升⽣成接⼝在并发场景下的稳定性。\n专业技能\nAgent 开发：熟悉 Agent 相关概念与基础架构设计，理解 Prompt 约束、上下⽂管理、⼯具调⽤、Skill、\nMemory 等核⼼机制，具备 Agent 应⽤架构设计意识\nRAG 系统：了解 RAG 从查询优化、召回到后处理的优化流程，熟悉查询重写、问题拆分、混合检索、召回融合和\n重排序等⽅法，能够基于离线评测进⾏检索策略调优\n数据库与缓存：熟悉 MySQL 索引、事务、锁、MVCC 和 SQL 优化；了解 Redis 缓存策略、分布式锁与缓存⼀致\n性处理，熟悉缓存穿透、击穿、雪崩的解决⽅案\n后端开发：熟悉 Java/Python 开发，掌握接⼝设计、参数校验、异常处理和分层模块落地\n⼯程实践：熟悉 Git、Docker、Apifox、JMeter，能够完成接⼝联调、项⽬构建、本地部署和压测分析\nAI辅助开发：利⽤ Codex、Claude Code 提升问题排查、⽅案设计，迭代开发和⽂档整理效率\n211\nPython\nJava\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg\n6ab2e98db11f99641HN92tm6F1BRwI-3WfibWOekn_fYNhRg",
+    "chars": 2500,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 8,
+      "ownership": 0,
+      "reliability": 3,
+      "api_design": 3
+    },
+    "agent": {
+      "agent_core": 9,
+      "rag": 12,
+      "llm_eng": 5
+    },
+    "metrics": 7
+  },
+  {
+    "batch": "Agent2",
+    "name": "郭轩",
+    "file": "【Agent 实习生_深圳 400-600元_天】郭轩 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】郭轩 27年应届生.pdf",
+    "text": "主要开发者\n \n  \n  \n  \n                                                                   \n                                                             \n \n  \n                                                                    \n  \n  \n  \n  \n  \n    \n  \n   \n \n     \n  \n   \n   \n     \n    \n    \n   \n \n                                                                       \n \n  \n     \n \n   \n \n    \n    \n \n    \n    \n \n \n \n \n \n \n \n \n \n  \n  \n \n \n \n \n \n  \n教育背景\n2024.09~2027.06    \n2019.09~2023.06                              \n硕士\n本科\n计算机技术\n软件工程\n深圳市云中鹤科技股份有限公司 2026.02~2026.06\n人工智能与数字经济广东省实验室（深圳） 2025.06~2025.09\n  \n            \n     \n  \n \n \n \n \n \n \n网易七鱼工单回复 助手（Chrome Extension+ FastAPI + Agno+Milvus +ElasticSearch）\n⚫ 背景 与目 标：为售 后业务团队 开发智能化回复 助手， 实现 从\u0016到\u0017的需求 分析， 开发 至测试部署。\n⚫ 技术方案 与执行 ：设计了基于 ,aYt'6I 的后端链路，集成 3Ol\\[Y 向量库与 +laYtOISearIN 全 文检索，采用 'MTo 框架编排智能体工作流\n，支撑业务团队项目问答，建议以及总结等场景。\n⚫ 工程化优化：针对 'MeTt 检索死循环问题，实施  toolEIallElOSOt 硬限制及超时熔断策略（\u001c\u0016Y）；针对 SaaS 系统 D53  频繁变 更 ，设\n计“固定字段ID \u0013$ label语义匹配 \u0013$ 结构解析 \u0013$ 正则提取”的 \u001a 级兜底获 取策略，确保数据采集零缺 失，支撑日均 \u0017\u0016\u0016\u0016+ 工单处 理，\n⚫ 背景与目标 ： 针对企业招标文档处理效率低下、核心条款提取偏差大等痛点，负责构建高效的自动化解析与生成系统。\n⚫ 技术方案 ： 设计了本地双引擎路由解析架构，集成  3OTer; 处理扫描件，统一将  6D,/D5C/D5C> 等异构文档标准化 3arQdo]T格式；\n针对百万字级复杂标书，采用  3[ltO\u0013'MeTt 协作与  3aV\u0013Red[Ie 并行抽取策略 。\n⚫ 行动与优化：构建三层冲突消解机制，精准提取 5\u0016\u0016\u0016+ 条核心商品条款；通过复用  6roSVt CaINe 技术，重构消息分层架构，将 稳定\n上下文与动态任务分离，使同父节点下的多叶子节点共享缓存前缀；通过预编排 \u0013并发 \u0013审计三段式架构，优化长文本生成链路。\n⚫ 结果： 实现全自动文档解析，相比串行处理速度提升 8\u001c.5\u000b，并通过预编排 \u0013并发 \u0013审计三段式架构，确保了多模态内容上下文一致性与\n3erSaOd 图表的稳定渲染；缓存命中率达 \u001f8.5\u000b，将  \u0017\u0016] 字标书生成成本降低至  \u0017 元以内。\n端到端响应优化至 \u0019Y 内。\n \n电话：15671376639\n邮箱：1643007089@qq.com\n姓 名：郭 轩\n年龄：23\n⚫\n \n \n \n \n \n项目 介绍： 将\b一句 话创意/小说 → 完整 成片 \b的创作链路抽象 为角色化、可协作的多智能体协作系统，完整 覆盖叙事 规划、跨镜头视觉 一致\n性保障 、图像 与视 频生成执行、成片组 装与质量校验，实现从文本创意到高质量多镜头 长视 频的自动化创作。\n⚫ 设计并实现基于+\\eTt StreaSOTM的 'MeTt 循环：单轮 对话内支持最多 5\u0016 次工具调用，通过 toQeT / toolEYtart / toolEVroMreYY / \ntoolEreY[lt / terSOTal等结构化事 件，将模型推理、工具执行与终 端输出统一为可观 测的事 件流，用户可实时看 到执行状 态。\n⚫ 构建 \u0017\u0019 个专业化智能体（剧 本生成、分镜 设计、镜头 规划、角色提取等），通过 Idea2<Odeo/SIrOVt2<Odeo/4o\\el2<Od eo三条端到\n端流水线串联 ，将\b创意 → 剧 本 → 分镜  → 镜头  → 关键帧  → 视 频片 段 → 成片 \b全 链路自动化。\n⚫ 实现工具调用并发分区机制：在工具注册 时声明 并发安全 标记，运 行时对安全 工具自动合并到同一批 次并行执行、串行依赖 的工具单独\n成批 ；在保证执行正确性的前提下，将多镜头 渲染的串行等待压缩 为并行流水，缩短 长视 频整 体生成耗 时约45%。\n⚫ 针对长篇小说改编场景（ 4o\\el2<Odeo） ：设计 \b叙事压缩  + 事件抽取  + 场景切分  + 全局信息规划 \b的组合策略，以全局角色档案与场\n景约束驱动后续分镜，解决长文本改编中常见的角色外观漂移与场景割裂问题。\n⚫ 集成  ,'ISS 向量检索  + (-+ 重排序的参考图召回链路 ：分镜生成时按角色与场景语义检索历史参考图，结合首帧与机位连续性约束传递\n至视频生成器，保障跨镜头的视觉一致性。\n2026.05~2026.07InsightForge — '/\u0003短剧 生成\n技术栈：Python + FastAPI + LangGraph+ React + ,'ISS + Redis + MySQL\nAgent \n地址： NttVY //MOtN[b.IoS/M^\u0013[O/ITYOMNtLorMe\n \n深圳大学\n武汉东湖学院\n在校荣誉：硕士二等奖学金、第八届 \"数竞杯\"数据智能创新应用大赛国三、中国大学生计算机设计大赛省一、 CET6\n专业技能\n⚫ 计算机基础与算法：精通 Python，熟悉Java，掌握计算机网络、操作系统核心知识；了解 Transformer 模型架构、注意力机制底层逻\n辑；熟悉 Linux 常用命令、Git 版本控制。\n⚫ 大模型与应用：了解大模型应用开发流程，掌握 Agent 与 RAG 检索增强生成的深度融合，熟悉文档分块、多路召回、重排优化流程；\n掌握 MiIvus向量数据库的索引设计、检索性能优化。\n⚫ Agent 开发：掌握 ReAct、RefIexion、CoT等主流智能体推理框架；掌握 MuIti-Agent 多智能体协作机制，角 色分工、任务拆解、冲\n突解决的核心方案；熟悉 Langgraph、Agno 等开源框架的架构与二次开发。\n⚫ 前后端技能：熟悉 FastApI、Spring Boot 后端开发框架；掌握 MysqI数据库及 Redis 缓存技术；熟悉 <ue\u0019开发框架。\n⚫ 熟练使用    C[rYor、Code^等 'I 编程工具，能够 检查、调试和改 进 'I 生成的代码。\n实习经历\nAI 开发实习生\n云鹤智标—ToB 招投标书AI生成系统\n大模型实习生\n基于强化学习（RL）的长链路 'MeTt 规划与工具调用优化\n \n \n:GYQ：针对长链路任务指 令跟 随弱 、:ool CallOTM 准确率低 痛点，\u0016\u0013\u0017搭 建 <eRL 6oYt\u0013traOTOTM流水线，利用 RL 提升严苛 约束下执行能力。\n⚫ 数据工程与采样策略: 构建包含通用推理、代码生成及工具调用的多任务混合数据集 (9k+)。设计基于熵的动态采样(Dynamic Sampling)\n策略，在训练中动态平衡通用认知与特定工具执行能力的权重，有效防止灾难性遗忘。\n⚫ 算法选型调优: 对比GRPO/DAPO/GSPO等策略，针对巨大动作空间设计“Cold Start + RL”两阶段范式，稳定大规模模型收敛。利用Ray\n + FSDP稳定训练。\n⚫ 分层奖励塑形: 针对长链路任务中反馈稀疏的痛点，设计基于 Smart Router 的分层奖励系统。构建并行的评估链路：在逻辑层引入数学/代\n码正确性校验，在执行层设计细粒度的工具校验链（格式检查 -> JSON 校验 -> API 名称核对 -> 参数验证），从规划逻辑、参数格式、执\n行结果三个维度对模型进行密集反馈（Dense Reward ），引导模型学习严谨的动作约束。\nResult：复杂任务的端到端成功率由4% 提升至33%（8.25×），工具选择准确率提升至87%，参数填充正确率从0 突破至33 %，结合vLLM \n推理引擎与熵动态采样策略，将样本生成效率提升33% (600step -> 400step)，相关方案已在实际环境中完成部署与验证。\n项目经历\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg\n1b7a65db9207b1a01HN92tm6GFBXy4y9Vv2eWOekn_fYNhRg",
+    "chars": 4121,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 100,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 13,
+      "ownership": 0,
+      "reliability": 2,
+      "api_design": 6
+    },
+    "agent": {
+      "agent_core": 12,
+      "rag": 12,
+      "llm_eng": 2
+    },
+    "metrics": 7
+  },
+  {
+    "batch": "Agent2",
+    "name": "余林杨",
+    "file": "【Agent 实习生_深圳 400-600元_天】余林杨 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】余林杨 27年应届生.pdf",
+    "text": "余林杨\n✉yulingyu08@gmail.com | 🐙github.com/Neon549\n求职意向：Agent应⽤开发 | 电话：17784322153\n教育背景\n新南威尔⼠⼤学 - ⼈⼯智能 · 硕⼠ 2025.03 - 2027.04\n重庆科技⼤学 - 计算机科学与技术 · 本科 2020.09 - 2024.06\n项⽬经历\nAlphaStock - ⾦融⻓距离量化 Agent｜GitHub 120+ Stars https://github.com/Neon549/Alpha_stock\n⾯向 A 股投研场景，将受限 Agent 编排、⾦融 RAG、证据回链、拒答和 Human-in-the-loop 审核纳⼊同⼀运⾏闭环。\nAgent 运⾏时与治理\n上下⽂⼯程与评测\n技术栈：AgentRuntime · Harness · Subagent · Skill Registry · PostgreSQL · pgvector · MinerU · MCP · React\nTechLens（基于 Qwen3-1.7B） - 本地⾦融分析模型 https://github.com/Neon549/TechLens-1.5B\n⾯向投研系统技术分析模块，训练本地⼩模型降低云端 API 延迟和成本，并约束结构化指标输出与错误分析。\n训练与服务集成\n技术栈：Qwen3-1.7B · LLaMA-Factory · LoRA · DPO · bitsandbytes · DeepSpeed\n开源经历\nByteDance DeerFlow - 开源贡献者｜80k+ GitHub Stars github.com/bytedance/deer-ﬂow\n技术能⼒\n专业排名：硕⼠阶段 23/600•\n专业排名：本科阶段 3/140•\n荣誉：全国⼯程⼤赛后端组国三等奖、蓝桥杯软件赛道省⼆等奖、两次校级⼀等奖学⾦、IELTS 7.0•\n运⾏编排：搭建 Gateway - InvestmentRuntime - Python State Machine 链路；ResearchHarness 仅允许⽩名单只读⼯具，单任务最\n多 3 次调⽤、单结果最多 1800 字符；Skill Registry 约束 Subagent 权限，最终输出默认进⼊⼈⼯审核。\n•\n检索与证据：针对 1,408 条新闻快照补充 84 个官⽅公告证据块，覆盖评测股票；通过 source_url 去重与⾦融意图分槽，关键词覆盖诊断\n从 0.6191 提升⾄ 0.6530。\n•\n上下⽂与记忆：以 6000 Token 预算组装 Bootstrap、Skill、偏好、Session Memory、近期对话和当前请求；70% 起按优先级裁剪，\n85% 设为硬上限，候选记忆经⼈⼯审核后写⼊ approved Markdown，再通过 pgvector HNSW 检索。\n•\n评测与策略：在内部公开新闻对照集上进⾏ RAGAS 消融；加⼊官⽅公告与意图分槽后，Faithfulness 从 0.8533 提升⾄ 0.9660，据此将\nnews-ﬁrst 设为默认，公告仅在候选不⾜时补位。\n•\n数据与评测：基于随机游⾛模拟 A 股⽇ K 线，按 KDJ/MA20 规则⽣成 Ground Truth；构建 2000 条七类训练样本和物理隔离的\n210 条评测集，覆盖正常⾏情、⼯具错误和数据不⾜。\n•\nSFT/DPO 与规则：使⽤ Qwen3-1.7B + LoRA 训练 3 epoch，构造 400 对 chosen/rejected 偏好数据；以代码断⾔评测 6 维指标，离\n线评测中价位编造率由 10% 降⾄ 0%。\n•\n部署与服务：以 BF16 GPU 部署 LoRA 权重并接⼊ Agent 在线调⽤，⽀持⼯具缺失⾃动补数、异常安全中⽌和云端降级；真实请求集\nP50 5.82 秒、服务成功率 97.6%。\n•\n# 4885 Memory ⼯程贡献：针对 DeerMem ⻓期记忆事实管理提出 Issue #4880，并提交 PR #4885；扩展 MemoryManager ABC 与\nDeerMem backend 的批量删除、批量分类更新能⼒，新增批量 API、React Query 乐观更新、全选与批量操作 UI。\n•\n# 4895 ⼯程化与验证：补充请求/响应模型、前后端类型、确认弹窗及单元、API 与集成测试，覆盖批量事实操作的状态同步与边界⾏为。•\nAgent 编排：AgenticLoop、Python State Machine、Planner、Harness、Tool Calling、Skills、Subagent、模型路由与降级•\n上下⽂与证据治理：熟悉 Context/Memory 管理、上下⽂压缩、优先级裁剪、记忆分层；RAG、BM25/Dense/RRF、LLM/Agent 评测•\n模型训练与⼯程化：LoRA/QLoRA、DPO、INT8/BF16、Python、FastAPI、React、PostgreSQL、Docker、Linux、Git、MCP•\nAI ⼯具与架构理念：熟悉并使⽤ Codex、Claude Code、DeepSeek Harness；研读并分析 Hermes、OpenClaw、DeerFlow 等开源范式•\n7a3a608989a513b81HN92tm1ElJWwIm_U_6eWOekn_fYNhRg\n7a3a608989a513b81HN92tm1ElJWwIm_U_6eWOekn_fYNhRg\n7a3a608989a513b81HN92tm1ElJWwIm_U_6eWOekn_fYNhRg\n7a3a608989a513b81HN92tm1ElJWwIm_U_6eWOekn_fYNhRg\n7a3a608989a513b81HN92tm1ElJWwIm_U_6eWOekn_fYNhRg\n7a3a608989a513b81HN92tm1ElJWwIm_U_6eWOekn_fYNhRg\n7a3a608989a513b81HN92tm1ElJWwIm_U_6eWOekn_fYNhRg",
+    "chars": 2579,
+    "eng_score": 38,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 98,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 6,
+      "ownership": 0,
+      "reliability": 3,
+      "api_design": 4
+    },
+    "agent": {
+      "agent_core": 21,
+      "rag": 5,
+      "llm_eng": 9
+    },
+    "metrics": 6
+  },
+  {
+    "batch": "Agent2",
+    "name": "邹骏恺",
+    "file": "【Agent 实习生_深圳 400-600元_天】邹骏恺 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】邹骏恺 27年应届生.pdf",
+    "text": "ሻलᙟ\nଳ· 25 ෟ·  18002270663 ·  605838411@qq.com\n৥\nധᎪն࿐ ණൖඌ 2024 – 2027\nඌն࿐ Ч॓ӱ CET-6 2019 – 2023\nି\n•Ԥğඃ༑ Python९ቆᆮĠඃ༑ C++འaSTLaC++11აҠ\nԤb\n• AgentğႨaഈ༯໓ /৘aHarness Engineering aFunction Callingࠎ\nႿ LangGraphb\n• RAGğaEmbedding֩ܙRAGЧ৽ਫ਼Ġඃ༑ Multi-QueryaRAG-Fusionarerank\nა RAGAS֩ܙRAGb\n• Agentğၩ്đඃ༑ MCP / A2A đඃ਀൐Ⴈ Codexᇹླ౰ҷ\n໊b\n৥\nܓAI Agent ௜෻ 2026.05 – 2026.07\nؿPython / FastAPI / PostgreSQL / Redis / Skyvern / Playwright / Pydantic v2 / React / T ypeScript / Docker\nhttps://github.com/kublesd/procurerpa-enterprise\nğᄝ Skyvern षჷ AI-RPAି৯b\n•֩ࡎ֮100+ႮLLM\nགඪૼѩਫ਼Ⴎബ஻đ໭ི LLMഒჿ 70%b\n• ൌགྷ LLM ೘ҪಸհğPrompt߄ܒࢲJSON༅Ҫ Pydantic v2 ཮ဒაᆷඔ๼хᇗ൫a಩ༀҪാϧሇ\nNEEDS_HUMANੀӱb\n•࠹Planner + ExecutorğPlanner Ⴈ LLMູሰ಩ༀ྽ਙđExecutorႨ Skyvern ჰള Task /\nWorkflow / Action ৽ᆳྛĠreplan࿃஝b\n•ል 7ܓSkill ა 6ቔੀଆϰč๤၂ Pydanticb\n•Ⴟຩ် DOM ჭ෍ඔਈaiframeކࢲRedis actionթčTTL\n24haDOMܒࢲhashթ keyĎ đֆ಩ༀLLMჿ 60%b\n•֥approverĠ\nLLMb\nDocuMindࠩRAG ᆩ്໙ճ௜෻ 2026.02 – 2026.04\nؿPython / FastAPI / PostgreSQL / Qdrant / MinIO / React / T ypeScript / RAGAS / pytest\nhttps://github.com/Kublesd/DocuMind\nࠩRAG ໙ճ৽ਫ਼b\n•ᆩ്ೆ९৽ਫ਼ğPDF / Markdown / TXT / Word ഈԮ →a๭ோ OCR ิ౼໓ЧĎ→ ѓี / ်઒\nॶ → Dense / SparseaটჷϱЧa ACLaႵ\n໙ีđᆣऌଁᇏੱՖ 61.2% ิശᇀ\n82.6%్ॶĎ b\n•Սঔᅚ→ݖ\n߭→ RRFಀᇗ → rerankࠎ\nбđᆜุ Recall@5 Ֆ 78.2% ิശᇀ 87.3%ಒඌეቆ 93.2%ຓLLMႨb\n•ݔࢲ→ ο Tokenഈ༯໓ →ճσ →\nࢩ6 ো Prompt InjectionĠ4000 Token ყ\nੱ 96.3%đ10ॢႄႨb\n•đRAGAS௟ҩ čContextPrecision 0.913aContextRecall 0.906aFaithfulness 0.952Ď\nࡹ100č໴োఒြඔऌჷa276Ď ഈ\nੱ 95.9%b\nCompetitive Analysis Agent༅ Agent 2026.04 – 2026.05\nؿPython / LangGraph / LangChain / Pydantic / Tavily / Streamlit / FastAPI / pytest\nhttps://github.com/kublesd/competitive_analysis_agent\n࿹ӮЧb\n• Ⴈ LangGraph༅҄ᇧ 1گّ\nᇗ൫b\n• Ⴈ PydanticĠοӁ௖aᇶีaURL ಀᇗ TavilyॖႨ / ஆԢ / րಒ\nಪb\n•đ\nാϧb\n•܂Streamlit / FastAPIರᆽĠ3b\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg\ncbf27b4e73df5f961HN92tm1FFpZyoS6WPOaWOekn_fYNhRg",
+    "chars": 2111,
+    "eng_score": 38,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 98,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 10,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 4
+    },
+    "agent": {
+      "agent_core": 15,
+      "rag": 12,
+      "llm_eng": 4
+    },
+    "metrics": 9
+  },
+  {
+    "batch": "Agent3",
+    "name": "周玉梁",
+    "file": "【Agent 实习生_深圳 400-600元_天】周玉梁 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】周玉梁 27年应届生.pdf",
+    "text": "ᇛზਃ\nཟğAI Agent /ؿ|ğ18325319587 | Ⴏདğzylczz@126.com\n৥\nᇜն࿐ |ӱ࿐ჽ |Ď 2024.09i2027.06\n• GPA 3.93/5.0 čህြభ 10%ၰં໓1 ௉đਸ਼Ⴕ௹़ં໓ 1 ௉ᄝ๧Ď\n•ࢂ֩ؽ\nӱն࿐ |აྐ༏࿐ჽ |࿐࿐ൖ 2019.09i2024.06\n• GPA 3.66/4.0 čህြభ 10%Ď\n•ՑđCET-4č527Ď aCET-6č499Ď\n৥\nMarketShield༢๤ |ದཛଢ 2026.05i2026.06\nඌᅜğPython / LangGraph / Pydantic / SQLAlchemy / MySQL / Ollama\nğႿLangGraph\nູླྀ๝ Agentb\n•ᇆିุླྀቔğႿ Ollama + LangGraph֥׮Supervisor಩ༀ\n۱Agent۲AgentݖPydanticđѩႮੀӱ൯\nႨඨ྽b\n•აᆯᄳğᆣऌ AgentགAgentᆟҦ Agentག\nຶĠथҦ Agentԩ৘\nᆳྛ൳॥ԩ৘b\n•ླྀ๝აνಆ॥ᇅğݖHITLथҦ Agentᆳྛ๼ॻҠቔđ\nቔb\n•ğ൐Ⴈ MySQL੣đ൐Ⴈ SQLiteੀӱሑ෿ѩᆦӻದ\nݖCLIೆ१b\nRecipe Agentic RAG෬༢๤ |ದཛଢ 2026.07i2026.08\nඌᅜğPython / LangGraph / Milvus / BGE / BM25 / ColBERT / FastAPI / CLI / Redis / RAGAS\nğ૫ཟᇏ໓ MarkdownԮ๤ RAG໙ีđഡ\nѩൌགྷ Agentic RAGճb\n• RAG ඔऌԩ৘ğ༅ Markdown৵࿃ᇅ\nקIDࣥ\nҰb\n• Agentic෬ੀӱğႿ MilvusoBGE + BM25ੲiColBERT ეၬᇗஆiTop-kݔࢲ\n෬ Agentّ\n෬ Agentཿb\n•ճğ൐Ⴈ RedisҒ௶໙\nđѩ൐Ⴈ Pydanticճ\nݖFastAPI ა CLI१b\n•௟ҩğ֥ࣟ100 ่ҩ൫Ⴈ২Ġᄝቋᇔᆣऌ Top-5༯đ\nAgentic RAGྟ RAG֥Recall@5 Ֆ 0.8221 ิശᇀ 0.9496đMRR Ֆ 0.7690 ิശᇀ 0.8748ĠRAGAS ௟\nҩ Faithfulness ູ 0.9519aAnswer Relevancy ູ 0.8231b\nି\n• AI Agentؿğඃ༑ LangGraphaTool CallingaMCP ა Agent Skillsb\n• RAG෬ᄹ఼ğඃ༑ EmbeddingaMilvusaBM25aColBERTb\n•ؿğඃ༑ PythonaFastAPIaPydanticaMySQLđऎС APIဒb\n• ଆ྘ႋႨა௟ҩğඃ༑ Promptൻԛა RAGAS൫b\n•ӱି৯ğඃ༑ LinuxaGitaDocker ა Docker Compose஥ᇂି৯b\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg\n6b21d09212c5e5701HN92tu6E1VWyo6_VfKaWOekn_fYNhRg",
+    "chars": 1635,
+    "eng_score": 38,
+    "agent_score": 35,
+    "depth_score": 21,
+    "total": 94,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 10,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 4
+    },
+    "agent": {
+      "agent_core": 24,
+      "rag": 14,
+      "llm_eng": 1
+    },
+    "metrics": 3
+  },
+  {
+    "batch": "Agent3",
+    "name": "张..",
+    "file": "【Agent 实习生_深圳 400-600元_天】张.. 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】张.. 27年应届生.pdf",
+    "text": "携程计算机技术(上海)有限公司 - 内容中心研发部 - 算法系统助理 2026.03~ 2026.08 \n中国科学院大学\n教育背景\n2024.09 ~ 2027.06 硕士\n张学渊 手机号码：15959643337邮箱：zhangxueyuan24@mails.ucas.ac.cn\n计算机技术\n福建师范大学2018.09 ~ 2022.06 本科 计算机科学与技术\n实习经历\n项目概述：深度参与建设携程内部 AI4T 智能测试平台核心 Agent 生成链路，围绕“需求输入 → PRD 初稿 → 测试用例树 →\n自动化测试衔接”，构建端到端智能测试资产生产流程。\n技术栈：Agent Loop、LangGraph、ReAct、SSE、Elasticsearch、BM25、Dense Vector、BGE Embedding/Reranker、\nRRF、RAG、Few-shot、LLM-as-Judge\n核心工作：\n1. Chatbox / Agent Runtime： 建设任务型 Agent Runtime，融合 Memory、Context Engineering、Tool Calling 与\nAgent Loop，支撑多轮任务编排、工具轨迹回流、权限控制和事件追踪，提升复杂任务执行的可恢复性与可观测性。\n2. RAG 知识库：围绕 PRD 和测试用例生成场景，建设历史案例检索增强链路，覆盖结构化切分、向量化索引、混合召回、\n重排、上下文压缩与失败兜底，为 Agent 提供可追溯的业务知识参考。\n3. PRD Generation：建设可控生成链路，通过需求结构化、全局章节规划、章节级 Context Engineering、Few-shot、\n流式生成与确定性 Guardrails，实现 PRD 初稿的分章并发生成、质量校验和失败降级，提升生成可靠性与可编辑性。\n4. PRD2XMind Agent：建设 PRD 测试用例生成链路，基于 LangGraph 编排结构拆分、模块级 ReAct 并行生成与确定性\n建树，并通过上下文预算、质量门禁、异源LLM Judge和多级去重提升用例覆盖性、忠实性与稳定性。\n5. Skill Evolution：建设反馈驱动的 Agent 规则演化闭环，基于人工审核 diff 进行问题聚类、根因归因与 Skill Delta 生\n成，并通过预审、人审、版本化合入与回滚实现规则可治理。\n科研经历\n【SCI期刊】Xueyuan Zhang, et al. \"FD-CCM-Informed Spatiotemporal Hypergraph Learning for Patient-Specific\nEpileptogenic Zone Localization From Interictal SEEG.\" Submitted to IEEE Transactions on Biomedical\nEngineering(TBME)(中科院二区, IF: 4.4), Under Review.\n携程计算机技术(上海)有限公司 & 中科院深圳先进技术研究院\n项目背景：构建具备“检索-推理-溯源”架构的医疗级多 Agent协作临床辅助决策系统，通过构建医学循证逻辑链攻克大模\n型幻觉难题，实现复杂临床场景下的高可靠决策支持。\n技术栈：Python, Agent, ReAct, LangGraph, MCP, Qwen3-8B, SFT, LoRA, GRPO\n解决方案：\n1.标准化数据接口集成：基于 MCP 协议整合 PubMed、临床指南等异构数据源。定义统一的医学 Schema， 利用校验机制\n与异常兜底机制，确保所有输出证据的准确性与可溯源性。\n2.多 Agent 协同架构：采用 LangGraph 构建有向无环图工作流，利用 ReAct 模式驱动疾病、药物、文献等多个垂直领域智\n能体。支持 Agent 自主调用 MCP 工具获取实时数据，并由 Summary Agent 进行共识决策，输出结构化 Markdown 医\n学报告。\n3.领域模型定向微调：针对医疗意图识别与实体抽取需求，使用 5万+ 高质量医学文本基于 Qwen3-8B 进行 LoRA 微调。将\n医学问题分类准确率提升至 91%，显著增强了 Agent 在复杂语境下的工具调用成功率。\n4.推理链路对齐与强化学习：引入 GRPO 算法进行偏好对齐，设计“推理链完整性 + 医学语义准确性”奖励函数。通过强化\n学习优化 Agent 的思维链，使系统在复杂医学推理任务中的端到端准确率较通用模型提升 3-5%。\n5.性能优化与评测：设计 Agent 专用的多维评测体系，监控工具调用成功率与数据一致性。通过并行调度与状态缓存策略，\n将长链条推理任务的端到端平均响应时延降低 20%，大幅提升了临床交互体验。\n中科院深圳先进技术研究院 - 生物医学信息技术研究中心 - 算法实习生 2025.07 ~ 2026.01 \n项目成果：沉淀上下文管理、工具调用、RAG 检索增强、可控生成、质量评审、可观测与失败恢复等 Agent 工程能力，支撑\n“需求输入 → PRD 初稿 → 测试用例树 → 人工采纳 → 自动化测试衔接”的端到端闭环。\n项目成果：支持 2000+ 常见疾病医学知识分析与临床指南检索，工具调用成功率达到95%，医学逻辑链一致性约 94%，医学\n报告生成效率提升约1.5倍。\n荣誉奖项\n第十三届全国大学生数学竞赛（非数学组）二等奖\n福建师范大学校级优秀学生奖学金\n专业技能\n熟悉大模型微调与对齐技术，包括 SFT、LoRA、Prompt Tuning、GRPO 等\n熟悉 Agent 协作架构与主流技术，包括 LangGraph、ReAct、RAG、Agent Runtime 等\n熟练使用 Python、PyTorch、HuggingFace 等深度学习主流工具\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg\ndebe2117762c72301HN92tu6EVdXxoi4UfqdWOekn_fYNhRg",
+    "chars": 2854,
+    "eng_score": 33,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 93,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 5,
+      "ownership": 0,
+      "reliability": 3,
+      "api_design": 3
+    },
+    "agent": {
+      "agent_core": 36,
+      "rag": 13,
+      "llm_eng": 13
+    },
+    "metrics": 8
+  },
+  {
+    "batch": "Agent2",
+    "name": "王亚雯",
+    "file": "【Agent 实习生_深圳 400-600元_天】王亚雯 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】王亚雯 27年应届生.pdf",
+    "text": "຦࿰ᵣ\n߅׈:19137539336\nႯད: 19137539336@163.com\nѰग़: https://blog.csdn.net/m0_55703957\n৥\nധᎪն࿐؀2024.9 - 2027.6\nն࿐ඌ Ч॓ 2020.9 - 2024.6\n• GPA:ğ3.46/4.0 (Top 5%),ğ4.2/5.0 (Top 2%)\n• ಴უ/ཛ:ࣁ2 Ց)ࣁ\n৥\nඳ\nᅲཬ i\nകğࣉ\n৵࿃aॖ\nༀb\nඌᅜğ LangGraphaFastAPIaPostgreSQLapgvectoraElasticsearchaDeepSeek\n•ਫ਼Ⴎğީ\naLLMҵᆳྛ೘෿ਫ਼ႮĠၩ๭്љሙಒੱႮ\n88% ิശᇀ 94%b\n• ҋਘᇆିყബğҋਘౢ\nಒಪb\n•ྍğބLLMྍ\nᆩ്ႄႨđЌ\n࿃൐ႨჰϱЧb\n•հა SOPğؓFunction Calling၂ູѓሙհ༂઒აാϧᆷ໕đ\nނSOPᅰ\nႨb\nAI ᇏ෻\nകğ֥AI৘a K8sଆ྘҆ඇ\nປᆜ৽ਫ਼b\nඌᅜğ SpringCloudaClickHouseaMySQLaElasticSearchaRedisaMinIOaShardingSphereaKubernetesaNacos\nᇶေᆯᄳğ༅a ES֩\n໙ีb\n•Ⴟ RocketMQ༅aඔऌೆ९a ESᯒđх\nྟb\n•a\nো྘ඔऌঔᅚb\n• ൌགྷ໓Чඔऌཟ ElasticsearchྛႪ\nҰ࿘ྟିb\n•Ⴟ ShardingSphereಆअ ID ஻ਈყ\nݖstart + stepື၂ྟb\nି\n• ᄽൌᅧ໤ JavaࠣJVM྘aLambdaᇅaJMM\nщӱđᅧ໤ཌӱӽaCASavolatileasynchronizedaLockᇅb\n• ඃ༑ MySQLᇅaMVCCྏᆩ്b\n• ඃ༑ RedisԬ/Ԭ๩/b\n• ඃ༑ RocketMQσb\n•࡮ଆൔb\n• ඃ༑ AgentሰAgent ླྀቔ; ᅧ໤\nDeep Agents,LangGraphؓOpenClaw,Hermes֩Agentb\n• ඃ༑ RAGaFunction callingaMCPaSkill൐ႨĠඃ਀൐Ⴈ Claude codeaCursoraCodexऎb\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg\n4a978fe2af93fdf21HN92ti8F1RRyoy8VPieWOekn_fYNhRg",
+    "chars": 1313,
+    "eng_score": 29,
+    "agent_score": 35,
+    "depth_score": 23,
+    "total": 87,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 9,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 1
+    },
+    "agent": {
+      "agent_core": 9,
+      "rag": 4,
+      "llm_eng": 0
+    },
+    "metrics": 4
+  },
+  {
+    "batch": "Agent3",
+    "name": "陈磊",
+    "file": "【Agent 实习生_深圳 400-600元_天】陈磊 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent3/Agent3/【Agent 实习生_深圳 400-600元_天】陈磊 27年应届生.pdf",
+    "text": "邮箱：2451665743@qq.com 电话：18458785965\n2023 年 9 月~2027 年 6 月 华中农业大学（211、双一流） 计算机科学与技术（本科）\nGPA : 3.4/4.0 英语成绩：CET-4\n主修课程：数据结构，数据库原理，操作系统，计算机网络，算法设计与分析，软件工程等\n奖励荣誉：获校级三好学生，百优班团干部等；GPLT 团体设计天梯赛三等奖；CCPC 全国邀请赛优胜奖\n学生工作：曾任华中农业大学信息学院团委副书记、班级班长\n2026 年 3 月~2026 年 6 月 RagNote 睿记智能笔记助手 全栈开发\n■ 技术栈：Python、FastAPI、React、TypeScript、ChromaDB、LangChain、MYSQL、Ollama\n■ 项目简介：传统笔记工具缺乏主动回顾与知识关联，融合 RAG 检索与间隔重复打造智能知识管理笔记助手。\n■ 实现目标：搭建后端 RAG 核心引擎、笔记业务模块、用户权限体系，完成前后端联调，兼容云端/本地模型部署。\n■ 核心工作：\n1. 设计 ChromaDB 双集合架构（笔记库+知识库），采用 HyDE 语义增强检索+BGE 重排序，优化召回链路；\n2. 异步 SQLAlchemy 管理笔记、艾宾浩斯复习记录，Redis 缓存向量查询，JWT 隔离多用户知识库；\n3. 封装 LangChainAgent 实现带来源引用流式问答，SSE 输出 AI 续写/摘要，实现 LLM 自动生成笔记标签；\n4. 开发多格式文档解析器，前端基于 Tiptap 实现 Markdown 富文本编辑器。\n■ 优化成果：检索准确率提升 42%，问答平均响应 0.8s；离线 Ollama 模式完整可用。\n2026 年 1 月~2026 年 2 月 云净智联客服问答系统 后端开发\n■ 技术栈：Python、Streamlit、LangGraph、LangChain、Chroma、Qwen\n■ 文档流水线构建：搭建端到端私有化 RAG 链路，实现多格式文档解析、向量化存储与语义检索，优化检索召回精度。\n■ ReAct 智能体开发：基于 LangGraph 构建自主推理 agent，自定义业务工具，依托对话记忆处理多轮复杂问题。\n■ 多业务场景落地：实现产品专业问答、用户月度 Markdown 使用报告、天气环境适配建议全自动生成。\n■ 前端与工程封装：Streamlit 流式对话页面，YAML 分文件配置、脱敏日志、虚拟环境整套标准化运维方案。\n■ 编程语言：熟练使用 Python，了解 java/go 编程语言及语法逻辑。\n■ 开发框架：熟练掌握 FastAPI、React 等前后端开发框架，熟悉 JWT 身份鉴权机制，asyncio 异步编程。\n■ AI 应用开发：熟悉 LangChain 框架、RAG 全链路优化、ReAct Agent 智能体搭建，了解 Prompt Engineering 与 SSE\n流式输出优化策略。\n■ 中间件技术：熟悉 Redis 的基本使用，了解 RabbitMQ 消息队列。\n■ 数据库技术：熟练掌握 MySQL 的数据表设计及查询优化；熟悉 Chroma 向量数据库。\n■ vibe coding 工具：熟练使用 Claude Code 等工具辅助开发。\n■ 工程工具：熟练使用 Git 进行版本控制与团队协作；了解 Linux 系统常用操作命令、Docker 容器化使用。\n教育经历\n陈磊\nP E R S O N A L R E S U M E\n项目经历\n专业技能\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg\nbc4f7d5566ee3e4f1HN92tu6EVpWwI24U_iaWOekn_fYNhRg",
+    "chars": 1893,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 12,
+    "total": 87,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 12,
+      "ownership": 0,
+      "reliability": 1,
+      "api_design": 4
+    },
+    "agent": {
+      "agent_core": 13,
+      "rag": 15,
+      "llm_eng": 1
+    },
+    "metrics": 2
+  },
+  {
+    "batch": "Agent2",
+    "name": "王嘉麟",
+    "file": "【Agent 实习生_深圳 400-600元_天】王嘉麟 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】王嘉麟 27年应届生.pdf",
+    "text": " 教育经历\n⾹港中⽂⼤学（深圳） 海外QS前50 2025年09⽉ - 2027年06⽉\n计算机信息⼯程 硕⼠ 全⽇制\nGPA：3.1/4.3  相关课程：深度学习 ，数据分析，信息论 ，⾼级计算机⽹络\n \n东南⼤学 985 2021年09⽉ - 2025年06⽉\n⼈⼯智能 本科 吴健雄学院 全⽇制\nGPA：3.21/4.0  IELTS：7.0  CET-6：594  CET-4：628\n 项⽬经历\nJLClaw · ⾃托管多渠道开发助理 Agent 系统 2026年05⽉ - 2026年08⽉\n项⽬介绍： 该项⽬是⼀个基于 Python + DeepAgents + LangGraph 构建的开源、可⾃托管的企业级 Dev 场景 Agent 系统,核⼼理念为\n\u0000Harness Engineering, Not Model Engineering\u0000(Model + Harness + Eval = Reliable Agent)。系统以研发协作助⼿ DevMate 为运⾏\n案例,围绕\u0000Issue → 规划 → 在隔离沙箱中改代码 → 跑测试 → 安全⾃查 → 提交改动\u0000的完整研发链路,⽀持多渠道接⼊、多模型路由、⻓任\n务异步化与⽣产级资源隔离,具备完整的服务端业务逻辑与 API 实现。\n核⼼技术栈： Python 3.13, DeepAgents 0.6 / LangGraph 1.x / LangChain, FastAPI, PostgreSQL, Redis, Docker, arq, FastMCP,\nAlibaba Qwen(qwen-max/plus/turbo), SSE, SlowAPI, LangSmith, Prometheus, locust, uv\n核⼼功能：多模型路由与 Harness Profile、⼦代理协作、⾃托管隔离沙箱(容器/gVisor/microVM 分级)、多渠道⽹关、⻓任务异步队列、\n⻓短期记忆持久化、并发治理与限流、全链路可观测\n多渠道统⼀接⼊与会话治理：针对⻜书 / Web / CLI / Webhook 多⼊口接⼊需求,设计了渠道抽象层 + 统⼀⽹关\u0000通过 (租⼾, 渠道, 会\n话) → 稳定 thread_id 的派⽣机制实现多轮会话归属与多租⼾硬隔离;基于⻜书⻓连接(WebSocket)接⼊应⽤机器⼈,⽤\nrun_coroutine_threadsafe 解决 SDK 同步回调与异步事件循环的桥接;⽹关层实现 API Key 鉴权与按租⼾的⾝份贯穿。\n多模型路由与中间件解耦架构：设计 Harness Profile 机制,通过中间件按场景(strong / standard / cheap 档位)动态路由 qwen 模型,\n实现\u0000模型选择\u0000与\u0000业务逻辑\u0000解耦;基于 awrap_model_call 等中间件钩⼦实现成本计量、⼯具审计、LLM 并发控制、模型 fallback(主\n模型限流/故障⾃动降级到备⽤模型),业务代码零侵⼊。\n⾃托管隔离沙箱与执⾏安全：针对\u0000开源可⾃托管产品不应将不可信代码执⾏外包给境外 SaaS\u0000的定位⽭盾,⾃建隔离沙箱⽅案\u0000梳理\n容器(runc 加固)/ gVisor(runsc)/ microVM(Kata-Firecracker) 三档隔离强度并按部署场景选型;实现统⼀ BaseSandbox 接口,基于\nDocker 构建加固容器(断⽹ / 丢能⼒ / 只读根⽂件系统 / 资源上限 / ⾮ root / ⽤完即弃),并实现\u0000换⼀⾏ runtime 配置即切换隔离级别、\n上层代码不变\u0000的可插拔抽象;⽤ FilesystemPermission 与容器只读挂载实现审查⼦代理的物理只读(机制优于提⽰词约束)。\n⻓任务异步化与任务队列选型：针对⻜书 3 秒响应限制与同步⻓任务阻塞问题,完成从 FastAPI BackgroundTasks(轻量、状态表持久\n化)到 arq + Redis 任务队列(独⽴ worker、可⽔平扩展、失败重试) 的选型与实现;⽤ arq _job_id(⻜书 event_id)实现幂等,替换内存去\n重为 Redis SET NX + TTL,保证跨副本、重启不丢的事件去重。\n并发治理与服务弹性：设计\u0000有限资源 + 按租⼾隔离\u0000的并发护栏\u0000asyncio.Semaphore 在 LLM 调⽤层限并发(精确粒度,⾮包整个\nagent)、沙箱池(隔离优先、⽤完即弃、上限回收)、SlowAPI 按租⼾限流(Redis backend 多副本共享、超额 429);并诚实标注信号量进\n程级、permissions 不覆盖沙箱 execute 等能⼒边界。\nTravelMind ― 多Agent协作 2026年01⽉ - 2026年04⽉\n项⽬介绍：该项⽬是⼀个基于 Python + LangGraph 构建的企业级智能旅⾏规划系统，采⽤多 Agent 协作架构设计。系统综合运⽤\nHandoffs 流程编排、Router 智能路由、Subagents ⼯具调⽤三⼤架构模式，通过多轮对话引导⽤⼾完成从需求收集到⽣成完整旅⾏规划\n的全流程，具备完整的服务端业务逻辑与 API 实现\n核⼼技术栈：Python 3.13, LangGraph/LangChain, LangSmith，FastAPI, PostgreSQL, Redis, ChromaDB, FastMCP, Alibaba\nQwen, SSE\n核⼼功能： 多 Agent 协作编排，Advanced RAG 深度检索，MCP 协议⼯具接⼊，⻓短期记忆持久化，流式输出，状态回退，全链路监控\n多模式 Agent 架构： 针对复杂旅⾏规划场景，设计了 Handoffs+ Router+ Subagents三种模式融合的架构，通过Middleware中间件\n根据 current_step 动态注⼊步骤级提⽰词与⼯具集，实现业务逻辑与框架代码的解耦。\nRAG 引擎构建： 针对⾮结构化旅游攻略⽂档的精准检索需求，构建了四阶段优化管道：查询优化、混合检索、LLM 重排序（结构化评\n分过滤噪声）、⽗⽂档上下⽂映射，并基于 Redis 实现检索结果缓存加速。\nMCP 协议标准化⼯具接⼊： 基于 FastMCP 框架搭建⾃建 MCP Server，将外部 API 能⼒封装为标准化⼯具服务。客⼾端侧基于\nMultiServerMCPClient 实现统⼀的多服务连接管理，兼容 stdio 与 Streamable HTTP 两种传输⽅式。\n⻓短期记忆双轨持久化： 基于 PostgreSQL 实现 Checkpointer+ Store。通过Middleware中间件在每次 LLM 调⽤前⾃动加载⽤⼾⻓\n期记忆注⼊提⽰词，实现个性化推荐\n⼯程化设计与实时交互： 采⽤单例模式 + ⼯⼚函数管理核⼼组件的⽣命周期；基于 FastAPI + SSE 实现实时 Token 流式推送通过\nPydantic Settings 统⼀管理环境变量配置，集成 Loguru 增强⽇志与 LangSmith 调试监控\n 荣誉奖项\nKaggle: NeurIPS - Ariel Data Challenge 2024 (Competition Silver Medalist) 2024.08-2024.11\n 专业技能\n⼤模型微调推理： Transformer、PyTorch、LoRA/QLoRA、LLaMA-Factory、vLLM 量化加速\nAgent 开发： Langchain&LangGraph、DeepAgent；⾃研 Agent Harness、标准化 Agent Loop、MCP/FastMCP Skill ⼯具、多\n智能体协同\nRAG 系统： 混合检索、Rerank、GraphRAG、Agentic RAG、Milvus/Chroma、RAGAS 评测\n⼯程交付： FastAPI、MySQL/PG/Redis、Docker、Harness CI/CD、LangSmith、Locust 压测、Prometheus、Grafana\n王嘉麟\n13725472763 |  2381513477@qq.com |  深圳\n应届⽣ |  深圳 |  ⼤模型开发\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg\n6f3b73ebf1ab96f21HN92tm1GFNTwY-3WPufWOekn_fYNhRg",
+    "chars": 3845,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 10,
+    "total": 85,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 31,
+      "ownership": 0,
+      "reliability": 5,
+      "api_design": 22
+    },
+    "agent": {
+      "agent_core": 36,
+      "rag": 13,
+      "llm_eng": 3
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "廖恩恺",
+    "file": "【Agent 实习生_深圳 400-600元_天】廖恩恺 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】廖恩恺 28年应届生.pdf",
+    "text": "教育经历\n实习经历\n项目经历\n专业技能\n技能/证书及其他\n廖恩恺\n189-2357-6715 \n|\n \nliaoek@qq.com \n|\n \n深圳市\n深圳大学\n深圳大学\n软件工程\n本科\n2024.09\n \n-\n \n2028.06\n荣誉/奖项：\n蓝桥杯省赛二等奖、2025腾讯云黑客松AI CODING比赛决赛三等奖、深圳大学校级二等奖学金\n深圳海关 | 后端开发实习生\n2026.03\n \n-\n \n2026.08\n智慧警示RAG\n面向合规警示与风险问答场景的RAG系统，支持多格式文档解析、混合检索与多轮问答。\n完成文本型 PDF、Word 文档解析、清洗、切分与向量化，基于 PostgreSQL/pgvector 构建法律知识索引。\n排查法律名称检索召回异常，定位关键 metadata 未参与 embedding；调整向量化文本并重建索引，改善按法律名称查询\n的召回效果。\n针对年份、法规名称等精确关键词召回不足问题，接入 BM25 与向量检索混合召回，并通过 RRF 完成候选结果融合。\n设计 Query 补全、重写与问题拆解，并结合滑动窗口和历史摘要处理多轮上下文；对召回结果不足的查询触发澄清，避免\n直接生成无依据答案。\n智能通关识别与风险分析平台 - 标注与样本管理后端服务\n面向海关 IPPC 标识与进口食品/水果标签识别场景的图像标注微服务后端。负责 IPPC 标识及进口食品、水果标签识别场景的\n标注结果回流服务，对接模型预标注模块。\n通过业务键唯一索引、幂等键和数据库受影响行数校验处理重复消息，避免重复消费导致标注数据重复写入。\n设计 append-only 标注快照机制，通过应用层校验和数据库触发器，保留模型预标注与人工修改历史，避免原始预标注结\n果被覆盖。\n 基于策略模式和启动期注册表实现 COCO、YOLO、PaddleOCR、JSON四类格式导出，并按 1000 条样本阈值切换同步\n与异步任务。\nAccountAgent | 会计凭证辅助生成系统\n项目工具\n：\nPython、FastAPI、Spring Boot、PostgreSQL、pgvector、Redis、Tool Calling\n项目描述：\n面向代账场景构建 Spring Boot 业务系统与 FastAPI 智能服务协同的凭证草稿生成流程。系统结合交易事实、票据\n证据、企业科目表及历史审核案例生成结构化分录，并通过确定性校验和人工复核控制落库风险。\n项目工作：\n设计对话路由与凭证分类 Agent 工作流，将科目查询、证据读取、历史案例检索封装为受控只读工具，引导 LLM 基于企\n业上下文生成结构化借贷分录，避免模型直接访问或修改业务数据。\n基于 PostgreSQL/pgvector 存储并召回同企业已审核历史案例，并在检索前后校验租户、权限、科目版本、审核状态和有\n效期，降低跨企业数据混用和失效经验误召回风险。\n设计“LLM 草稿—确定性校验—单次修复—人工复核”的受控闭环，校验科目可用性、证据引用、金额精度、分摊规则和借\n贷平衡；对证据不足、模型异常或校验失败的任务安全降级为人工复核。\n划分 FastAPI Agent 与 Spring Boot 业务系统职责边界：Agent 负责理解、编排和生成可审计草稿，Java 后端负责权\n限、持久化、业务状态及最终凭证创建。\n后端与数据服务：\nJava、Spring Boot、MyBatis-Plus、Redis、PostgreSQL，掌握 RESTful API 设计、 Sa-Token 认证授权\n及基础数据库设计。\nRAG与知识检索：\nPython、FastAPI、pgvector、BM25、Embedding、混合召回、RRF、Query Rewrite。\n工程化能力：\nGit、Maven、Postman、Swagger/OpenAPI、Linux 常用命令。\n语言:\n \n英语 \n(六级)\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg\nd34c9890ce0f3fb41HN92tm0GFJQy4m3U_icWOekn_fYNhRg",
+    "chars": 2028,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 8,
+    "total": 83,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 17,
+      "ownership": 0,
+      "reliability": 1,
+      "api_design": 6
+    },
+    "agent": {
+      "agent_core": 7,
+      "rag": 14,
+      "llm_eng": 2
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "吴培俊",
+    "file": "【Agent 实习生_深圳 400-600元_天】吴培俊 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】吴培俊 28年应届生.pdf",
+    "text": "吴培俊\n19859022015@163.com 19859022015\nEducation\n香港中文大学 硕士\n计算机科学与技术(信息工程) 2026.9- 2027 .11\n东南大学 本科\n计算机科学与技术 2022.9- 2026.6\nGPA:3.2/4.0\n核心课程:程序设计基础及语言、数据结构、计算机组成原理、编译原理、计算机网络、操作系统\nProjects\nRethinking  LLM  Ensembling  from  the  Perspective  of  Mixture  Models 第二作者\nICML2026  Spotlight\n•设计并实现一种高效  LLM  集成方法，将传统需要多模型同时推理的  ensemble  优化为单模型逐步调用机制，显著降低推理计算\n开销并大幅提升推理效率\n•设计并实现  KV  Cache  同步机制（Lazy  KV  Cache），通过按需补齐历史上下文，有效解决多模型切换带来的缓存不一致与重\n复计算问题\n•在多个数据集上开展系统实验，验证方法在不同场景下的稳定性与泛化能力，推理速度提升  1.8×– 2.6×，性能基本保持一致\n•支持异构模型集成（不同结构与词表），兼容多种主流  LLM  架构，提升方法在实际推理部署与多模型协同场景中的适用性\n智能AI  Agent系统\n基于Spring  AI框架构建的智能AI  Agent系统  实现了自主决策、工具调用和知识库检索功能  \n系统采用Think-Execute循环机制，支持多模型切换、RAG检索、能够完成复杂的多步骤任务\n技术栈：Spring  AI，PostgreSQL，React，SSE\n项目成果：\n•实现了完整的AI  Agent系统，实现工具调用系统，支持固定工具和可选工具的灵活配置\n•设计多模型支持机构，实现多种大语言模型接入\n•基于RAG技术实现知识库检索功能，使用pgvector进行向量相似度搜索\n分布式RPC通信框架\n基于  Java、Netty、Zookeeper  实现的  RPC  框架，支持服务注册与发现、动态代理调用、自定义通信协议、多种序列化方式、\n负载均衡、失败重试、限流、熔断、心跳检测。\n技术栈：Java、Netty、Zookeeper\n主要工作：\n•基于  Netty  实现客户端与服务端通信，设计自定义编解码器，完成消息类型、序列化方式、消息长度和消息体的协议封装\n•基于  Zookeeper  和  Curator  实现服务注册与发现；在客户端建立缓存，避免频繁访问注册中心\n•为客户端提供多种负载均衡策略选择并实现熔断器机制，监测服务调用情况进行3种状态的切换，从而实现熔断保护\n•基于  Guava  Retry  实现对白名单上幂等性服务进行超时重试机制，指定重试策略\nSkills\n编程语言：C++ ,  Python,  Java\n语言能力：英语  CET 4,CET6,IEL TS(6.5)\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg\nc30d15270a621e791HN92tm6FlpQxoi9V_maWOekn_fYNhRg",
+    "chars": 1644,
+    "eng_score": 36,
+    "agent_score": 35,
+    "depth_score": 10,
+    "total": 81,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 6,
+      "ownership": 0,
+      "reliability": 4,
+      "api_design": 1
+    },
+    "agent": {
+      "agent_core": 4,
+      "rag": 8,
+      "llm_eng": 1
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "汤荣清",
+    "file": "【Agent 实习生_深圳 400-600元_天】汤荣清 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】汤荣清 27年应届生.pdf",
+    "text": "ณ಴ౢ\n13597030434 | 3149681491@qq.com\n求职意向：Agent 应用开发工程师\nࣟ\nն࿐ 计算机科学与技术·硕士 2024.09—2027.06\nն࿐ 计算机科学与技术·学士 2020.09—2024.06\n৥\nAiPower 深圳市特拉图智能科技有限公司·后端开发（大模型应用方向） 2026.03—2026.07\n项目描述: 面向 PPT 内容生成、文档解析、智能问答与 Agent 开放调用场景，参与 AI 应用平台后端开发，覆盖知识库\n接入、开放接口与工程化适配等核心链路。\n• 知识库问答能力: 设计并实现 PPT 问答链路，为问答会话新增知识文件关联能力，支持会话级知识文件选择与 VLM\n解析文本按需注入 LLM 上下文。经两轮数据模型迭代将知识引用演进为独立字段，重生成接口自动挂载已选文件保\n证回答引用一致，提升知识引用的可控性与问答结果稳定性。\n• 文档智能解析: 设计并实现上传侧多模态文档预处理流程， 支持PDF、Word、PPT 等资料的文本抽取与 Qwen-VL 逐\n页识别。 以Markdown 约定格式替代 JSON 提升 VLM 输出稳定性， 后端通过正则做容错处理， 同时输出Markdown\n和 JSON 供下游消费，增强复杂资料场景下的可用性。\n• 开放平台接口建设: 设计 Agent 列表查询、创建、更新、删除、调用与任务状态查询等开放 API，支撑外部应用通过\n统一接口接入平台能力。 通过App-Agent 授权绑定实现应用级资源隔离， 引入Redis 任务别名映射支持客户端自定义\n任务 ID 与平台内部 ID 双向查询。\n• 权限控制: 设计并实现用户 Token 与应用 Token 的双层鉴权机制，在 JWT 用户鉴权之上叠加 App Token 应用级鉴\n权，签名密钥从数据库实时读取支持不停服在线轮换，结合 Agent 调用链路按创建者标识实现多租户数据隔离，提升\n开放平台场景下的访问安全性与调用可控性。\n৥\nAgent Loop֥׮AIა PPT ളӮ༢๤ 2026.04—2026.07\n项目描述: 面向「主题调研 → 报告生成 → 智能问答 → PPT 导出」场景，开发一套 AI 内容生产系统，打通搜索增强、\n文档解析、多轮推理、流式问答与异步导出全链路。\n• 统一执行引擎: 设计并实现 Agent Loop 执行框架，支持 LLM 基于 Function Calling 自主选择搜索、文件读取、报告\n生成、报告修改和 PPT 生成等工具，形成多轮推理闭环。\n• 工具与上下文管理: 抽象 ToolRegistry 和 ContextManager， 实现工具分组、 并发控制、 独立超时、 失败重试、 滑动窗\n口和上下文压缩，提升长链路推理过程中的稳定性与可维护性。\n• 报告生成链路: 接入 Tavily 搜索增强与 Prompt 约束机制，要求模型忠于检索内容，仅在有数据时生成表格，并通过\n结构化参考来源提取减少伪造链接和内容幻觉问题。\n• 文档解析与报告修改: 集成 RapidOCR 与 PP-OCRv6，支持 PDF、Word、图片等资料解析，并支持基于已有报告的\n自然语言增量修改，满足先生成再迭代优化的使用场景。\n• 智能问答能力: 基于 Agent Loop 实现报告问答主链路， 将报告内容与最近6 轮对话历史共同注入 LLM 上下文，LLM\n可在回答过程中按需调用搜索工具补充信息。前端通过 SSE 实时接收思考流、工具调用和完成事件。\n• PPT 异步生成: 实现从报告内容到 PPTX 的 7 步生成流水线，覆盖叙事文档生成、页面规范派生、质量检查与文件\n导出。后端基于 BackgroundTasks 异步执行，前端轮询获取任务状态与下载链接。\nཛა॓࿹\n• 荣誉奖项：学业一等奖学金（×2） ，五好硕士研究生\n• 科研成果：两篇 SCI 论文，一篇国际会议论文\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg\n903600bb112dfe8f1HN92tm1E1pXxom8U_uZWOekn_fYNhRg",
+    "chars": 2040,
+    "eng_score": 34,
+    "agent_score": 35,
+    "depth_score": 10,
+    "total": 79,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 2,
+      "ownership": 0,
+      "reliability": 3,
+      "api_design": 8
+    },
+    "agent": {
+      "agent_core": 9,
+      "rag": 3,
+      "llm_eng": 6
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "陈辉",
+    "file": "【Agent 实习生_深圳 400-600元_天】陈辉 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】陈辉 28年应届生.pdf",
+    "text": "陈辉\nAI应⽤开发实习⽣\n20岁 | 男\n13925956387 | 838638667@qq.com\n教育背景\n2024-06 ~ 2028-06 ⼴州⼤学 ⼈⼯智能（本科）\n专业成绩：GPA 3.91/4（专业前5%）\n主修课程：C++程序设计、Python语⾔程序设计、机器学习、深度学习、数据结构、数据库原理\n项⽬经验\n2026-04 ~ 2026-07 技术⽂档智能检索与问答系统\nhttps://github.com/C-chen1/rag-from-scratch\n核⼼技术： Python、FastAPI、Chroma、Qwen text-embedding-v4、BM25、RRF、bge-reranker-v2-m3、\nDeepSeek\n项⽬介绍： ⾯向中⽂技术⽂档的检索增强问答系统。⽤⼾可通过⾃然语⾔提问，系统结合语义检索与关键词检索召回相\n关⽂档⽚段，经融合和重排序后作为上下⽂，由⼤语⾔模型⽣成回答并返回对应来源。\n独⽴实现完整 RAG Pipeline，基于 Python 完成 Markdown ⽂档加载、Chunk 切分、Embedding、Chroma 向量检\n索、Reranker 重排序和 DeepSeek 答案⽣成，并使⽤ FastAPI 提供问答接⼝。\n设计 Dense + BM25 混合检索流程，两路分别召回 Top-10，通过 RRF 融合候选结果，再使⽤ bge-reranker-v2-m3 \n进⾏⼆阶段精排，选取 Top-3 上下⽂⽣成答案并返回来源。\n构建 30 条 Query 的⼈⼯标注测试集，实现 Recall@3/5/10 离线评测并对⽐ 4 种检索策略；当前测试集上 Dense \nRecall@10 达 0.867，通过实验分析 BM25 较弱时等权 RRF 的排序影响，以及 Recall 对 Reranker 排序效果评估的局\n限。\n技能特⻓\nPython： 熟悉 Python 基础语法及常⽤开发⽅式，能够使⽤ Python 完成模块化开发、⽂件处理、第三⽅库调⽤及\n异步编程基础。\nLLM 应⽤： 了解⼤语⾔模型 API 调⽤流程，具备 Prompt 设计和上下⽂组装经验，能够结合 DeepSeek 等模型完成\n基础的 AI 问答应⽤开发。\nRAG： 掌握 RAG 基本架构及核⼼流程，理解⽂档加载、Chunk 切分、Embedding、向量检索、BM25、混合检索、\nRRF 融合和 Reranker 精排；具备 Recall@K 离线评测实践经验。\nAI 应⽤后端： 熟悉 FastAPI 基础开发，能够完成 RESTful API 设计、请求响应处理及应⽤⽣命周期资源初始化；了解\n异步 Web 开发的基本流程。\n数据库与检索： 掌握 MySQL 基础及 SQL 常⽤操作，具备 Chroma 向量数据库使⽤经验，理解向量索引与相似度检\n索的基本原理。\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg\n92ed9fb0b2058da61HN92tm7FlJQw4-_WfmdWOekn_fYNhRg",
+    "chars": 1611,
+    "eng_score": 25,
+    "agent_score": 35,
+    "depth_score": 17,
+    "total": 77,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 5,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 5
+    },
+    "agent": {
+      "agent_core": 0,
+      "rag": 27,
+      "llm_eng": 3
+    },
+    "metrics": 3
+  },
+  {
+    "batch": "Agent2",
+    "name": "吴晓铭",
+    "file": "【Agent 实习生_深圳 400-600元_天】吴晓铭 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】吴晓铭 27年应届生.pdf",
+    "text": "໱ཫ૿\nЛ (+86) 13682648893\nć 1592415656@qq.com\nƺ ଳ ¦ wxid_j3f293eb540722\n৥\nᇆି࿐ჽ 2023.09 – 2027.07\nඌ\nܒࢲ\nି\n• Agentିğඃ༑ LangChainđReAct थҦੀđMemoryđ\ntoolᇉਈ promptࢳLangGraphࡏ\n•RAGğඃ༑ RAGĠ\nσ\n•Ԥğa\nمٚ࠹\n•१ҩ൫ğ१ҩ൫ (PostmanaJMeteraFiddler)Ġඃ༑ Python + Pytest + Requests߄׮\nщཿ\n• linuxି৯ğඃ༑ӈႨ linux໊໙ีđҰुհ༂ರᆽđሧჷ\n֩࣢ߌ\n•թğඃ༑ MySQLࢳRedisթ\nҦ੻\n•؊ުpythonԤğඃ༑ pythonԤ, FastApi , SQLAlchemyರᆽஆ\nҰ໙ีđඃ਀൐Ⴈ Gitؿ\n•AI ି৯ğིᄎႨ TraeđChatgpt, claude֩AI൫đᄝ\nིੱ\n৥\nႿ RAG౰ᆯᇹ൭ Agent\n2026.04 – 2026.06\n• ཛଢଢѓğѩൌ\nႿ RAG֥AI ᅱௗ Agentྏ\nିb\n•ᄳଽಸğᄳ Agentđປ೿ promptࡹܒRAG໊ཟਈ\nႿLangchain࠹ReAct थҦੀ,৥ൎTool Resultࡥ࠹\n৥c໱ཫ૿c1/2\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n\nᇆି௄஥b\n•ඌႋႨğ FastAPI đPython đMySQL đSQLAlchemy đDeepSeek նଆ྘ Function Calling ,\nLangchainb\n•ğࡹܒRAG֥Vector + BM25෬ RRF + rerankࡼ\n࣍൅࠹”࣍4߅ؓ+ ၫ +ၫ”ࠩMemoryđႵི\n֮ࢆTokenѩЌӻഈ༯໓၂ᇁྟb\nAI৘௜෻ (࡫)\n2025.10 – 2025.12\n• ཛଢଢѓğ֥AIb\naAIЌᅰ೐ຩॖႨྟb\n•ᄳଽಸğ࠹80+੣aAIႿ Pytest\n+ Requestsҩ൫đ൐Ⴈ JMeter༅ TPSa\nհ༂ੱđ൐Ⴈ Fiddlerྟ\n•ඌႋႨğ FastAPI + Python 3.9 đReact + TypeScript + Vite đPostgreSQL 16 + SQLAlchemy\n2.0Їնଆ྘đJWT ಪᆣđIndexedDBթ\n•ğگ10+ࠣAI໙ีđປӮ\n၇ऌ\nᆣ඀\nčCET-4ݖ\nčCET-6ݖ\nࢲ\n•ࠣAIؓAgentaRAG֩LLM ႋႨ\nି৯b\n•಩ༀο\n௹ປӮb\n•b\n•॓࿹ሧਘb\n•ིᄎႨ Trae aChatGPT֩AIᄖཛଢᇏཁᇷ\nིੱb\n৥c໱ཫ૿c2/2\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg\n9cc55c264011cdad1HN92tm1GFtZy4u4VfKdWOekn_fYNhRg",
+    "chars": 1829,
+    "eng_score": 27,
+    "agent_score": 35,
+    "depth_score": 10,
+    "total": 72,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 7,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 3
+    },
+    "agent": {
+      "agent_core": 13,
+      "rag": 8,
+      "llm_eng": 2
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "莫文豪",
+    "file": "【Agent 实习生_深圳 400-600元_天】莫文豪 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】莫文豪 28年应届生.pdf",
+    "text": "开发实习简历\n (+86) 13686544343 |  mowenhao21@outlook.com |  Mowenhao13\n教育经历\n中山大学 广州\n计算机科学与技术 2024/09 - 2028/07\n论文 & 获奖经历\n《基于 FLUTE 协议的可靠单向文件传输系统设计与实现》（二作在投）\n中山大学人工智能挑战赛（团队）本科组三等奖\n项目经历\n长程项目记忆系统 2026/04 - Present\nhttps://github.com/Mowenhao13/Feishu-LongTerm-Mem\n集成飞书的 Agent 长程项目记忆管理插件\n超图架构组织记忆：将记忆文件分成三种节点与四类边，让信息变成语义拓扑图，支持复杂的信息检索\n实时感知，解决决策遗忘：通过飞书  WebSocket/Poll 实时监听群聊消息流，启发式评分流水线自动识别\n决策信号，无需人工标记。 Qwen3-Embedding 模型  + Reranker 精排的双阶段语义检索，精准召回历史决\n策，成员无需反复讨论已定事项。\nAgent 主动推送，解决决策冲突：检测到新决策、冲突或状态变更时，自动向群聊推送飞书交互式决策\n卡片，支持一键确认 / 驳回 / 解决冲突。\nGit 式生命周期，便于追溯决策生命周期：采用  Branch-per-Record 策略，每条决策独立分支管理，变更\n即  Git 提交，每次改动完整可追溯，支持回滚到任意历史版本。同时支持父子决策关系建模（如微服务\n→gRPC→Kong 限流策略），树状查询。\nFluteGo| 独立开发 2025/09-2025/12\nhttps://github.com/Mowenhao13/FluteGo\n基于  RFC6726 协议  采用 Golang 实现的单向无反馈信道传输系统，确保关键数据传输安全（已在校内保密管\n理部门小范围试用）\n基于  RaptorQ 前向纠错码算法，使用符号级交叉发送减少无反馈传输信道传输丢包风险\n系统原生套接字代替  Golang 标准库， win 端采用 iocp 减少数据拷贝与系统调用开销\n保持多端支持：同时支持 mac 与 win 之间互传\n支持多播和单播  减少 arp 配置流程\nArgusbot Agent 科研插件  | Co-contributor 2026/03 - 2026/04\nhttps://github.com/waltstephen/ArgusBot\n支持  Claude Code / Codex / Copilot\nSubagent + Main_Agent 多  Agent 协作\n接入飞书  Channel ，支持远程对话调用\nOmniSafeBench-MM | 项目复现 2026/03 - 2026/04\nhttps://github.com/Mowenhao13/OmniSafeBench-MM\n多模态大模型安全测评工具箱复现\n复现多模态模型安全工具箱\n使用  13 种攻击方式和  15 种防御方式进行攻防测试\n支持多种模型（远端  API 调用  / 本地模型）\n采用 vllm 引擎加速推理\n技能\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n\n熟练掌握多种编程语言（ Golang, Python ），对  Golang 底层有一定的理解\n熟悉  Git 项目管理，有团队协作经验\n熟练使用  ClaudeCode, Codex, Trae solo 等  AI 工具编程\n校园经历：在学校网络中心兼职开发助理\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg\n41f8c76b223e65111HN92ti8F1NTxI-3V_ydWOekn_fYNhRg",
+    "chars": 2196,
+    "eng_score": 33,
+    "agent_score": 35,
+    "depth_score": 4,
+    "total": 72,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 8,
+      "ownership": 1,
+      "reliability": 0,
+      "api_design": 2
+    },
+    "agent": {
+      "agent_core": 6,
+      "rag": 4,
+      "llm_eng": 0
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "杨咏成",
+    "file": "【Agent 实习生_深圳 400-600元_天】杨咏成 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】杨咏成 27年应届生.pdf",
+    "text": "杨咏成\n性 别：男 邮 箱：895105859@qq.com\n年 龄：21 岁 电 话：18020803089\n2023.09 - 2027.09 厦门大学 计算机科学与技术(本科)\n 主修课程：数据结构、算法分析与设计、计算机组成原理、操作系统、计算机网络等。\nAskFlow AI Agent 应用开发\n 项目简介：一款基于多 Agent 架构的企业智能问答系统，通过三路融合意图识别、RAG 检索增强与多 Agent\n编排协作处理客户咨询，内置 LLM-as-Judge 自动化评测体系，解决单一大模型直连问答存在的意图误判、检\n索幻觉、复合问题无法处理与质量不可量化四大痛点。\n 技术栈：Python、LLM API、Embedding、ChromaDB、RAG、Multi-Agent、Prompt Engineering、LLM-as-\n Judge、Dynamic Skills、Conversation Memory\n技术亮点：\n 意图融合：搭建端到端意图识别模块，融合大模型少样本判别、向量相似度匹配、关键词规则三种识别方式，\n依托动态权重分配与低置信度兜底降级策略，有效削减识别误判情况，提升整体意图判定的稳定性与精准度。\n 检索增效：重构 RAG 检索全链路，借助大模型拆解原生问题生成多角度子检索语句，并行调取 ChromaDB\n知识库资源，后续执行结果去重筛选与大模型二次重排序，优化召回内容相关性，改善问答素材匹配质量。\n 智能编排：搭建多智能体调度体系，依照用户意图分发任务至答疑、解析等专属 Agent，并行处置复合型咨询；\n配套动态技能注入机制约束各 Agent 业务边界，辅以 LLM 自动评测体系校验整体效果。\nFaultsFind\n 项目简介：一款基于 RAG 架构的企业内部知识库问答系统，支持多格式业务文档的解析与知识入库，通过大\n模型结合私有数据解决内部信息孤岛问题， 提供准确的业务咨询服务。\n 技术栈：Python、LangChain、FastAPI、Milvus、Qwen 大模型、Redis\n技术亮点：\n 混合检索：融合 BM25 关键词检索与 Milvus 向量检索，依托 RRF 算法加权融合两路召回数据，针对性优化\n专业冷门术语检索效果，最终把长尾专有名词召回准确率整体提升 20%，知识库匹配精准度显著改善。\n 父子检索：采用父子文档检索方案解决长文本拆分上下文断裂问题，向量库检索细碎子文本，推理阶段挂载完\n整父级段落送入大模型，补齐上下文信息，从源头减少模型编造信息的幻觉问题。\n 异步调优：基于 FastAPI 搭建异步服务接口，搭配 SSE 协议实现大模型推理流式推送，优化接口调度逻辑，\n将用户首字符响应耗时控制在 1 秒之内，大幅优化前端实时对话的使用流畅度。\n 编程基底：熟练运用 Python 开展开发工作，夯实面向对象编程功底，熟知主流数据结构与基础算法知识，理\n解 Transformer 整体架构与 Attention 注意力机制底层逻辑，能够依托编程基础承接大模型相关工程侧基础开\n发调试工作。\n 提示优化：精通提示词工程实操方法，熟练运用思维链、少样本提示等经典策略，可针对性打磨优化 Prompt\n指令，规范约束大模型输出逻辑，有效提升生成内容的精准度、逻辑性与实用性，适配各类场景下 AI 落地调\n优需求。\n 检索落地：吃透 RAG 全流程业务链路，掌握 LangChain 基础开发用法，熟练选用合理文本分块方案，可独立\n操作 Milvus、Chroma 等向量数据库完成向量入库与检索调用，搭配踏实高效的执行力快速落地简单智能问答\n搭建工作。\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg\n0e4d34c95d8689191HN92ti8F1BZwIy4VP2dWOekn_fYNhRg",
+    "chars": 1926,
+    "eng_score": 28,
+    "agent_score": 35,
+    "depth_score": 8,
+    "total": 71,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 4,
+      "ownership": 0,
+      "reliability": 1,
+      "api_design": 6
+    },
+    "agent": {
+      "agent_core": 10,
+      "rag": 30,
+      "llm_eng": 6
+    },
+    "metrics": 2
+  },
+  {
+    "batch": "Agent2",
+    "name": "陈旻炜",
+    "file": "【Agent 实习生_深圳 400-600元_天】陈旻炜 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】陈旻炜 27年应届生.pdf",
+    "text": "陈旻炜\n男 | 2002.09 | 福建三明 | 18020817339 | 18020817339@163.com\n教育背景\n香港浸会大学 | 硕士 | 数据分析与人工智能 2026/9-2027/6\n河北工业大学 | 本科 | 人工智能 2020/9-2024/6\n专业技能\nAgent 技术栈：LangGraph、LangChain、Function Calling、ReAct、Multi-Agent 协作\n大模型与 RAG：Ollama、EvalScope、DeepEval、LLM-as-Judge、RAG、Prompt Engineering\n编程与工具：Python、PyTorch、TensorFlow、C/C++、Linux、Git、Docker\n项目简述\n基于 LangGraph 的工具调用多智能体协作系统\n• 搭建 LangGraph+OmniRoute 模型路由架构，涵盖主流大模型并按能力划分为弱/中/强，解耦业务与模型资源\n• 集成 SerpAPI 搜索、Python REPL、本地知识库检索等工具，实现 ReAct 推理-行动循环，Agent 自主决策路\n由和工具选择与调用顺序\n• 实现任务智能分流机制，基于轻量模型自动识别三类任务场景，简单问答直接由弱模型闭环，降低推理成本\n• 设计多步任务全自动化链路：强模型做全局拆解规划和结果整合校验，中档模型执行原子子任务，提升复杂\n任务完成率\n智能文档生成系统\n• RAG 混合检索+Qwen3.6:35B 本地模型的文档自动生成系统，支持模板解析与多格式输出、流式生成\n• 引入 LangGraph 工作流编排模板解析→内容生成→格式校验自动化链路，前端 SSE 实时推送生成进度\n基于 Ollama 的本地大模型综合维度评测\n• 基于 EvalScope + DeepEval 构建 LLM 评估系统，支持摘要质量、安全性等多维度评估，为选型提供依据\n• 集成 Ollama 本地推理实现 LLM-as-Judge，支持自定义数据集评测，输出模型能力雷达图与对比报告\n工作实习\n星网锐捷 | AI Agent 实习生 2026.04 - 2026.08\n• 搭建基于 EvalScope + DeepEval 的 LLM 评估流水线，覆盖多维度，完成 Qwen 系列小参数模型系统性评测，\n集成 Ollama 本地推理实现 LLM-as-Judge，输出模型能力雷达图与对比报告，为银行场景本地 LLM 驱动\nAgent 选型提供决策支撑\n• 设计基于混合 RAG+本地 LLM 的标准化文档生成系统，引入 Agent 工作流实现解析-生成-校验自动化链路\n宁德时代 | 助理工程师 2024.08 - 2025.06\n• 完成洛阳基地预测性维护系统部署，负责传感数据采集与异常检测算法验证，优化信号检测与数据有效性\n自我评价\n• 对 LLM Agent 技术栈有系统理解，熟悉 ReAct、Tool Use、多智能体协作等核心范式，具备从模型选型到\nAgentFlow 设计的全链路实践经验\n• 有端侧大模型部署经验，关注 Agent 在边缘场景的落地可行性；抗压能力强，具备跨部门项目协作经验\n4229a5a9837b21911HN92tm6F1pSxYW4V_uZWOekn_fYNhRg\n4229a5a9837b21911HN92tm6F1pSxYW4V_uZWOekn_fYNhRg\n4229a5a9837b21911HN92tm6F1pSxYW4V_uZWOekn_fYNhRg\n4229a5a9837b21911HN92tm6F1pSxYW4V_uZWOekn_fYNhRg\n4229a5a9837b21911HN92tm6F1pSxYW4V_uZWOekn_fYNhRg\n4229a5a9837b21911HN92tm6F1pSxYW4V_uZWOekn_fYNhRg\n4229a5a9837b21911HN92tm6F1pSxYW4V_uZWOekn_fYNhRg",
+    "chars": 1685,
+    "eng_score": 14,
+    "agent_score": 35,
+    "depth_score": 10,
+    "total": 59,
+    "tier": "可面试",
+    "reason": "工程+Agent，深挖待面验",
+    "flags": [],
+    "eng": {
+      "backend_stack": 4,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 1
+    },
+    "agent": {
+      "agent_core": 21,
+      "rag": 7,
+      "llm_eng": 10
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "陶昱遐",
+    "file": "【Agent 实习生_深圳 400-600元_天】陶昱遐 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】陶昱遐 27年应届生.pdf",
+    "text": "AI 应用工程师 / 后端开发 | AI Application Engineer / Backend Developer\n陶昱遐\n× 17819776387 | ć 2767133571@qq.com | a github.com/TU‑U\n求职方向： Agent 开发/应用工程师 | 所在城市：深圳\n具备 Python / TypeScript 服务端开发与 AI 应用工程实践经验， 参与短期/长期记忆协同、 多 Agent 并发编排与状态结算； 具备 Prompt/Workflow\n迭代、大模型 API 集成、RAG 检索、任务并发、结果校验和链路观测经验。\nŵ 教育背景\n深圳技术大学 ，本科，专业：计算机科学与技术 2023 年 9 月–2027 年 6 月（预计）\n核心课程 ：数据结构、算法设计与分析、操作系统、计算机网络、计算机组成原理、数据库系统、机器学习。\nϻ 实习经历\nProject Resonance 共鸣计划｜ AI 驱动角色扮演、互动叙事游戏 实习\n深圳市灵榫文化科技有限公司 | AI 游戏 Agent 开发 深圳 2026.02–2026.08\n‧ 背景与成果 ：面向角色设定、 剧情演进与内容生成， 将大模型能力落为可迭代的 AI 应用功能； 团队项目参展\n2026 ChinaJoy，获现场玩家喜爱度投票第三名并获财新网报道。\n‧ 我的职责 ：\n– Context Engineering 与记忆架构 ： 参与角色短期/长期记忆协同机制 ， 按任务组装角色人设、 剧情与检索\n记忆；以 检索和记忆压缩替代全量历史注入 ，cache 命中率由 30% 提升至 80% ，支撑长程角色扮演的上\n下文连续性。\n– 多 Agent 并发编排与状态结算 ：参与动态剧情、角色扮演与自主决策场景的 多 Agent 职责拆分与并发逻\n辑设计 ， 将角色扮演、 剧情推进与规则结算等链路协同编排； 设计并发执行、 结果汇聚与规则结算 流程， 基\n于玩家选择触发剧情分支与数值状态变更，并将结算结果回写为后续剧情推进条件。\n– LLM 工作流平台迁移与治理 ：推动差异化模型 API 与 Prompt 迁移至可视化节点工作台 ，使用 Codex 协\n同梳理 Prompt 上下游、启用状态、需求和开发文档，并参与评审与迁移测试；针对变量膨胀、节点/变量\n引用不存在、复杂流程耦合及约束丢失等问题细化需求，完成 项目内工作流拆分与正式接入 ，支持非技术\n人员维护 Prompt。\n– 模型调用交付与资源管理 ：协助开发 多平台 API 统一管理平台 ，封装差异化 API，支持 多路任务并行 、状\n态展示与资源查看； 针对 OOC、 重复/不当内容及 JSON/格式异常， 参与检测记录、 上下文约束、 格式修复、\n重试和后端校验，并 持久化事件交互记录 ，支持问题定位与回归验证；动态视频生成在并发资源下生成时\n间缩短约 60%。\nϻ 项目经历\n艺术展览人形机器人导览智能体 项目\n4 人合作 | 核心开发 2025.10–2026.01\n项目链接 ：github.com/Camelliaaa‑11/vl‑rag‑system\n‧ 背景与目标 ：校内具身智能实验室项目，面向线下艺术展览构建可实时交互的导览智能体。\n‧ 我的职责 ： 作为 4 人团队核心开发， 参与 Agent 架构、 语音/视觉交互、 RAG 检索和链路观测模块的设计与集\n成。\n– 交互与服务编排 ： 面向艺术展览导览场景， 参与Agent 架构、 语音/视觉交互模块及跨模块集成 ， 将现场交\n互需求落为可持续响应的应用能力，端到端响应延迟控制在 2–5 秒。\n– 检索与记忆 ：构建含 82 个展品结构化元数据 的 RAG 检索能力，结合 向量语义与关键词混合召回、候选重\n排序；会话结束后存储用户偏好与近期互动，减少重复回答和上下文断裂。\n– 可观测性与容错 ： 搭建Agent 监控工作台 ， 记录语音识别、 模型推理、 工具调用等链路耗时与运行状态； 针\n对模型超时、语音重复/回声输入及并发交互设计 回退和拦截机制 。\nè 技能/其他\n‧ 编程与工具 ：Python | TypeScript | Nodejs\n‧ AI 工具/模型 ：Codex | Claude Code | Coze | 即梦 | Lovart | RAGFlow | Vidu | Seedance | Qwen 等\n‧ 框架/其他 ：FastAPI | React | Next.js | LangChain | ReAct | Pi Agent | Harness | Context Engineering\n‧ 语言：英语 CET‑6，普通话标准； 爱好：画画、游戏、旅游、AI。\n2767133571@qq.com | 17819776387 | github.com/TU‑U\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg\n1683cb630527ed711HN92tm0E1ZUy428V_2cWOekn_fYNhRg",
+    "chars": 2428,
+    "eng_score": 40,
+    "agent_score": 35,
+    "depth_score": 17,
+    "total": 82,
+    "tier": "淘汰",
+    "reason": "keyword_stuff",
+    "flags": [
+      "keyword_stuff"
+    ],
+    "eng": {
+      "backend_stack": 11,
+      "ownership": 0,
+      "reliability": 5,
+      "api_design": 5
+    },
+    "agent": {
+      "agent_core": 19,
+      "rag": 12,
+      "llm_eng": 8
+    },
+    "metrics": 4
+  },
+  {
+    "batch": "Agent2",
+    "name": "阳卓越",
+    "file": "【Agent 实习生_深圳 400-600元_天】阳卓越 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】阳卓越 28年应届生.pdf",
+    "text": "个人信息  \n姓名：阳卓越\n意向岗位： AI 应用开发\n邮箱： 1990780445@qq.com\n电话： 19330212832\n教育背景  \n华南理工大学                                          计算机科学与技术（硕士）                                           2025.09 —— 2028.06\n湖南科技大学                                          信息与计算科学（本科）                                               2021.09 —— 2025.06\n项目经历  \nDeepResearch Agent ：面向复杂深度研究任务的多智能体协作系统                                     2026.03 —— 2026.05\n项目简介：本项目从零构建了一套面向深度研究任务的 Agent 系统，覆盖规划，执行，记忆，对抗，评测全链路。\n自研多智能体编排引擎 :  基于asyncio+ Semaphore实现  DAG 拓扑并发执行，设计9 状态状态机管理任务生命\n周期，支持动态 replan 和三级降级策略( 单任务超时 —> 批量失败重规划 —> 全局超时强制合成 ) 。\nRed-Blue 对抗降噪机制 :  Red Agent 从事实性 / 逻辑一致性 / 引用质量多维度攻击报告， Blue Agent 执行\nADD/DELETE/MODIFY/VERIFY修复 ; 内置评分收敛与震荡检测，三层 JSON 解析 fallback 将成功率从 85% 提升到\n95% 。\n上下文压缩与共享记忆 :  L1 Embedding 粗过滤， L2 TextRank 细筛选  ， L3 原文摘要三级语义压缩，显著降低\n长链路任务的信息损失 ; 构建跨 Agent 共享记忆存储 (SQLite+numpy 向量索引) ，写前自动去重 +矛盾检测( 启发\n式反义词 + 语义对立 ) 与多策略消解。\n完整评测体系 :  自建  ResearchBench(11 领域 /35 题 )+HotpotQA 深度研究变体 ; 规则指标 ( 事实准确率 / 幻觉率 / 引\n用覆盖率 )+LLM-as-Judge 5 维度评分 + Bootstrap 95% CI+Cohen'sd三层评测流水线 ; 支持 4 类 LLM 后端\n(DeepSeek/MiMo/vLLM/OpenAI) 热切换与 6 项一键实验脚本。\nRAG 智能知识检索系统                                                                                                                    2025.09——2025.10\n项目简介：面向个人知识管理场景的 RAG 问答系统，支持 pdf ， word ， excel 等常见知识源，围绕离线索引阶段，在线\n检索阶段，效果测评与缓存加速完成全链路工程优化，提升个人知识场景下的问答准确率。\nRAG 检索增强生成系统：基于  LangGraph 状态机编排实现多阶段决策流 —— 首次检索后通过  Grader LLM 做\n文档相关性二分类，不通过时路由器自动选择  Step-Back/HyDE/Complex 策略重写查询并二次检索，形成检\n索 → 评估 → 重写 → 再检索的闭环。\nHybrid Search + Auto-Merge 混合检索架构： Dense 向量（ BGE-M3 ）与  Sparse 向量（ BM25 ）经  RRF\n（ k=60 ）融合，配合 Rerank 精排；创建三级滑动窗口分块（ L1/L2/L3 ），检索时命中  L3 叶子层后按父子分\n组阈值触发两跳自动合并，逐级还原更大粒度的上下文块给  LLM ，提升召回率 15% 。\n跨线程流式输出方案： LangChain Agent 同步工具在子线程执行，通过  call_soon_threadsafe 将检索步骤事件\n桥接到主事件循环，实现  RAG 检索进度与  LLM Token 生成在  SSE 通道上的统一实时流式推送。\n评测体系：基于 Ragas 建立三维打分机制（ Faithfulness / Answer Relevancy / Context Recall ），设计 30+ 条\nGolden Test Set 对每轮优化进行测试，确保优化可行性。\n专业技能  \n熟悉RAG 全链路设计与优化，能够结合业务场景对召回效果，响应质量与系统性能进行针对性优化\n熟悉Agent Harness工程基本原理，了解任务规划，工具调用，流程编排，记忆系统的基础设计思路\n熟悉Claude code ， Codex等 Agent 的使用流程与常见操作方式，能够利用其完成代码任务\n熟悉深度学习框架 pytorch，在校具有 VLA 模型的模型训练，模块优化，微调经验\n获全国大学生数学竞赛数学类二等奖，英语 CET-4\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg\n390d086ff542690d1HN92ti9FlRRy4W7VvyWWOekn_fYNhRg",
+    "chars": 2575,
+    "eng_score": 28,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 78,
+    "tier": "淘汰",
+    "reason": "keyword_stuff",
+    "flags": [
+      "keyword_stuff"
+    ],
+    "eng": {
+      "backend_stack": 2,
+      "ownership": 2,
+      "reliability": 3,
+      "api_design": 0
+    },
+    "agent": {
+      "agent_core": 13,
+      "rag": 21,
+      "llm_eng": 8
+    },
+    "metrics": 7
+  },
+  {
+    "batch": "Agent2",
+    "name": "陈仕燊",
+    "file": "【Agent 实习生_深圳 400-600元_天】陈仕燊 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】陈仕燊 28年应届生.pdf",
+    "text": "ྠ଀ğӧൢ燊Ď\nğ18850100463 Ⴏདğ1721298496@qq.com\nࣟ\nඌն࿐č985ӱ - ණൖ 2025.09 – 2028.06\nᇜն࿐č211ӱ - Ч॓ 2020.09 – 2024.06\nି\n•ӱି৯ğඃ༑ PythonaPyTorchႿ veRL࿞਀აAgentဒb\n•࿞਀ğ ඃ༑TransformeraRoPEaMHA࿐༝PPOaGRPOaDPOჰ৘b\n• Agentؿğඃ༑ ReActaPlan-and-Solve֩AgentࢳContext EngineeringaHarness Engi-\nneeringđऎС Agentဒb\n৥\nSpreadsheetZero֥Agent࿐༝࿞਀ 2026.03 – 2026.08\nඌğPython, FastAPI, veRL, vLLM, SQLite\nཛଢ૭ඍݣࡹܒAgent Harness֥࣢ߌ޺ࢌAgentؓQwen3-\n4B-Thinkingྛ GRPO࣮Agent HarnessބGRPO႕ཙb\nྏᆯᄳğ\n– Agent Harness࠹ᆦӻቋӉ 15۱assistant֥ކ߭Agent Harnessט\n࠹12ऎ\nݖCheckpointؓExcelቅ\n໙ีđູ Reward/Recalculateༀႄೆ request_idᇅb\n– ඔऌሙСა Reward࠹ࠢExcelForum training tasks ัԢ 41֤\n5,884ݣ399֥SpreadsheetBench-Verifiedb ҐႨOutcome Reward\n࿊ Workbookᇀၳ҄ RewardࣜWindows Excelթᆴđᄜοճσ\nْ߭ؓ1ْ߭0b\n– GRPO෿ҐဢႿveRLႨ AgentؓQwen3-4B-ThinkingປӮ GRPO\n࿞਀đૄ่ Prompt Ґဢ 8ቆଽ RewardႪ൝ູ 0໙ีđႄೆ DAPO෿\nੲಆ 0/ಆ 1 ቆđ60࿞਀ Step൐Ⴈ 960ྍb\n–ݔഈđAgent ༢๤൐Ⴈ๝၂ଆ྘čgpt-5.6-solĎPass@1 ղ 86.72%ᆦӻ Python\n֥Baseline ิശ 24.06ĠQwen3-4B-ThinkingࣜGRPOđPass@1 Ⴎ 13.03% ิ\nശᇀ 19.55%ղ 23.31%ൔ቎࿖ੱႮ Base֥85.46% ิശᇀ 97.24%љဒᆣਔ\nAgent ༢๤ა GRPOิശb\nLexTraceੰླྀၰബҰ Agent 2026.04 – 2026.07\nඌğPythonaasyncioaPostgreSQLapgvectoraBM25abge-m3\nཛଢ૭ඍࡹܒPlanner → ѩ\nྛ Searcher → Refiner؟Agentb\nྏᆯᄳğ\n–؟Agent щஆ࠹Planner → ѩྛ\nSearcher → Refiner֥DAG щஆ৽ਫ਼ĠPlannerđSearcherݖTool Calling؟5 ੽\n౼ᆣđRefinerંđᄝ ContractNLIো಩ༀഈ Accuracy ղ 81%b\n– ᆣऌෆ෬აሔිğSearcherՍ/໊ѩοླᅚष\nჰ໓đྙӮ”߭→ Ս/໊ → ่ॻჰ໓౼ᆣ”ෆ෬৽ਫ਼đᄝ LegalBenchRAG\nᇏ Span Recall ղ 86.39%ބࢫ\n်઒đЌᆣᆣऌॖሔිb\n–ཚ৫෬ႄĠၛ\nEvidenceStore౼đSearcherഒഈ༯໓\nࡼtoken֮ࢆݻ32%b\n–ࡹܒႿ ContractNLIބLegalBenchRAGۂڭ\nੱđѩႄೆ LLM-as-Judgeᄵᆷ\nđѩᆦӻ OpenAIބAnthropicb\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg\n69b2d655069efbba1HN92tm6F1ZRw4-8UfyfWOekn_fYNhRg",
+    "chars": 1920,
+    "eng_score": 17,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 67,
+    "tier": "淘汰",
+    "reason": "keyword_stuff",
+    "flags": [
+      "keyword_stuff"
+    ],
+    "eng": {
+      "backend_stack": 3,
+      "ownership": 0,
+      "reliability": 1,
+      "api_design": 2
+    },
+    "agent": {
+      "agent_core": 18,
+      "rag": 2,
+      "llm_eng": 2
+    },
+    "metrics": 9
+  },
+  {
+    "batch": "Agent2",
+    "name": "尤曙宏",
+    "file": "【Agent 实习生_深圳 400-600元_天】尤曙宏 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】尤曙宏 27年应届生.pdf",
+    "text": "新 加 坡 南 洋 理工大学 (QS12) 计 算 机科学与技 术 (硕 士) 2025.08 - 2027.06\n核 心 课 程： 自 然 语 言 处 理 、 机 器 视 觉 、 遗 传 算 法与机 器 学 习 、 人工 智 能与数 据 挖 掘 、 视 频 信 号 处 理 、 图 像 分 析 与 模 式 识 别\n北京 师 范 大学 (985) 地理信 息科学 (本科) 2023.09 - 2025.06\n核 心 课 程 ：数 据 结 构 与 编程 (90) 、 GIS 设计 与开发 (95) 、 GIS 软 件 工 程 (90)  荣 誉 : 京 师 一 等 奖 学金 、 校 优 秀 毕 业生  排 名: 3/47(6%)\n北京 林 业大学 (211) 工 商管 理类 — 物业 管 理 (本科) 2019.09 - 2023.06\n数理 基 础 ：高等数学 A (92)   荣 誉 ：全国大学生数学 竞 赛 国家 二 等 奖 、 北京 冬 奥 会 赛 会 志 愿 者 校 级 “ 先 进个人 ” 、 校 优 秀 学生 干 部\n后 端 与工 程 ： 熟 悉  Python 、 FastAPI 、 asyncio ， 了 解  WebSocket / SSE ； 使 用  Git 、 Docker 、 pytest 完 成开发与 测 试\nAgent 工 程 ： 熟 悉  ReAct/Agent Loop 、 工 具 调 用 、 MCP/Skill 、 上下文 / 记 忆 、 权 限 控 制 及 LangChain/LangGraph 多 智 能体 编排\nRAG 与 检 索 ： 熟 悉  Embedding 、 BM25 / 向 量 混 合 检 索 、 RRF 、 Rerank ， 了 解  MRR 、 Hit@K 、 NDCG 等 检 索评 测 指 标\n评 测 与  AI Coding ： 熟 悉  Agent Eval 、 Trace 、 失 败 归 因 ； 使 用  Codex / Claude Code 辅 助 方 案 验 证 与开发\nCodePaceX ｜ 终 端  AI 编程 Agent ｜  个人 项 目  ｜  Shuhong-BNU/CodePaceX-Agent 2026.04 - 2026.08\n面 向 真 实 代码 仓 库 中的 多 轮 代码 理 解 、 修改 与 验 证 ， 以 及 工 具规 模 增 长 、 权 限 安全和 结 果可 评 测 等问题 ， 实现 轻 量 Coding Agent\n1 ） 运 行时与多 模 型 适 配 ： 实现  Agent Loop 与  Provider 适 配 层 ， 统 一  Anthropic / OpenAI / OpenAI-compatible 的 流 式文本与  Tool \nCalling 事件 ， 对上 层暴 露 一 致 事件 模 型 ； 通过  Tool Result 回 写 驱 动 代码读取 、 修改 、 命 令 执 行与 测 试验 证\n2 ）工 具 按 需 加 载 ： 针 对  MCP / Skill 工 具 增 多后 完 整  Schema 挤 占 上下文 的 问题 ， 实现  ToolSearch 延 迟 激 活机制 ； 在  50 个 模 拟 重\n型 工 具场 景 中， 初 始  Schema 上下文 占 用 降 低  90%+\n3 ）权 限 与 状 态 恢 复 ： 将 权 限 检 查 接入工 具 执 行 链 ， 对高 风 险 命 令 、 文 件 写 入和 路 径 访 问 按  deny > ask > allow 规 则 裁 决； 通过 \nSession / Memory 与  JSONL 持 久 化 保 存 状 态 ， 支持 中 断 后 的 会话 恢 复\n4 ） 评 测 与可 靠 性 ： 搭 建 “ 固 定回 归 — 真 实  SWE 任 务 — 失 败 归 因 — 证 据 固 化 ” 的 评 测 链 ， 在 预 注 册  20-task subset 上 完 成  20/20 \nscorable 、 4 resolved； 区分  Agent 、 Provider 与 基 础 设 施 失 败 ， 并 固 化可回 查  Artifact\nOmniCart Agent ｜ 多平 台 智 能 购 物与 决策  Agent ｜  校 企 合作 课 题 2026.03 - 2026.08\n面 向 多平 台 购 物 中 商 品 搜索 、 币 种 与 运费 差异 、 自 然 语 言 偏 好 难 以 统 一 处 理 的 问题 ， 构 建从 需 求 拆 解 、 并 行 检 索 到 比价 与个性化推\n荐 的 完 整  Agent 决策 链 。\n1 ） 购 物 决策 链 ： 将 预算 、 品类 、 排 除 条件 与 软 偏 好 拆 为 结 构 化 约 束 和 语 义 查 询 ， 由  Planner 规 划 并 串 联 商 品 检 索 、 价格 归 一、 运费\n税 费计 算 、 候 选 筛 选 与 结 果 总结 ， 完 成 “ 检 索 — 比价 — 到手 价 — 筛 选 — 解 释 ” 的 业务 链 路 。\n2 ）多 智 能体 编排 ： 基 于  LangChain / LangGraph 采 用主  Agent + 按 需  fork 子  Agent ， 根 据 任 务可 并 行性 、 上下文 隔 离 和 调 用 链深 度\n决 定是 否 委 派 ； 在  200 条  Query 对 比 测 试 中， 4 平 台并 行 检 索  P95 由 约  3.2 s 降 至  1.1 s （ -65% ）。\n3 ） 检 索 与个性化 ： 将结 构 化 硬 过 滤 与 语 义 检 索 分 离 ， 采 用  BM25 + 向 量 混 合 检 索 、 RRF 融 合与  Top-K Rerank 获 取 候 选 ， 并结 合长\n期 用户 偏 好 完 成 筛 选 ； 引 入  Rerank 后  Recall@8 由 约  0.62 提 升 至  0.81。\n4 ）上下文与 缓 存 治理 ： 针 对长对话 增 长后 盲 目 压 缩 破 坏  Prompt Cache 的 问题 ， 引 入  Cache Breakpoint 分 隔 稳 定前 缀 与可 压 缩 历\n史； 在  100 个长对话  Session 对 比 中， Cache Hit 由  15% 恢 复 至  80%， 综 合成本 降 低约  35%。\n中 国 城 市 干 旱 韧 性 评 估 与 未 来情 景 预测研究 共 同 一 作（ 顺 位 第 2 ） 2023.10 - 2026.04\n设计并 落 地 “ 数 据 筛 选 - 指 标 构 建 - 机制分 析 - 模 型 预测 - 结 果 解 释 ” 的 研究 流程 ， 完 成 288 个地 级 市多 源 数 据 分 析 与 未 来情 景 预测 。   \n用 Python 比 较随 机 森 林 与 BP-ANN ， 基 于 SHAP 开 展 模 型解 释 ; 论文发表于 iScience(JCR Q1),DOI ： 10.1016/j.isci.2026.116697\n尤 曙 宏\n15560736937 （同微信 ） | shuhong001@e.ntu.edu.sg\n24 岁 AI Agent 开发（实 习 ） 中 共 党 员\n教 育 背 景\n专业技能\n项 目 经 历\n科 研 经 历\n9bdaed1b85aae80a1HN92tm0F1pSw4W7VfmZWOekn_fYNhRg\n9bdaed1b85aae80a1HN92tm0F1pSw4W7VfmZWOekn_fYNhRg\n9bdaed1b85aae80a1HN92tm0F1pSw4W7VfmZWOekn_fYNhRg\n9bdaed1b85aae80a1HN92tm0F1pSw4W7VfmZWOekn_fYNhRg\n9bdaed1b85aae80a1HN92tm0F1pSw4W7VfmZWOekn_fYNhRg\n9bdaed1b85aae80a1HN92tm0F1pSw4W7VfmZWOekn_fYNhRg\n9bdaed1b85aae80a1HN92tm0F1pSw4W7VfmZWOekn_fYNhRg",
+    "chars": 3477,
+    "eng_score": 16,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 66,
+    "tier": "淘汰",
+    "reason": "keyword_stuff",
+    "flags": [
+      "keyword_stuff"
+    ],
+    "eng": {
+      "backend_stack": 2,
+      "ownership": 0,
+      "reliability": 1,
+      "api_design": 3
+    },
+    "agent": {
+      "agent_core": 23,
+      "rag": 5,
+      "llm_eng": 7
+    },
+    "metrics": 6
+  },
+  {
+    "batch": "Agent2",
+    "name": "丁晨海",
+    "file": "【Agent 实习生_深圳 400-600元_天】丁晨海 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】丁晨海 27年应届生.pdf",
+    "text": "ݚ\nն࿐č985ӱč2027Ч॓Ď\n+86 15811055071 chenhai.ding@outlook.com GitHub: github.com/Ding666666\nࣟ\nն࿐čUESTCĎ 2023.09 – 2027.06\n؀GPAğ3.82 / 4.0\nຩ઎č94ӱč95ᇆିč92ෘč86Ď\nି\n• LLM Agentᇆିุ༢๤ğඃ༑ PythonaFastAPIaLangChainaCrewAIaPydanticaQwen API ა DSHđऎ\nС Prompt Engineering aRAGastructured outputဒb\n•ଆ෿ğඃ༑ PyTorchaNumPyaCLIP/BioMedCLIP ა zero-shot classificationؓ\naProcrustes AlignmentࠣAccuracy/AUROC/F1ဒb\n• ႇეି৯ğ IELTS 7.5đCET-6 560ੀି৯b\n৥\nKhalifa University ॓࿹ཛଢš Research Assistant 2026.01 – 2026.05\nCAP Aఊ۠IEEE BIBM čUnder Review ĎšGitHub\n•հ໊໙ีđิԛ CAPAđ০Ⴈ\nো๨b\n•ࡗProcrustesࡼMacro-\nAUROC Ֆ 0.7908 ิശᇀ 0.8746b\n৥\nHireSense AI༢๤š LLM Agentؿ2026.03 – 2026.05\nඌᅜğ PythonaFastAPIaLangChainaQwen API aChromaDBaBGE-M3aNeo4jaPydantic\n•֥ࣟLLM AgentႿ LangChainೆ QwenކࢲPydantic structured\noutputളӮb\n•༅ა RAGିa ཛଢSTARႿChromaDB + BGE-M3\nb\n• ൐Ⴈ Neo4j؟\nྟb\nDSHؿ2026.08 –ࣂ\nඌᅜğ PythonaFastAPIaCrewAIaDSHaSQLAlchemy/SQLiteaPyCasbinaGit Worktree GitHub\n•Ⴟषჷ DeepSeek Harness čDSHݖCrewAI щ\nஆ ManageraExecutoraReviewer ა Integratorࠏ\nb\n•ၛ SQLiteႿFastAPIaSQLAlchemyࢤ֩\nކࢲPyCasbinྟb\n•Ⴟ Git Worktree༢๤ Gateᆇൌଆ\nҪဒᆣุ༢\n৥\n• 2026ༀຓЇԷྍԷြն೗༆҆೗౵ Aࢂ֩\n•2025 ডూЖ Java Aࢂ֩ؽ\n•2023-2024ࣁ\n•2024-2025ࣁ\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg\nf602147f6c8322c21HN92tm6EVZXxYu_UP-cWOekn_fYNhRg",
+    "chars": 1530,
+    "eng_score": 27,
+    "agent_score": 32,
+    "depth_score": 10,
+    "total": 59,
+    "tier": "淘汰",
+    "reason": "keyword_stuff",
+    "flags": [
+      "keyword_stuff"
+    ],
+    "eng": {
+      "backend_stack": 5,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 6
+    },
+    "agent": {
+      "agent_core": 6,
+      "rag": 2,
+      "llm_eng": 1
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "卢佳栋",
+    "file": "【Agent 实习生_深圳 400-600元_天】卢佳栋 27年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】卢佳栋 27年应届生.pdf",
+    "text": "ׯࡄ\nൔğ (+86) 136 2255 5424 Ⴏདğ lujiadong@u.nus.edu\nದຩᅟğ jiadlu.github.io ᆟᇍ૫ષğჴ\nŵࣟ\n৫ն࿐༅࿐ ණൖ 2025.08i2027.06\n࿐ჽඌ Ч॓ 2020.09i2024.06\në৥\nKriston.AIčॹഅ๙Ď |LLM࿞਀ൌ༝ള 2026.04i2026.08\n•ğ૫ཟ၄ਏ/ህြ໙ᆐa\nb\n• ૫ཟപ॓սุ༢b ൐ႨDeepSeek V4 Proग़ଆ୅ఖ\nކ\nӮ 2300ࣜLLM Judgea௠зჰཬଆ྘\nؓQwen-8B ष\n੽ SFTႿ 15%ഈཌĠ\n۽Bad Caseb\n• ૫ཟಆ॓൩҃ຓ Bad Case đᄝᆇൌ Harness ᇏປ\nӮ SFT֤ࠆCold-Start ModelႿVeRL/GRPOۂڭࡹܒಆ॓൩੽ Online\nRLđ षᅚHarness-native Rolloutđ ൐ଆ྘ᄝAgent⚶Environment৫ა਽৳Ҧ੻Ġ\na ြༀRubrics஥໙ีb\n8ଽ҆ Bench ิശ 35%aః෰ି৯ӻ௜Ġಆ॓൩໙ีੱႮ 16%ᇀ 10%Ⴟ 15% ഈཌᚐᆴb\nඳ |AI AgentӱഽčಆᆯĎ 2024.07i2025.10\n•ğ٠Agent߄SOP࠺\nᆴᄎႏb\n•֞Agent Harnessۋ\n৘SOPልູ Skillsđ ๤၂щஆӉ௹Memorya\nᆷଲ RAG֩Toolsༀb\n•࠹SOP౞ਈAgentᄛSkillsaTools\nᆀ Memoryb\n•Ӊ௹ Memory߄RAG༅\nༀb\n•ࠣSOP\nো Bad Caseս HarnessđྙӮ Human-in-the-loopb\nˌ৥\n•കğ 2025.11i2026.03\n૫ཟ Long-Horizon Coding AgentࡹܒAgentic RL ࿞਀\n၇ঠ Harness৘ି৯b\n•č1ğࡼReasoningaTool Call ა Context Management৘Ֆຓ҆\nheuristic֥policy॥token budgetሑ෿Ќ਽ა\nྛTrajectory-level policy optimization৘Ҧ੻b\n•č2ğჿ 8಩ༀa1.2Ⴟ 8×A100 ປӮ 32B֥\nAgentic RLđ յ๙Task → Tool Execution → Observation → Verifiable Rewardປᆜ Agentic\nRollout ა RL pipelineۿ/ॖ࿞਀ྟဒᆣb\n৥\n•ऎğඃ਀ Vibe CodingაSkillsቔੀaLinuxaGitaW&Bb\n•ԤğࢳTransformerđඃ༑ LLMႋႨb\n•ି৯ğb\n•གྷି৯ğSearch-R1aTool-StaraARPOaIGPOaGiGPOaExpRLaRL VERaCollabLLMb\n•৥ğGoogle Scholar ሹႄႨ 27ĠEnhanced Word-Unit Broad Learning System With Sememes đIEEE Accessđ\nቔᆀđIF 4.2 ĠTyphoon Track Prediction Based on TimeForce CNN-LSTM Hybrid Model đComputer and\nInformation Science၂ቔᆀb\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg\nb11a88aec8b417e01HN92tm1F1tTwo69VvieWOekn_fYNhRg",
+    "chars": 1804,
+    "eng_score": 7,
+    "agent_score": 35,
+    "depth_score": 25,
+    "total": 57,
+    "tier": "淘汰",
+    "reason": "keyword_stuff",
+    "flags": [
+      "keyword_stuff"
+    ],
+    "eng": {
+      "backend_stack": 1,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 2
+    },
+    "agent": {
+      "agent_core": 10,
+      "rag": 2,
+      "llm_eng": 1
+    },
+    "metrics": 5
+  },
+  {
+    "batch": "Agent2",
+    "name": "曹程洋",
+    "file": "【Agent 实习生_深圳 400-600元_天】曹程洋 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】曹程洋 28年应届生.pdf",
+    "text": "13745569445· caochengyang25@mails.ucas.ac.cn\n求职意向： AI Agent 算法⼯程师\n个⼈简介：⼈⼯智能⽅向硕⼠研究⽣，关注  LLM Agent 、 RAG 检索增强、模型训练与⾃动化评\n测；熟悉  PyTorch 、 Transformers 、 Reranker 、 vLLM 、 SWE-bench 等技术栈。\n硕⼠，中国科学院⼤学，⼈⼯智能专业， 2025.09~2028.06\n本科，上海理⼯⼤学，计算机科学与技术专业， 2020.09~2024.06\nRAG-Retrieval ：⾯向  Agent/RAG 系统的检索模型训练与推理框架\nPython / PyTorch / Transformers / DeepSpeed / FSDP / Embedding / ColBERT / Reranker\n构建端到端  RAG 检索模型框架，⽀持  Embedding 、 ColBERT late-interaction 、 BERT/LLM-\nbased Reranker 的训练、推理与蒸馏，⽤于提升  Agent 在知识库问答、⻓⽂档检索和上下⽂\n召回场景中的准确性。\n设计统⼀  Reranker 推理接⼝，兼容  Cross-Encoder 与  Decoder-Only LLM Reranker ，并⽀\n持⻓⽂档截断、分块打分取最⼤值等策略，降低不同排序模型在  Agent/RAG 应⽤中的接⼊成\n本。\n⽀持  BGE 、 BCE 、 GTE 等主流开源检索模型微调，引⼊  MRL Loss 、⼤模型到⼩模型蒸馏、\n多卡训练等能⼒；在  MTEB Reranking 任务中， 0.41GB ⾃训练  Reranker 达到  67.12 平均\n分，接近或超过部分  1.11GB 基线模型。\nAgentic Evals Lab ： LLM Agent 强化学习与评测框架\nPython / PyTorch / Transformers / TRL / vLLM / DeepSpeed / LoRA/PEFT / Hydra / SLURM /\nSWE-bench\n构建⾯向代码智能体的端到端训练与评测框架，覆盖  SFT 、 GRPO/GSPO 强化学习训练、\nAgent 多轮推理、轨迹采集与⾃动化评测流程。\n将  nano-agent / mini-swe-agent 等  Coding Agent 接⼊  OpenAI-compatible vLLM 服务，实\n现并发  agent rollout ，⽀持训练侧权重同步、⼯具调⽤、代码修复  diff ⽣成与  reward/eval 闭\n环。\n⾯向漏洞检测、单⽂件代码修复、仓库级代码修复等任务，基于  Hydra 配置、\nApptainer/SLURM 脚本和  uv 本地环境提升实验复现与⼤规模训练效率。\n⽀撑  Agentic Eval 随机性研究，在  SWE-bench Verified 上沉淀多模型、多  scaffold 、多温度\n的  agent 轨迹与评测结果，⽤于分析  pass@1/pass@k ⽅差和评测可靠性。\n曹程洋\n个⼈信息\n教育经历\n项⽬经历\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n\n★★★ Python 、 PyTorch 、 Transformers\n★★★ RAG 、 Embedding 、 Reranker 、 ColBERT\n★★☆ TRL 、 LoRA/PEFT 、 SFT 、 GRPO/GSPO\n★★☆ SWE-bench 、 Agent rollout 、⼯具调⽤、⾃动化评测、 reward/eval 闭环\n技能清单\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg\n5d01b7d2953ed5d31HN92tm6GVBRw4W8U_mdWOekn_fYNhRg",
+    "chars": 2180,
+    "eng_score": 11,
+    "agent_score": 35,
+    "depth_score": 13,
+    "total": 49,
+    "tier": "淘汰",
+    "reason": "keyword_stuff",
+    "flags": [
+      "keyword_stuff"
+    ],
+    "eng": {
+      "backend_stack": 1,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 4
+    },
+    "agent": {
+      "agent_core": 15,
+      "rag": 23,
+      "llm_eng": 14
+    },
+    "metrics": 2
+  },
+  {
+    "batch": "Agent2",
+    "name": "林先生",
+    "file": "【Agent 实习生_深圳 400-600元_天】林先生 26年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】林先生 26年应届生.pdf",
+    "text": "zmgreen54@163.com \n自我评价 \n191 2032 3089 \n教\n育背景 \n \n林湘桐 \n \nzmgreen54@163.com \n奖项荣誉 \n广东广州 \n专业水平：1、具有 Java/Python/C/C++等编程语言基础。2、系统学习过计算机网络、数据结构、机器学习\n等专业知识。3、熟练使用 Eclipse、IDEA、MySQL 等软件与平台。4、熟练使用 Linux (Ubuntu)  进行开发与\n部署，熟悉常用命令及文件系统结构。 5、熟悉 PyTorch，TensorFlow，理解 深度学习  网络结构（ ResNet, \nBERT, YOLO 等） 。6、熟练掌握 ONNX 标准，有丰富的模型转换及 onnxruntime 推理优化经验 7、理解 算子\n（Operator） 实现原理，能使用 Python/C++ 进行算子性能分析，了解 CUDA 编程基础。8、能够查阅各种开\n发技术的中英文手册。9、有高中信息技术教师资格合格证明。10、熟练使用各种大语言模型工具。 \n个人品质：勤奋虚心好学，善良有爱心，责任感强。善于沟通，能吃苦耐劳，不推卸责任，性格沉稳。学习\n能力强，善于学习和掌握新技术。有较强的抗压性，善于应对各种挑战。 \n \n2018.09-2022.06          广东金融学院             计算机科学与技术（本科）（理科，超当年高考优先投档线） \n主修课程：计算机组成原理及汇编语言(83)，计算机体系结构(97)，算法分析与设计(86)，离散数学(89)， \n软件工程课程设计(83)，高等数学(88)(无挂科) \n2023.09-2026.06          广东外语外贸大学             网络空间安全（学术型硕士） \n研究方向：自然语言处理，知识图谱，异构计算，区块链，网络安全，分布式系统 \n \n \n⚫ 2020 全国大学生数学建模竞赛省级优胜奖 \n⚫ 第六届“互联网＋”大学生创新创业大赛暨广东省分赛校内选拔赛铜奖 \n⚫ 2025 年广东外语外贸大学年度评议优秀共青团员 \n⚫ 广东外语外贸大学二等奖学金（2023、2024、2025） \n⚫ 华为昇腾人工智能技能 Ascend C 算子开发能力认证（中级）(2024) \n \n \n硕士研究生 \n基本素养 \n教育背景 \n项目经历 \n奖项荣誉 \n时间 项目名称 技术栈 主要职责与成果 \n2020.10-\n2020.12 \n电子书系统及\n微信小程序 \nSpringBoot,MySQL, Redis, \nLayui, 微信小程序 \n1. 独立负责全栈开发，完成 UI 设计、后端框架搭建及数据库设计。2. 基于 \nB/S 架构 实现 PC 端与小程序端数据互通，完成系统从 0 到 1 的实现。 \n2021.02-\n2021.06 \n基于以太坊的\n区块链考勤系\n统 \nSolidity, Ethereum, Web3, \nPC Node \n1. 使用 Solidity 开发智能合约，将考勤记录上链存储，确保数据不可篡改。 \n2. 搭建以太坊私有链网络节点，完成基于区块链的去中心化考勤系统部\n署。 \n2023.10-\n2023.11 \n深度学习模型\n研究与应用 \nTensorFlow, GRU, Python, \nDeep Learning \n1. 构建基于 GRU 神经网络 的股票价格预测模型，结合深度学习理论优化精\n度。2. 搭建 TensorFlow 文本分类模型，优化算法性能，显著提升分类准确\n率与效率。 \n2023.12-\n2024.03 \n基于学习型索\n引的键值存储\n优化 \nC++, LSM -tree, Learned \nIndex, Linux \n1. 设计适配键值分离架构的学习型索引，支持不定长键，替代传统 B+ 树。 \n2. 实现单调转换函数 ，读延迟降低 30%，写放大显著减少，延长  SSD 寿\n命。 \n2024.04-\n2025.08 \n \n面向异构计算\n的查询加速引\n擎 \nSYCL, DPC++, CPU/GPU \nHeterogeneous \n1. 将合取查询转换为数值计算过程，基于 SYCL 实现异构资源弹性调度。 \n2. 复杂关联查询吞吐量提升 2-5 倍，异构设备变更无需重新编译。 \n⚫ 论文《Chain-Aware Vectorized Datalog Reasoning over Large Knowledge Graphs》(KSEM 2026 录用) \n1. 论文录用：中国计算机协会 CCF 推荐的国际会议 KSEM 2026 （International Conference on Knowledge Science, \nEngineering and Management）录用。 \n2. 提出广义链式规则规范化方法，设计链式感知评估策略，将多路连接转换为有序二元连接 - 投影流水线。 \n3.基于 NumPy 构建向量化执行引擎，利用 SIMD 指令 amortize Python 开销。 \n5. 成果： 在 7 个基准中 6 个优于 RDFox 和 Soufflé，最高加速比达 11.84 倍 和 56.65 倍。 \nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg\nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg\nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg\nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg\nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg\nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg\nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg\nd6621740a8657f811HN92tm6GFJTwIi7WfidWOekn_fYNhRg",
+    "chars": 2567,
+    "eng_score": 30,
+    "agent_score": 3,
+    "depth_score": 14,
+    "total": 37,
+    "tier": "淘汰",
+    "reason": "course_only",
+    "flags": [
+      "course_only"
+    ],
+    "eng": {
+      "backend_stack": 7,
+      "ownership": 1,
+      "reliability": 1,
+      "api_design": 0
+    },
+    "agent": {
+      "agent_core": 0,
+      "rag": 1,
+      "llm_eng": 0
+    },
+    "metrics": 2
+  },
+  {
+    "batch": "Agent2",
+    "name": "吴鹏举",
+    "file": "【Agent 实习生_深圳 400-600元_天】吴鹏举 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】吴鹏举 28年应届生.pdf",
+    "text": "a6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg\na6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg\na6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg\na6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg\na6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg\na6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg\na6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg\na6b15fdb792285171HN92tm7FFdRwoS-Vf2YWOekn_fYNhRg",
+    "chars": 391,
+    "eng_score": 0,
+    "agent_score": 0,
+    "depth_score": 0,
+    "total": -10,
+    "tier": "淘汰",
+    "reason": "thin",
+    "flags": [
+      "thin"
+    ],
+    "eng": {
+      "backend_stack": 0,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 0
+    },
+    "agent": {
+      "agent_core": 0,
+      "rag": 0,
+      "llm_eng": 0
+    },
+    "metrics": 0
+  },
+  {
+    "batch": "Agent2",
+    "name": "肖昌未",
+    "file": "【Agent 实习生_深圳 400-600元_天】肖昌未 28年应届生.pdf",
+    "path": "/tmp/agent-screening/agent2/Agent 2/【Agent 实习生_深圳 400-600元_天】肖昌未 28年应届生.pdf",
+    "text": "d53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg\nd53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg\nd53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg\nd53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg\nd53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg\nd53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg\nd53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg\nd53fb8adb26b55d41HN92tm0EFJVwIi7V_2YWOekn_fYNhRg",
+    "chars": 391,
+    "eng_score": 0,
+    "agent_score": 0,
+    "depth_score": 0,
+    "total": -10,
+    "tier": "淘汰",
+    "reason": "thin",
+    "flags": [
+      "thin"
+    ],
+    "eng": {
+      "backend_stack": 0,
+      "ownership": 0,
+      "reliability": 0,
+      "api_design": 0
+    },
+    "agent": {
+      "agent_core": 0,
+      "rag": 0,
+      "llm_eng": 0
+    },
+    "metrics": 0
+  }
+]

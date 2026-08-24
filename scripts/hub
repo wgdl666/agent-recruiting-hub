@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Cursor-friendly CLI for agent-recruiting-hub API
+set -euo pipefail
+BASE="${HUB_URL:-http://localhost:8080/api}"
+
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+  health)   curl -s "$BASE/health" | python3 -m json.tool ;;
+  list)     tier="${1:-S}"; curl -s "$BASE/candidates?tier=$tier&eng_first=true" | python3 -m json.tool ;;
+  get)      curl -s "$BASE/candidates/$1" | python3 -m json.tool ;;
+  tier)     curl -s -X PATCH "$BASE/candidates/$1" -H 'Content-Type: application/json' \
+              -d "{\"tier\":\"$2\"}" | python3 -m json.tool ;;
+  screen)   curl -s -X POST "$BASE/screen" -H 'Content-Type: application/json' \
+              -d "{\"path\":\"$1\",\"source\":\"cursor\"}" | python3 -m json.tool ;;
+  upload)   curl -s -X POST "$BASE/upload" -F "files=@$1" -F source=cursor | python3 -m json.tool ;;
+  seed)     curl -s -X POST "$BASE/import/seed" | python3 -m json.tool ;;
+  rescreen) curl -s -X POST "$BASE/rescreen" | python3 -m json.tool ;;
+  export)   curl -s "$BASE/export" -o "${1:-candidates-export.json}" && echo "saved ${1:-candidates-export.json}" ;;
+  feishu)   curl -s -X POST "$BASE/export/feishu" | python3 -m json.tool ;;
+  md)       curl -s "$BASE/export/markdown" -o "${1:-report.md}" && echo "saved ${1:-report.md}" ;;
+  open)     open "http://localhost:8080" ;;
+  help|*)
+    cat <<'EOF'
+Usage: scripts/hub <command> [args]
+
+  health              API health check
+  list [tier]         List candidates (default S)
+  get <id>            Candidate detail + questions
+  tier <id> <S|A|B|C|淘汰>  Update candidate tier
+  screen <path>       Screen PDF dir or file
+  upload <file>       Upload PDF or ZIP
+  seed                Import seed/batch.json
+  rescreen            Re-score all resumes with PDFs
+  export [file.json]  Export all candidates
+  feishu              Create Feishu doc via lark-cli
+  md [file.md]        Save markdown report locally
+  open                Open web UI in browser
+
+Env: HUB_URL (default http://localhost:8080/api)
+EOF
+    ;;
+esac
