@@ -104,7 +104,7 @@ const (
 	SortEngFirst = "eng_first"
 )
 
-func (s *Store) ListCandidates(tier, status, q string, batchID int64, sortBy string) ([]models.Candidate, error) {
+func (s *Store) ListCandidates(tier, status, q string, batchID int64, sortBy, createdAfter string) ([]models.Candidate, error) {
 	query := `SELECT c.id, c.name, c.source, c.tier, c.auto_tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
 		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
 		COALESCE(b.name,''), c.created_at, c.updated_at
@@ -126,6 +126,12 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, sortBy str
 		query += ` AND (c.name LIKE ? OR c.eng_summary LIKE ? OR c.project_summary LIKE ? OR c.one_liner LIKE ?)`
 		like := "%" + q + "%"
 		args = append(args, like, like, like, like)
+	}
+	// 看板没有状态/档位行，用入库时间窗口切开当前板，避免几个月前的简历把列铺满。
+	// created_at 存的是 UTC RFC3339 文本，与同样格式的下界按字典序比较即可。
+	if createdAfter != "" {
+		query += ` AND c.created_at >= ?`
+		args = append(args, createdAfter)
 	}
 	switch sortBy {
 	case SortImportedAsc:
@@ -453,7 +459,7 @@ func copyFile(src, dst string) error {
 }
 
 func (s *Store) ExportAll() ([]models.CandidateDetail, error) {
-	list, err := s.ListCandidates("", "", "", 0, SortEngFirst)
+	list, err := s.ListCandidates("", "", "", 0, SortEngFirst, "")
 	if err != nil {
 		return nil, err
 	}

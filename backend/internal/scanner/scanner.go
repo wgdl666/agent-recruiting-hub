@@ -21,7 +21,7 @@ var internPatterns = map[string]*regexp.Regexp{
 var engPatterns = map[string]*regexp.Regexp{
 	"backend_stack": regexp.MustCompile(`(?i)Redis|MySQL|PostgreSQL|MongoDB|Kafka|RabbitMQ|消息队列|队列|微服务|gRPC|REST|FastAPI|Flask|Go|Gin|Spring|Docker|K8s|Kubernetes|部署|并发|幂等|分布式`),
 	"ownership":     regexp.MustCompile(`(?i)独立(开发|负责|设计|实现)|从零|主导|负责.*(开发|实现|设计|架构)|自研|上线|生产环境|完整链路`),
-	"reliability":   regexp.MustCompile(`(?i)超时|重试|降级|容错|高可用|监控|日志|Trace|压测|QPS|延迟|P99|性能优化`),
+	"reliability":   regexp.MustCompile(`(?i)超时|重试|降级|容错|高可用|监控|日志|Trace|压测|QPS|延迟|P99|性能优化|耗时|P95`),
 	"api_design":    regexp.MustCompile(`(?i)接口|API|schema|鉴权|限流|中间件|ORM`),
 }
 
@@ -31,7 +31,7 @@ var agentPatterns = map[string]*regexp.Regexp{
 	"llm_eng":    regexp.MustCompile(`(?i)prompt|Prompt|微调|fine-tun|评测|eval|轨迹|guardrail|上下文|token`),
 }
 
-var metricPattern = regexp.MustCompile(`\d+[%％]|\d+→\d+|P9[59]|QPS|MRR|Recall|准确率|压缩`)
+var metricPattern = regexp.MustCompile(`\d+[%％]|\d+→\d+|P9[59]|QPS|MRR|Recall|准确率|压缩|耗时|降幅|\d+\s*秒`)
 
 var keywordStuff = regexp.MustCompile(`(?i)精通.*精通|熟练掌握.*熟练掌握`)
 

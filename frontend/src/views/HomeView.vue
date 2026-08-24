@@ -2,7 +2,8 @@
 import { onMounted, ref, watch } from 'vue'
 import { Upload } from '@element-plus/icons-vue'
 import {
-  fetchCandidates, fetchPipelineStats, fetchStats, type CandidateSort,
+  createdAfterISO, fetchCandidates, fetchPipelineStats, fetchStats,
+  type CandidateSort, type CreatedRange,
 } from '../api/client'
 import type { Candidate, PipelineStats, Stats } from '../types'
 import { useTabs } from '../composables/useTabs'
@@ -26,6 +27,8 @@ const status = ref('all')
 const query = ref('')
 // 默认新→旧：刚导进来的简历排在最上面，避免被旧数据顶下去。
 const sort = ref<CandidateSort>('imported_desc')
+// 只在看板展示：看板没有状态/档位行，靠时间窗口切开当前板。
+const createdRange = ref<CreatedRange>('')
 const viewMode = ref<'list' | 'kanban'>('list')
 const candidates = ref<Candidate[]>([])
 const kanbanCandidates = ref<Candidate[]>([])
@@ -43,14 +46,18 @@ async function load() {
       fetchStats(),
       fetchPipelineStats(batchId),
       viewMode.value === 'kanban'
-        ? fetchCandidates('all', query.value, 'all', batchId, sort.value)
+        ? fetchCandidates('all', query.value, 'all', batchId, sort.value, createdAfterISO(createdRange.value))
         : Promise.resolve([] as Candidate[]),
     ])
     stats.value = st
     pipelineStats.value = pipe
     candidates.value = list
-    setNavFromCandidates(list, tier.value, status.value, sort.value)
-    if (viewMode.value === 'kanban') kanbanCandidates.value = allForKanban
+    if (viewMode.value === 'kanban') {
+      kanbanCandidates.value = allForKanban
+      setNavFromCandidates(allForKanban, 'all', 'all', sort.value, createdRange.value)
+    } else {
+      setNavFromCandidates(list, tier.value, status.value, sort.value, '')
+    }
   } catch (err) {
     console.error('failed to load candidates', err)
   } finally {
@@ -59,7 +66,7 @@ async function load() {
 }
 
 onMounted(load)
-watch([tier, status, query, sort, activeBatchId, viewMode], load)
+watch([tier, status, query, sort, createdRange, activeBatchId, viewMode], load)
 
 function onUploadDone() {
   uploadExpanded.value = []
@@ -104,6 +111,15 @@ function onUploadDone() {
               <el-radio-button value="S">S</el-radio-button>
               <el-radio-button value="A">A</el-radio-button>
               <el-radio-button value="淘汰">淘汰</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div v-if="viewMode === 'kanban'" class="filter-row">
+            <span class="filter-label">创建时间</span>
+            <el-radio-group v-model="createdRange" size="small">
+              <el-radio-button value="">全部</el-radio-button>
+              <el-radio-button value="24h">最近24h</el-radio-button>
+              <el-radio-button value="2d">2天</el-radio-button>
+              <el-radio-button value="7d">一周</el-radio-button>
             </el-radio-group>
           </div>
           <div class="filter-row">
@@ -193,7 +209,7 @@ function onUploadDone() {
 .filter-label {
   font-size: 13px;
   color: #909399;
-  min-width: 32px;
+  min-width: 56px;
 }
 .search { max-width: 220px; }
 .sort-select { width: 180px; }

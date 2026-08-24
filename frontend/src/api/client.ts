@@ -13,6 +13,14 @@ export async function fetchStats() {
 }
 
 export type CandidateSort = 'imported_desc' | 'imported_asc' | 'eng_first'
+export type CreatedRange = '' | '24h' | '2d' | '7d'
+
+/** 看板「最近 24h / 2天 / 一周」转成 UTC RFC3339 下界，和库里 created_at 文本比较。 */
+export function createdAfterISO(range: CreatedRange): string | undefined {
+  if (!range) return undefined
+  const hours = range === '24h' ? 24 : range === '2d' ? 48 : 168
+  return new Date(Date.now() - hours * 3600_000).toISOString().replace(/\.\d{3}Z$/, 'Z')
+}
 
 export async function fetchCandidates(
   tier = 'all',
@@ -20,6 +28,7 @@ export async function fetchCandidates(
   status = 'all',
   batchId = 0,
   sort: CandidateSort = 'imported_desc',
+  createdAfter?: string,
 ) {
   const { data } = await api.get<Candidate[] | null>('/candidates', {
     params: {
@@ -28,6 +37,7 @@ export async function fetchCandidates(
       q,
       batch_id: batchId > 0 ? batchId : undefined,
       sort,
+      created_after: createdAfter || undefined,
     },
   })
   return asList(data)

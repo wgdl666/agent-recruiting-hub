@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import type { Candidate } from '../types'
-import { fetchCandidates, type CandidateSort } from '../api/client'
+import { createdAfterISO, fetchCandidates, type CandidateSort, type CreatedRange } from '../api/client'
 import { useActiveBatch } from './useActiveBatch'
 
 /** 左侧固定选择栏只需要切换身份的字段，避免把整份简历摘要挂在导航状态里 */
@@ -10,6 +10,7 @@ const navList = ref<NavCandidate[]>([])
 const navTier = ref('all')
 const navStatus = ref('all')
 const navSort = ref<CandidateSort>('imported_desc')
+const navCreatedRange = ref<CreatedRange>('')
 
 export function useCandidateNav() {
   function setNavFromCandidates(
@@ -17,6 +18,7 @@ export function useCandidateNav() {
     tier = navTier.value,
     status = navStatus.value,
     sort: CandidateSort = navSort.value,
+    createdRange: CreatedRange = navCreatedRange.value,
   ) {
     navList.value = (list ?? []).map((c) => ({
       id: c.id,
@@ -27,6 +29,7 @@ export function useCandidateNav() {
     navTier.value = tier
     navStatus.value = status
     navSort.value = sort
+    navCreatedRange.value = createdRange
   }
 
   function indexOf(id: number) {
@@ -64,8 +67,15 @@ export function useCandidateNav() {
 
   async function reloadNav() {
     const { activeBatchId } = useActiveBatch()
-    const list = await fetchCandidates(navTier.value, '', navStatus.value, activeBatchId.value, navSort.value)
-    setNavFromCandidates(list, navTier.value, navStatus.value, navSort.value)
+    const list = await fetchCandidates(
+      navTier.value,
+      '',
+      navStatus.value,
+      activeBatchId.value,
+      navSort.value,
+      createdAfterISO(navCreatedRange.value),
+    )
+    setNavFromCandidates(list, navTier.value, navStatus.value, navSort.value, navCreatedRange.value)
   }
 
   return {

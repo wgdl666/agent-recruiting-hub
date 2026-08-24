@@ -19,12 +19,13 @@ type docEntry struct {
 
 var docCatalog = []docEntry{
 	{Slug: "overview", Title: "项目概览", Order: 1},
-	{Slug: "quickstart", Title: "快速开始", Order: 2},
-	{Slug: "architecture", Title: "架构说明", Order: 3},
-	{Slug: "api", Title: "REST API", Order: 4},
-	{Slug: "deploy", Title: "部署指南", Order: 5},
-	{Slug: "workflow", Title: "分支与发布", Order: 6},
-	{Slug: "extend", Title: "扩展开发", Order: 7},
+	{Slug: "hiring", Title: "用人标准", Order: 2},
+	{Slug: "quickstart", Title: "快速开始", Order: 3},
+	{Slug: "architecture", Title: "架构说明", Order: 4},
+	{Slug: "api", Title: "REST API", Order: 5},
+	{Slug: "deploy", Title: "部署指南", Order: 6},
+	{Slug: "workflow", Title: "分支与发布", Order: 7},
+	{Slug: "extend", Title: "扩展开发", Order: 8},
 }
 
 var slugRe = regexp.MustCompile(`^[a-z0-9-]+$`)

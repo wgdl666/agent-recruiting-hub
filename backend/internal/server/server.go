@@ -133,7 +133,16 @@ func (s *Server) listCandidates(c *gin.Context) {
 			sortBy = store.SortImportedDesc
 		}
 	}
-	list, err := s.st.ListCandidates(tier, status, q, batchID, sortBy)
+	createdAfter := strings.TrimSpace(c.Query("created_after"))
+	if createdAfter != "" {
+		t, err := time.Parse(time.RFC3339Nano, createdAfter)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid created_after"})
+			return
+		}
+		createdAfter = t.UTC().Format(time.RFC3339)
+	}
+	list, err := s.st.ListCandidates(tier, status, q, batchID, sortBy, createdAfter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -532,7 +541,7 @@ func (s *Server) RunSeedImport() (int, error) {
 }
 
 func (s *Server) rescreenAll(c *gin.Context) {
-	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc)
+	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc, "")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -590,7 +599,7 @@ func (s *Server) rescreenAll(c *gin.Context) {
 }
 
 func (s *Server) syncQuestions(c *gin.Context) {
-	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc)
+	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc, "")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

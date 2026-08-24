@@ -26,7 +26,10 @@ curl -X POST http://localhost:8080/api/sync/questions
 
 ## 改评分规则
 
-`backend/internal/scanner/scanner.go` — 关键词与权重。
+用人标准（上手就做 / 聪明度 / 广度与深度 / 工程意识）见 `docs/hiring.md`。
+
+- LLM：`backend/internal/scanner/scoring_prompt.txt`（上传/拖入时走 ModelHub）
+- 启发式：`backend/internal/scanner/scanner.go` — 关键词与权重。
 
 改完后：
 
