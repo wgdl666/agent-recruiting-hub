@@ -70,4 +70,4 @@ export HUB_URL=http://localhost:8080/api   # 远端时改成对应地址
 A：多为图片 PDF，文本提取失败。看档位、摘要和 PDF 原文，可手动调档。
 
 **Q：如何更新面试题？**  
-A：改 `backend/internal/seed/qa.go` 后执行 `POST /api/sync/questions` 或网页「同步面试题与参考答案」。
+A：S 档会按简历自动生成。详情页可「按简历重新生成」；或 `POST /api/sync/questions`。生成 prompt 见 `backend/internal/scanner/questions_prompt.txt`。无模型时用 `seed/qa.go`。

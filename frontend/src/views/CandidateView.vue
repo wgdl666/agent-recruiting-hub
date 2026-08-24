@@ -88,6 +88,11 @@ async function onStatusUpdated(c: CandidateDetail) {
   updateCandidateTab(c.id, { status: c.status })
 }
 
+function onQuestionsUpdated(questions: CandidateDetail['questions']) {
+  if (!detail.value) return
+  detail.value = { ...detail.value, questions }
+}
+
 async function resetAutoTier() {
   if (!detail.value) return
   detail.value = await updateCandidate(detail.value.id, { clear_manual: true })
@@ -170,7 +175,12 @@ watch(() => props.id, load)
               <span v-if="!questionsOpen" class="toggle-label">面试题</span>
             </button>
             <div v-show="questionsOpen" class="questions-body">
-              <QuestionPanel :questions="detail.questions" />
+              <QuestionPanel
+                :questions="detail.questions"
+                :candidate-id="detail.id"
+                :tier="detail.tier"
+                @updated="onQuestionsUpdated"
+              />
             </div>
           </aside>
 

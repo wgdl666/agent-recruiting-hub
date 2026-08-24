@@ -58,7 +58,8 @@ POST /screen
 ```bash
 POST /import/seed       # 导入 seed/batch.json + 关联 PDF
 POST /rescreen          # 启发式重评全部（不走 ModelHub；不覆盖 tier_manual）
-POST /sync/questions    # 从 seed/qa.go 刷新 S 档面试题
+POST /sync/questions    # S 档按简历生成面试题（失败回落 seed/qa.go）
+POST /candidates/:id/questions/generate
 ```
 
 ## 导出

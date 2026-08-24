@@ -56,6 +56,7 @@ func (s *Server) Router() *gin.Engine {
 		api.GET("/candidates", s.listCandidates)
 		api.GET("/candidates/:id", s.getCandidate)
 		api.GET("/candidates/:id/resume", s.getResume)
+		api.POST("/candidates/:id/questions/generate", s.generateQuestions)
 		api.PATCH("/candidates/:id", s.patchCandidate)
 		api.DELETE("/candidates/:id", s.deleteCandidate)
 		api.POST("/upload", s.uploadFiles)
@@ -429,7 +430,7 @@ func (s *Server) processPDF(path, filename, source string, batchID int64) (*mode
 	resumePath, resumeKey := s.persistResume(name, resumePath)
 	id, err := s.st.UpsertCandidate(store.UpsertInput{
 		Name: name, Source: source, Tier: tier,
-		AutoTier: scanner.NormalizeTier(score.Tier),
+		AutoTier:   scanner.NormalizeTier(score.Tier),
 		EngSummary: eng, ProjectSummary: proj, OneLiner: one,
 		Action: action, ResumePath: resumePath, ResumeKey: resumeKey,
 		ScoreTotal: score.Total, EngScore: score.EngScore, AgentScore: score.AgentScore,
@@ -442,9 +443,7 @@ func (s *Server) processPDF(path, filename, source string, batchID int64) (*mode
 	if err != nil {
 		return nil, err
 	}
-	if qs, ok := seed.Questions[name]; ok {
-		_ = s.st.SetQuestions(id, qs)
-	}
+	s.tryWriteInterviewQuestions(id, name, tier, eng, proj, text)
 	return &models.ScreenResult{
 		Name: name, Tier: tier, ScoreTotal: score.Total,
 		EngScore: score.EngScore, AgentScore: score.AgentScore,
@@ -524,7 +523,7 @@ func (s *Server) RunSeedImport() (int, error) {
 			EngSummary: cand.EngSummary, ProjectSummary: cand.ProjectSummary,
 			OneLiner: cand.OneLiner, Action: cand.Action, ResumePath: dest, ResumeKey: resumeKey,
 			InterviewOrder: seed.InterviewOrder[name],
-			BatchID: cand.BatchID, Status: cand.Status,
+			BatchID:        cand.BatchID, Status: cand.Status,
 		}
 		if sc, ok := scored[name]; ok {
 			in.ScoreTotal, in.EngScore, in.AgentScore = sc.Total, sc.EngScore, sc.AgentScore
@@ -580,9 +579,9 @@ func (s *Server) rescreenAll(c *gin.Context) {
 		}
 		_, err = s.st.UpsertCandidate(store.UpsertInput{
 			Name: cand.Name, Source: cand.Source, Tier: tier,
-			AutoTier: autoTier,
+			AutoTier:   autoTier,
 			EngSummary: eng, ProjectSummary: proj, OneLiner: one,
-			Action: action,
+			Action:     action,
 			ResumePath: cand.ResumePath,
 			ResumeKey:  cand.ResumeKey,
 			ScoreTotal: score.Total, EngScore: score.EngScore, AgentScore: score.AgentScore,
@@ -606,12 +605,14 @@ func (s *Server) syncQuestions(c *gin.Context) {
 	}
 	updated := 0
 	for _, cand := range list {
-		qs, ok := seed.Questions[cand.Name]
-		if !ok {
+		if scanner.NormalizeTier(cand.Tier) != "S" && seed.Questions[cand.Name] == nil {
 			continue
 		}
-		if err := s.st.SetQuestions(cand.ID, qs); err == nil {
-			updated++
+		text := s.resumeTextOf(&cand)
+		before := updated
+		s.tryWriteInterviewQuestions(cand.ID, cand.Name, cand.Tier, cand.EngSummary, cand.ProjectSummary, text)
+		if scanner.NormalizeTier(cand.Tier) == "S" || seed.Questions[cand.Name] != nil {
+			updated = before + 1
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{"updated": updated})

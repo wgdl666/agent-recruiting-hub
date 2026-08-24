@@ -64,6 +64,11 @@ async function onFeishu() {
 }
 
 async function onSyncQuestions() {
+  await ElMessageBox.confirm(
+    '将对所有 S 档按简历重新出题（答案写给不一定熟悉该方向的面试官）。已配置模型时较慢；失败则回落种子题。',
+    '同步面试题与参考答案',
+    { confirmButtonText: '开始', cancelButtonText: '取消', type: 'warning' },
+  )
   await withBusy(async () => {
     const res = await syncQuestions()
     ElMessage.success(`已同步 ${res.updated} 人面试题（含参考答案）`)

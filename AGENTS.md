@@ -83,7 +83,7 @@ open http://localhost:8080/api/candidates/1/resume
 
 ## 评分逻辑
 
-- 配置 `HUB_MODELHUB_ADDRESS` 后，**上传/拖入简历**时走 **wgModelHub** → `gemini-2.5-flash`（prompt：`backend/internal/scanner/scoring_prompt.txt`）
+- 配置 `HUB_MODELHUB_ADDRESS` 后，**上传/拖入简历**时走 **wgModelHub** → `gemini-2.5-flash`（评分 prompt：`backend/internal/scanner/scoring_prompt.txt`；S 档面试题 prompt：`backend/internal/scanner/questions_prompt.txt`）
 - 未配置或 RPC 失败时回退关键词启发式
 - **全库重评**（`POST /api/rescreen`）仅用启发式，不调用 ModelHub
 - `GET /api/health` 的 `scanner` 字段：`modelhub` | `heuristic`

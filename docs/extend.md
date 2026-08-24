@@ -2,7 +2,11 @@
 
 ## 修改 S 档面试题
 
-编辑 `backend/internal/seed/qa.go`：
+S 档上传后会按简历 **LLM 出题**（prompt：`backend/internal/scanner/questions_prompt.txt`）。题目要求务实、绑项目；参考答案写成 briefing，让不一定做过 Agent 的面试官也能问、能判。
+
+页面上点题目会弹出参考答案；详情里可「按简历重新生成」。
+
+无模型或生成失败时，回落 `backend/internal/seed/qa.go` 里的种子题：
 
 ```go
 var Questions = map[string][]QA{
@@ -12,10 +16,16 @@ var Questions = map[string][]QA{
 }
 ```
 
-同步到数据库：
+批量刷新（S 档走模型，失败再用种子题）：
 
 ```bash
 curl -X POST http://localhost:8080/api/sync/questions
+```
+
+单人重新生成：
+
+```bash
+curl -X POST http://localhost:8080/api/candidates/1/questions/generate
 ```
 
 ## 调整人工档位

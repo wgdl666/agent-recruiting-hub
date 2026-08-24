@@ -124,6 +124,12 @@ func withCallerMetadata(ctx context.Context, caller string) context.Context {
 
 // GenerateJSON sends system/user prompts and unmarshals JSON text output into dest.
 func (c *ModelHub) GenerateJSON(system, user string, dest any) error {
+	return c.GenerateJSONOpts(system, user, dest, 4096, 0)
+}
+
+// GenerateJSONOpts is GenerateJSON with output budget and optional per-call timeout.
+// 面试题参考答案要写细，4096 容易被截断。
+func (c *ModelHub) GenerateJSONOpts(system, user string, dest any, maxTokens int32, timeout time.Duration) error {
 	if err := c.ensure(); err != nil {
 		return err
 	}
@@ -132,9 +138,11 @@ func (c *ModelHub) GenerateJSON(system, user string, dest any) error {
 	if user == "" {
 		return fmt.Errorf("empty user prompt")
 	}
+	if maxTokens <= 0 {
+		maxTokens = 4096
+	}
 
 	temp := 0.2
-	maxTokens := int32(4096)
 	textOut := &modelhubv2.TextOutput{
 		Temperature:     &temp,
 		MaxOutputTokens: &maxTokens,
@@ -156,11 +164,14 @@ func (c *ModelHub) GenerateJSON(system, user string, dest any) error {
 		Parts: []*modelhubv2.ContentPart{{Content: &modelhubv2.ContentPart_Text{Text: user}}},
 	}}})
 
-	timeout := c.Timeout
-	if timeout <= 0 {
-		timeout = 90 * time.Second
+	wait := timeout
+	if wait <= 0 {
+		wait = c.Timeout
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	if wait <= 0 {
+		wait = 90 * time.Second
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
 
 	stream, err := c.rpc.Generate(ctx, &modelhubv2.GenerateRequest{

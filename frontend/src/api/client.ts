@@ -103,7 +103,12 @@ export async function rescreenAll() {
 }
 
 export async function syncQuestions() {
-  const { data } = await api.post<{ updated: number }>('/sync/questions')
+  const { data } = await api.post<{ updated: number }>('/sync/questions', null, { timeout: 300000 })
+  return data
+}
+
+export async function generateQuestions(id: number) {
+  const { data } = await api.post<CandidateDetail>(`/candidates/${id}/questions/generate`, null, { timeout: 180000 })
   return data
 }
 
