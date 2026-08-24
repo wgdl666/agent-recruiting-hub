@@ -12,6 +12,7 @@ type Candidate struct {
 	OneLiner       string    `json:"one_liner"`
 	Action         string    `json:"action"`
 	ResumePath     string    `json:"resume_path,omitempty"`
+	ResumeKey      string    `json:"resume_key,omitempty"`
 	ScoreTotal     int       `json:"score_total"`
 	EngScore       int       `json:"eng_score"`
 	AgentScore     int       `json:"agent_score"`

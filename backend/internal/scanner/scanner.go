@@ -36,15 +36,20 @@ var metricPattern = regexp.MustCompile(`\d+[%％]|\d+→\d+|P9[59]|QPS|MRR|Recal
 var keywordStuff = regexp.MustCompile(`(?i)精通.*精通|熟练掌握.*熟练掌握`)
 
 type ScoreBreakdown struct {
-	Text        string
-	EngScore    int
-	AgentScore  int
-	InternScore int
-	DepthScore  int
-	Total       int
-	Tier        string
-	Reason      string
-	Flags       []string
+	Text           string
+	EngScore       int
+	AgentScore     int
+	InternScore    int
+	DepthScore     int
+	Total          int
+	Tier           string
+	Reason         string
+	Flags          []string
+	EngSummary     string
+	ProjectSummary string
+	OneLiner       string
+	Action         string
+	Source         string // "gemini" | "heuristic"
 }
 
 func ExtractText(path string) (string, error) {
@@ -115,14 +120,20 @@ func ExtractName(filename, text string) string {
 
 func Score(text string) ScoreBreakdown {
 	text = strings.TrimSpace(text)
-	flags := []string{}
-
 	if len(text) < 300 {
-		flags = append(flags, "thin")
 		return ScoreBreakdown{
-			Text: text, Total: -10, Tier: "淘汰", Reason: "thin", Flags: flags,
+			Text: text, Total: -10, Tier: "淘汰", Reason: "thin", Flags: []string{"thin"},
+			Action: ActionForTier("淘汰"), Source: "heuristic",
 		}
 	}
+	if score, ok := tryModelHubScore(text); ok {
+		return score
+	}
+	return scoreHeuristic(text)
+}
+
+func scoreHeuristic(text string) ScoreBreakdown {
+	flags := []string{}
 
 	if keywordStuff.MatchString(text) {
 		flags = append(flags, "keyword_stuff")
@@ -178,6 +189,7 @@ func Score(text string) ScoreBreakdown {
 	return ScoreBreakdown{
 		Text: text, EngScore: eng, AgentScore: agent, InternScore: intern, DepthScore: depth,
 		Total: total, Tier: tier, Reason: reason, Flags: flags,
+		Action: ActionForTier(tier), Source: "heuristic",
 	}
 }
 
@@ -189,7 +201,7 @@ func tierFromScores(eng, agent, intern, depth, total int, flags []string) (strin
 		return "淘汰", "keyword_stuff"
 	}
 	if contains(flags, "no_intern") && eng < 2 && agent < 2 {
-		return "C", "no_intern"
+		return "淘汰", "no_intern"
 	}
 	if eng >= 3 && agent >= 2 && depth >= 2 && intern >= 2 {
 		return "S", fmt.Sprintf("eng=%d agent=%d intern=%d depth=%d", eng, agent, intern, depth)
@@ -198,24 +210,33 @@ func tierFromScores(eng, agent, intern, depth, total int, flags []string) (strin
 		return "A", fmt.Sprintf("eng=%d agent=%d intern=%d", eng, agent, intern)
 	}
 	if eng >= 2 || agent >= 2 {
-		return "B", fmt.Sprintf("score=%d", total)
+		return "A", fmt.Sprintf("score=%d", total)
 	}
 	if total < 5 {
 		return "淘汰", "weak"
 	}
-	return "C", fmt.Sprintf("score=%d", total)
+	return "淘汰", fmt.Sprintf("score=%d", total)
+}
+
+func NormalizeTier(tier string) string {
+	switch strings.TrimSpace(tier) {
+	case "S", "A", "淘汰":
+		return strings.TrimSpace(tier)
+	case "B":
+		return "A"
+	case "C":
+		return "淘汰"
+	default:
+		return "淘汰"
+	}
 }
 
 func ActionForTier(tier string) string {
-	switch tier {
+	switch NormalizeTier(tier) {
 	case "S":
 		return "优先排期"
 	case "A":
 		return "第二批"
-	case "B":
-		return "有余量"
-	case "C":
-		return "低优先"
 	default:
 		return "暂不约"
 	}

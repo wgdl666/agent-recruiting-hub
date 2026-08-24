@@ -81,8 +81,9 @@ open http://localhost:8080/api/candidates/1/resume
 
 ## 评分逻辑
 
-- 后端 `backend/internal/scanner/`：关键词启发式（实习 4 维 + 工程 4 维 + Agent 3 维 + 深度指标）
-- 简历无实习关键词 → 标 `no_intern`，自动降权；有实习+工程+Agent 双强 → 优先
+- 配置 `HUB_MODELHUB_ADDRESS` 后走 **wgModelHub** → `gemini-3.1-pro-preview`（prompt：`backend/internal/scanner/scoring_prompt.txt`）
+- 未配置或 RPC 失败时回退关键词启发式
+- `GET /api/health` 的 `scanner` 字段：`modelhub` | `heuristic`
 - `seed/questions.go`：S 档 11 人各 3 条定制面试题
 - `seed/questions.go` ManualTier：人工档位覆盖
 - 图片 PDF：尝试 `python3 backend/scripts/ocr_resume.py`（需 pymupdf）

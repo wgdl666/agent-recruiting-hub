@@ -17,6 +17,7 @@ import (
 	"github.com/caden/agent-recruiting-hub/internal/models"
 	"github.com/caden/agent-recruiting-hub/internal/scanner"
 	"github.com/caden/agent-recruiting-hub/internal/seed"
+	"github.com/caden/agent-recruiting-hub/internal/storage"
 	"github.com/caden/agent-recruiting-hub/internal/store"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -25,10 +26,11 @@ import (
 type Server struct {
 	st   *store.Store
 	root string
+	oss  *storage.ResumeStore
 }
 
-func New(st *store.Store, root string) *Server {
-	return &Server{st: st, root: root}
+func New(st *store.Store, root string, oss *storage.ResumeStore) *Server {
+	return &Server{st: st, root: root, oss: oss}
 }
 
 func (s *Server) Router() *gin.Engine {
@@ -61,6 +63,7 @@ func (s *Server) Router() *gin.Engine {
 		api.POST("/import/seed", s.importSeed)
 		api.POST("/rescreen", s.rescreenAll)
 		api.POST("/sync/questions", s.syncQuestions)
+		api.POST("/sync/resumes", s.syncResumes)
 		api.POST("/export/feishu", s.exportFeishu)
 		api.GET("/export/markdown", s.exportMarkdown)
 		api.GET("/export", s.exportAll)
@@ -88,7 +91,22 @@ func (s *Server) health(c *gin.Context) {
 		"candidates": n,
 		"db":         s.st.DBPath(),
 		"resumes":    s.st.ResumeDir(),
+		"scanner":    scannerMode(),
 	})
+}
+
+func scannerMode() string {
+	if scanner.ModelHubEnabled() {
+		return "modelhub"
+	}
+	return "heuristic"
+}
+
+func summariesFromScore(score scanner.ScoreBreakdown) (eng, proj, one string) {
+	if score.EngSummary != "" || score.ProjectSummary != "" || score.OneLiner != "" {
+		return score.EngSummary, score.ProjectSummary, score.OneLiner
+	}
+	return score.Reason, "", fmt.Sprintf("自动分 %d", score.Total)
 }
 
 func (s *Server) stats(c *gin.Context) {
@@ -176,12 +194,26 @@ func (s *Server) getResume(c *gin.Context) {
 		return
 	}
 	d, err := s.st.GetCandidate(id)
-	if err != nil || d.ResumePath == "" {
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "candidate not found"})
+		return
+	}
+	if d.ResumeKey != "" && s.oss != nil && s.oss.Enabled() {
+		url, err := s.oss.SignedGETURL(d.ResumeKey, time.Hour)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.Redirect(http.StatusFound, url)
+		return
+	}
+	local := s.st.ResolveResumePath(d.ResumePath)
+	if local == "" {
 		c.JSON(http.StatusNotFound, gin.H{"error": "resume not found"})
 		return
 	}
-	c.Header("Content-Disposition", fmt.Sprintf("inline; filename=%q", filepath.Base(d.ResumePath)))
-	c.File(d.ResumePath)
+	c.Header("Content-Disposition", fmt.Sprintf("inline; filename=%q", filepath.Base(local)))
+	c.File(local)
 }
 
 func (s *Server) deleteCandidate(c *gin.Context) {
@@ -366,22 +398,27 @@ func (s *Server) processPDF(path, filename, source string, batchID int64) (*mode
 	}
 	name := scanner.ExtractName(filename, text)
 	score := scanner.Score(text)
-	tier := score.Tier
+	tier := scanner.NormalizeTier(score.Tier)
 	if t, ok := seed.ManualTier[name]; ok {
-		tier = t
+		tier = scanner.NormalizeTier(t)
 	}
-	eng, proj, one := score.Reason, "", fmt.Sprintf("自动分 %d", score.Total)
+	eng, proj, one := summariesFromScore(score)
 	if sum, ok := seed.Summaries[name]; ok {
 		eng, proj, one = sum.Eng, sum.Proj, sum.One
+	}
+	action := score.Action
+	if action == "" {
+		action = scanner.ActionForTier(tier)
 	}
 	resumePath, err := s.st.SaveResume(name, path)
 	if err != nil {
 		return nil, err
 	}
+	resumePath, resumeKey := s.persistResume(name, resumePath)
 	id, err := s.st.UpsertCandidate(store.UpsertInput{
 		Name: name, Source: source, Tier: tier,
 		EngSummary: eng, ProjectSummary: proj, OneLiner: one,
-		Action: scanner.ActionForTier(tier), ResumePath: resumePath,
+		Action: action, ResumePath: resumePath, ResumeKey: resumeKey,
 		ScoreTotal: score.Total, EngScore: score.EngScore, AgentScore: score.AgentScore,
 		Reason: score.Reason, Flags: score.Flags,
 		InterviewOrder: seed.InterviewOrder[name],
@@ -431,7 +468,7 @@ func (s *Server) RunSeedImport() (int, error) {
 		}
 		name := row[0]
 		in := store.UpsertInput{
-			Name: name, Source: row[1], Tier: row[2],
+			Name: name, Source: row[1], Tier: scanner.NormalizeTier(row[2]),
 			EngSummary: row[3], ProjectSummary: row[4], OneLiner: row[5],
 			Action: row[6], InterviewOrder: seed.InterviewOrder[name],
 			BatchID: defaultBatch, Status: models.StatusScreening,
@@ -467,10 +504,11 @@ func (s *Server) RunSeedImport() (int, error) {
 		if err != nil {
 			return nil
 		}
+		dest, resumeKey := s.persistResume(name, dest)
 		in := store.UpsertInput{
 			Name: name, Source: cand.Source, Tier: cand.Tier,
 			EngSummary: cand.EngSummary, ProjectSummary: cand.ProjectSummary,
-			OneLiner: cand.OneLiner, Action: cand.Action, ResumePath: dest,
+			OneLiner: cand.OneLiner, Action: cand.Action, ResumePath: dest, ResumeKey: resumeKey,
 			InterviewOrder: seed.InterviewOrder[name],
 			BatchID: cand.BatchID, Status: cand.Status,
 		}
@@ -497,51 +535,57 @@ func (s *Server) rescreenAll(c *gin.Context) {
 	scored, _ := seed.LoadScored(s.root)
 	updated := 0
 	for _, cand := range list {
-		if cand.ResumePath == "" {
+		local := s.st.ResolveResumePath(cand.ResumePath)
+		if local == "" && cand.ResumeKey == "" {
 			continue
 		}
-		text, err := scanner.ExtractText(cand.ResumePath)
-		if err != nil {
+		text, err := scanner.ExtractText(local)
+		if err != nil || local == "" {
 			continue
 		}
 		score := scanner.Score(text)
-		tier := score.Tier
+		tier := scanner.NormalizeTier(score.Tier)
 		if cand.TierManual {
-			tier = cand.Tier
+			tier = scanner.NormalizeTier(cand.Tier)
 		} else if t, ok := seed.ManualTier[cand.Name]; ok {
-			tier = t
+			tier = scanner.NormalizeTier(t)
 		}
 		if score.Total < 0 {
 			if sc, ok := scored[cand.Name]; ok {
 				score.Total, score.EngScore, score.AgentScore = sc.Total, sc.EngScore, sc.AgentScore
 				score.Reason, score.Flags = sc.Reason, sc.Flags
 				if !cand.TierManual {
-					tier = cand.Tier
+					tier = scanner.NormalizeTier(cand.Tier)
 					if t, ok := seed.ManualTier[cand.Name]; ok {
-						tier = t
+						tier = scanner.NormalizeTier(t)
 					}
 				}
 			} else if !cand.TierManual {
 				if t, ok := seed.ManualTier[cand.Name]; ok {
-					tier = t
+					tier = scanner.NormalizeTier(t)
 					score.Reason = "manual_tier"
 				}
 			}
 		}
-		eng, proj, one := cand.EngSummary, cand.ProjectSummary, cand.OneLiner
+		eng, proj, one := summariesFromScore(score)
+		if eng == "" {
+			eng, proj, one = cand.EngSummary, cand.ProjectSummary, cand.OneLiner
+		}
 		if sum, ok := seed.Summaries[cand.Name]; ok {
 			eng, proj, one = sum.Eng, sum.Proj, sum.One
+		}
+		action := score.Action
+		if cand.TierManual {
+			action = cand.Action
+		} else if action == "" {
+			action = scanner.ActionForTier(tier)
 		}
 		_, err = s.st.UpsertCandidate(store.UpsertInput{
 			Name: cand.Name, Source: cand.Source, Tier: tier,
 			EngSummary: eng, ProjectSummary: proj, OneLiner: one,
-			Action: func() string {
-				if cand.TierManual {
-					return cand.Action
-				}
-				return scanner.ActionForTier(tier)
-			}(),
+			Action: action,
 			ResumePath: cand.ResumePath,
+			ResumeKey:  cand.ResumeKey,
 			ScoreTotal: score.Total, EngScore: score.EngScore, AgentScore: score.AgentScore,
 			Reason: score.Reason, Flags: score.Flags,
 			InterviewOrder: cand.InterviewOrder,

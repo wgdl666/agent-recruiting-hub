@@ -8,7 +8,7 @@ import TierTag from './TierTag.vue'
 const props = defineProps<{ candidate: Candidate; compact?: boolean }>()
 const emit = defineEmits<{ updated: [CandidateDetail] }>()
 
-const tiers = ['S', 'A', 'B', 'C', '淘汰']
+const tiers = ['S', 'A', '淘汰']
 const tier = ref(props.candidate.tier)
 const saving = ref(false)
 

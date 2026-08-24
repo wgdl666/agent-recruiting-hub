@@ -16,6 +16,7 @@ defineProps<{ stats: Stats | null }>()
       <el-col :span="3"><el-statistic title="面试完成" :value="stats.by_status?.completed || 0" /></el-col>
       <el-col :span="3"><el-statistic title="S 档" :value="stats.by_tier.S || 0" /></el-col>
       <el-col :span="3"><el-statistic title="A 档" :value="stats.by_tier.A || 0" /></el-col>
+      <el-col :span="3"><el-statistic title="档位淘汰" :value="stats.by_tier['淘汰'] || 0" /></el-col>
     </el-row>
   </div>
 </template>

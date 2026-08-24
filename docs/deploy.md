@@ -76,7 +76,32 @@ journalctl -u agent-recruiting-hub -f
 
 curl -s http://127.0.0.1:8808/api/health
 curl -s -X POST http://127.0.0.1:8808/api/sync/questions
+curl -s -X POST http://127.0.0.1:8808/api/sync/resumes   # 需配置 OSS
 ```
+
+### OSS 环境变量
+
+在 `/opt/agent-recruiting-hub/.env` 配置（参考 `.env.example`），`make deploy` 会自动挂到 systemd：
+
+```bash
+HUB_OSS_ENDPOINT=oss-cn-shenzhen.aliyuncs.com
+HUB_OSS_BUCKET=your-bucket
+HUB_OSS_ACCESS_KEY_ID=...
+HUB_OSS_ACCESS_KEY_SECRET=...
+HUB_OSS_PREFIX=recruiting-hub/resumes
+```
+
+### ModelHub 评分
+
+在 `/opt/agent-recruiting-hub/.env` 增加（需能访问 ACK 内网 `wg-model-hub:50053` 或本地端口转发）：
+
+```bash
+HUB_MODELHUB_ADDRESS=127.0.0.1:50053
+HUB_MODELHUB_MODEL=gemini-3.1-pro-preview
+HUB_MODELHUB_CALLER=agent-recruiting-hub
+```
+
+`GET /api/health` 返回 `"scanner":"modelhub"` 表示已启用。
 
 ## 数据持久化
 

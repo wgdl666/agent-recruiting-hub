@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS candidates (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   source TEXT DEFAULT '',
-  tier TEXT DEFAULT 'B',
+  tier TEXT DEFAULT 'A',
   eng_summary TEXT DEFAULT '',
   project_summary TEXT DEFAULT '',
   one_liner TEXT DEFAULT '',
@@ -86,12 +86,16 @@ CREATE INDEX IF NOT EXISTS idx_questions_candidate ON interview_questions(candid
 	_, _ = s.db.Exec(`UPDATE candidates SET status = 'screening' WHERE status IS NULL OR status = ''`)
 	_, _ = s.db.Exec(`ALTER TABLE interview_questions ADD COLUMN answer TEXT DEFAULT ''`)
 	_, _ = s.db.Exec(`ALTER TABLE interview_questions ADD COLUMN level TEXT DEFAULT ''`)
+	_, _ = s.db.Exec(`ALTER TABLE candidates ADD COLUMN resume_key TEXT DEFAULT ''`)
+	_, _ = s.db.Exec(`UPDATE candidates SET tier='A' WHERE tier='B'`)
+	_, _ = s.db.Exec(`UPDATE candidates SET tier='淘汰' WHERE tier='C'`)
+	_ = s.NormalizeResumePaths()
 	return nil
 }
 
 func (s *Store) ListCandidates(tier, status, q string, batchID int64, engFirst bool) ([]models.Candidate, error) {
 	query := `SELECT c.id, c.name, c.source, c.tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
-		c.resume_path, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
+		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
 		COALESCE(b.name,''), c.created_at, c.updated_at
 		FROM candidates c LEFT JOIN batches b ON c.batch_id = b.id WHERE 1=1`
 	args := []any{}
@@ -114,11 +118,11 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, engFirst b
 	}
 	if engFirst {
 		query += ` ORDER BY CASE c.status WHEN 'interviewing' THEN 0 WHEN 'to_interview' THEN 1 WHEN 'screening' THEN 2 WHEN 'passed' THEN 3 WHEN 'completed' THEN 4 ELSE 5 END,
-			CASE c.tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN 'B' THEN 2 WHEN 'C' THEN 3 ELSE 4 END,
+			CASE c.tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN '淘汰' THEN 2 ELSE 3 END,
 			CASE WHEN c.interview_order > 0 THEN c.interview_order ELSE 999 END,
 			c.eng_score DESC, c.agent_score DESC, c.score_total DESC`
 	} else {
-		query += ` ORDER BY CASE tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN 'B' THEN 2 WHEN 'C' THEN 3 ELSE 4 END,
+		query += ` ORDER BY CASE tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN '淘汰' THEN 2 ELSE 3 END,
 			score_total DESC`
 	}
 	rows, err := s.db.Query(query, args...)
@@ -128,7 +132,7 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, engFirst b
 	defer rows.Close()
 	var out []models.Candidate
 	for rows.Next() {
-		c, err := scanCandidate(rows)
+		c, err := s.scanCandidate(rows)
 		if err != nil {
 			return nil, err
 		}
@@ -139,10 +143,10 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, engFirst b
 
 func (s *Store) GetCandidate(id int64) (*models.CandidateDetail, error) {
 	row := s.db.QueryRow(`SELECT c.id, c.name, c.source, c.tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
-		c.resume_path, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
+		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
 		COALESCE(b.name,''), c.created_at, c.updated_at
 		FROM candidates c LEFT JOIN batches b ON c.batch_id = b.id WHERE c.id = ?`, id)
-	c, err := scanCandidateRow(row)
+	c, err := s.scanCandidateRow(row)
 	if err != nil {
 		return nil, err
 	}
@@ -155,10 +159,10 @@ func (s *Store) GetCandidate(id int64) (*models.CandidateDetail, error) {
 
 func (s *Store) GetCandidateByName(name string) (*models.Candidate, error) {
 	row := s.db.QueryRow(`SELECT c.id, c.name, c.source, c.tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
-		c.resume_path, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
+		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
 		COALESCE(b.name,''), c.created_at, c.updated_at
 		FROM candidates c LEFT JOIN batches b ON c.batch_id = b.id WHERE c.name = ?`, name)
-	c, err := scanCandidateRow(row)
+	c, err := s.scanCandidateRow(row)
 	if err != nil {
 		return nil, err
 	}
@@ -228,6 +232,7 @@ type UpsertInput struct {
 	OneLiner       string
 	Action         string
 	ResumePath     string
+	ResumeKey      string
 	ScoreTotal     int
 	EngScore       int
 	AgentScore     int
@@ -252,11 +257,11 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 	err := s.db.QueryRow(`SELECT id FROM candidates WHERE name = ?`, in.Name).Scan(&id)
 	if err == sql.ErrNoRows {
 		res, err := s.db.Exec(`INSERT INTO candidates
-			(name, source, tier, eng_summary, project_summary, one_liner, action, resume_path,
+			(name, source, tier, eng_summary, project_summary, one_liner, action, resume_path, resume_key,
 			 score_total, eng_score, agent_score, reason, flags_json, interview_order, status, batch_id, created_at, updated_at)
-			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 			in.Name, in.Source, in.Tier, in.EngSummary, in.ProjectSummary, in.OneLiner, in.Action,
-			in.ResumePath, in.ScoreTotal, in.EngScore, in.AgentScore, in.Reason, string(flags), in.InterviewOrder,
+			in.ResumePath, in.ResumeKey, in.ScoreTotal, in.EngScore, in.AgentScore, in.Reason, string(flags), in.InterviewOrder,
 			defaultStatus(in.Status), in.BatchID, now, now)
 		if err != nil {
 			return 0, err
@@ -267,12 +272,16 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 		return 0, err
 	}
 	resumePath := in.ResumePath
+	resumeKey := in.ResumeKey
 	status := defaultStatus(in.Status)
 	batchID := in.BatchID
-	_ = s.db.QueryRow(`SELECT resume_path, status, batch_id FROM candidates WHERE id = ?`, id).
-		Scan(&resumePath, &status, &batchID)
+	_ = s.db.QueryRow(`SELECT resume_path, resume_key, status, batch_id FROM candidates WHERE id = ?`, id).
+		Scan(&resumePath, &resumeKey, &status, &batchID)
 	if in.ResumePath != "" {
 		resumePath = in.ResumePath
+	}
+	if in.ResumeKey != "" {
+		resumeKey = in.ResumeKey
 	}
 	if in.Status != "" {
 		status = defaultStatus(in.Status)
@@ -281,10 +290,10 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 		batchID = in.BatchID
 	}
 	_, err = s.db.Exec(`UPDATE candidates SET source=?, tier=?, eng_summary=?, project_summary=?, one_liner=?,
-		action=?, resume_path=?, score_total=?, eng_score=?, agent_score=?, reason=?, flags_json=?, interview_order=?, status=?, batch_id=?, updated_at=?
+		action=?, resume_path=?, resume_key=?, score_total=?, eng_score=?, agent_score=?, reason=?, flags_json=?, interview_order=?, status=?, batch_id=?, updated_at=?
 		WHERE id=?`,
 		in.Source, in.Tier, in.EngSummary, in.ProjectSummary, in.OneLiner, in.Action,
-		resumePath, in.ScoreTotal, in.EngScore, in.AgentScore, in.Reason, string(flags), in.InterviewOrder, status, batchID, now, id)
+		resumePath, resumeKey, in.ScoreTotal, in.EngScore, in.AgentScore, in.Reason, string(flags), in.InterviewOrder, status, batchID, now, id)
 	return id, err
 }
 
@@ -323,10 +332,31 @@ func (s *Store) SaveResume(name, srcPath string) (string, error) {
 	if err := copyFile(srcPath, dest); err != nil {
 		return "", err
 	}
-	return dest, nil
+	return RelativeResumePath(safe), nil
 }
 
-func scanCandidate(rows *sql.Rows) (models.Candidate, error) {
+func (s *Store) NormalizeResumePaths() error {
+	rows, err := s.db.Query(`SELECT id, resume_path FROM candidates WHERE resume_path != ''`)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		var p string
+		if err := rows.Scan(&id, &p); err != nil {
+			return err
+		}
+		rel := RelativeResumePath(p)
+		if rel == p {
+			continue
+		}
+		_, _ = s.db.Exec(`UPDATE candidates SET resume_path = ? WHERE id = ?`, rel, id)
+	}
+	return rows.Err()
+}
+
+func (s *Store) scanCandidate(rows *sql.Rows) (models.Candidate, error) {
 	var c models.Candidate
 	var flagsJSON, created, updated string
 	var interviewOrder, tierManual int
@@ -334,7 +364,7 @@ func scanCandidate(rows *sql.Rows) (models.Candidate, error) {
 	var batchID int64
 	var batchName string
 	err := rows.Scan(&c.ID, &c.Name, &c.Source, &c.Tier, &c.EngSummary, &c.ProjectSummary, &c.OneLiner,
-		&c.Action, &c.ResumePath, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
+		&c.Action, &c.ResumePath, &c.ResumeKey, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
 		&interviewOrder, &tierManual, &status, &batchID, &batchName, &created, &updated)
 	if err != nil {
 		return c, err
@@ -345,13 +375,13 @@ func scanCandidate(rows *sql.Rows) (models.Candidate, error) {
 	c.BatchID = batchID
 	c.BatchName = batchName
 	_ = json.Unmarshal([]byte(flagsJSON), &c.Flags)
-	c.HasResume = c.ResumePath != "" && fileExists(c.ResumePath)
+	c.HasResume = s.HasResumeFile(c.ResumePath, c.ResumeKey)
 	c.CreatedAt, _ = time.Parse(time.RFC3339, created)
 	c.UpdatedAt, _ = time.Parse(time.RFC3339, updated)
 	return c, nil
 }
 
-func scanCandidateRow(row *sql.Row) (models.Candidate, error) {
+func (s *Store) scanCandidateRow(row *sql.Row) (models.Candidate, error) {
 	var c models.Candidate
 	var flagsJSON, created, updated string
 	var interviewOrder, tierManual int
@@ -359,7 +389,7 @@ func scanCandidateRow(row *sql.Row) (models.Candidate, error) {
 	var batchID int64
 	var batchName string
 	err := row.Scan(&c.ID, &c.Name, &c.Source, &c.Tier, &c.EngSummary, &c.ProjectSummary, &c.OneLiner,
-		&c.Action, &c.ResumePath, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
+		&c.Action, &c.ResumePath, &c.ResumeKey, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
 		&interviewOrder, &tierManual, &status, &batchID, &batchName, &created, &updated)
 	if err != nil {
 		return c, err
@@ -370,7 +400,7 @@ func scanCandidateRow(row *sql.Row) (models.Candidate, error) {
 	c.BatchID = batchID
 	c.BatchName = batchName
 	_ = json.Unmarshal([]byte(flagsJSON), &c.Flags)
-	c.HasResume = c.ResumePath != "" && fileExists(c.ResumePath)
+	c.HasResume = s.HasResumeFile(c.ResumePath, c.ResumeKey)
 	c.CreatedAt, _ = time.Parse(time.RFC3339, created)
 	c.UpdatedAt, _ = time.Parse(time.RFC3339, updated)
 	return c, nil
@@ -415,7 +445,7 @@ func (s *Store) DeleteCandidate(id int64) error {
 	_ = s.db.QueryRow(`SELECT resume_path FROM candidates WHERE id = ?`, id).Scan(&path)
 	_, err := s.db.Exec(`DELETE FROM candidates WHERE id = ?`, id)
 	if err == nil && path != "" {
-		_ = os.Remove(path)
+		_ = os.Remove(s.ResolveResumePath(path))
 	}
 	return err
 }

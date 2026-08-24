@@ -37,28 +37,38 @@ flowchart LR
 
 ## 核心模型
 
-**候选人 `candidates`**
+**候选人 `candidates`**（页面信息基本都在这一张表）
 
-- 档位 `tier`：S / A / B / C / 淘汰  
-- 状态 `status`：screening → to_interview → interviewing → passed / completed / rejected  
-- `tier_manual`：手动锁定档位，重评不覆盖  
-- `batch_id`：所属招聘批次  
+| 字段 | 说明 |
+|------|------|
+| name, source, tier, status, batch_id | 姓名、来源、档位、进度、批次 |
+| eng_summary, project_summary, one_liner, action | 传统工程 / 深挖项目 / 摘要 / 建议 |
+| score_total, eng_score, agent_score, reason, flags_json | 自动评分与标签（如 no_intern） |
+| interview_order, tier_manual | S 档面试顺序、是否手动锁定档位 |
+| resume_path | 相对路径 `data/resumes/姓名.pdf`（本地缓存，便于重评 OCR） |
+| resume_key | OSS 对象键（如 `recruiting-hub/resumes/何鑫奎.pdf`） |
 
-**批次 `batches`**
-
-- `period_type`：daily / weekly / monthly / custom  
-- 上传时按 `period_type` 自动归批，或指定 `batch_id`  
+简历：**文件在 OSS**，库中只存 `resume_key` + 相对 `resume_path`。预览走 `/api/candidates/:id/resume`（OSS 签名 URL 或本地回退）。
 
 **面试题 `interview_questions`**
 
-- `question` / `answer` / `level`（L1-L3）  
-- 种子来自 `seed/qa.go`，经 `/api/sync/questions` 写入库  
+| 字段 | 说明 |
+|------|------|
+| question, answer, level | 题目、面试官参考答案、L1/L2/L3 |
+
+**批次 `batches`**
+
+| 字段 | 说明 |
+|------|------|
+| name, tag, period_type | 批次名、唯一标签、日/周/月 |
+
+不单独建「实习经历」表：实习有无用 `flags_json` 的 `no_intern` + 面试时人工确认。
 
 ## 评分逻辑（scanner）
 
-- 实习 4 维 + 工程 4 维 + Agent 3 维 + 深度指标  
-- 无实习关键词 → `no_intern` 降权  
-- 图片 PDF → `thin` 标记，分数可能为负，需人工  
+- 优先 **wgModelHub**（`HUB_MODELHUB_ADDRESS`，模型默认 `gemini-3.1-pro-preview`）  
+- 回退：关键词启发式  
+- `/api/health` → `scanner: modelhub|heuristic`
 
 ## 前端标签页
 

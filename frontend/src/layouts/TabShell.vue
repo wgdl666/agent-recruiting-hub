@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { User, Upload, Notebook } from '@element-plus/icons-vue'
 import HomeView from '../views/HomeView.vue'
 import UploadView from '../views/UploadView.vue'
 import DocsView from '../views/DocsView.vue'
@@ -11,6 +12,30 @@ import { statusLabel, statusType } from '../constants/status'
 const route = useRoute()
 const router = useRouter()
 const { activeKey, candidateTabs, openCandidateById, removeTab } = useTabs()
+
+const navItems = [
+  { key: 'home', label: '候选人', icon: User },
+  { key: 'upload', label: '上传', icon: Upload },
+  { key: 'docs', label: '知识库', icon: Notebook },
+] as const
+
+const navKey = computed(() =>
+  activeKey.value.startsWith('candidate-') ? 'home' : activeKey.value,
+)
+
+const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
+
+const candidateTabActive = computed({
+  get: () => (isCandidateView.value ? activeKey.value : ''),
+  set: (key: string) => {
+    if (key) activeKey.value = key
+  },
+})
+
+function onNavSelect(key: string) {
+  activeKey.value = key
+  syncRoute()
+}
 
 function onTabRemove(name: string | number) {
   removeTab(String(name))
@@ -47,54 +72,65 @@ onMounted(() => {
       <div class="brand">Agent 招聘评估台</div>
       <div class="tagline">工程落地优先 · 标签页打开候选人 · 可标记面试状态</div>
     </el-header>
-    <el-main class="main">
-      <el-tabs
-        v-model="activeKey"
-        type="card"
-        class="app-tabs"
-        @tab-remove="onTabRemove"
-      >
-        <el-tab-pane label="候选人" name="home" :closable="false">
-          <HomeView />
-        </el-tab-pane>
-        <el-tab-pane label="上传" name="upload" :closable="false">
-          <UploadView />
-        </el-tab-pane>
-        <el-tab-pane label="知识库" name="docs" :closable="false">
-          <DocsView />
-        </el-tab-pane>
-        <el-tab-pane
-          v-for="tab in candidateTabs"
-          :key="tab.key"
-          :name="tab.key"
-          :closable="true"
-          lazy
+
+    <el-container class="body">
+      <el-aside width="148px" class="side">
+        <el-menu
+          :default-active="navKey"
+          class="side-menu"
+          @select="onNavSelect"
         >
-          <template #label>
-            <span class="tab-label">
-              {{ tab.title }}
-              <el-tag v-if="tab.tier" size="small" :type="tab.tier === 'S' ? 'danger' : 'info'" class="tab-tier">
-                {{ tab.tier }}
-              </el-tag>
-              <el-tag v-if="tab.status" size="small" :type="statusType(tab.status)" class="tab-tier">
-                {{ statusLabel(tab.status) }}
-              </el-tag>
-            </span>
-          </template>
-          <CandidateView :id="String(tab.candidateId)" />
-        </el-tab-pane>
-      </el-tabs>
-    </el-main>
+          <el-menu-item v-for="item in navItems" :key="item.key" :index="item.key">
+            <el-icon><component :is="item.icon" /></el-icon>
+            <span>{{ item.label }}</span>
+          </el-menu-item>
+        </el-menu>
+      </el-aside>
+
+      <el-main class="main">
+        <el-tabs
+          v-if="candidateTabs.length"
+          v-model="candidateTabActive"
+          type="card"
+          class="candidate-tabs"
+          @tab-remove="onTabRemove"
+        >
+          <el-tab-pane
+            v-for="tab in candidateTabs"
+            :key="tab.key"
+            :name="tab.key"
+            :closable="true"
+            lazy
+          >
+            <template #label>
+              <span class="tab-label">
+                {{ tab.title }}
+                <el-tag v-if="tab.tier" size="small" :type="tab.tier === 'S' ? 'danger' : 'info'" class="tab-tier">
+                  {{ tab.tier }}
+                </el-tag>
+                <el-tag v-if="tab.status" size="small" :type="statusType(tab.status)" class="tab-tier">
+                  {{ statusLabel(tab.status) }}
+                </el-tag>
+              </span>
+            </template>
+            <CandidateView :id="String(tab.candidateId)" />
+          </el-tab-pane>
+        </el-tabs>
+
+        <div v-show="!isCandidateView" class="page-panel">
+          <HomeView v-if="activeKey === 'home'" />
+          <UploadView v-else-if="activeKey === 'upload'" />
+          <DocsView v-else-if="activeKey === 'docs'" />
+        </div>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
-<style>
-body {
-  margin: 0;
-  background: #f5f7fa;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+<style scoped>
+.layout {
+  min-height: 100vh;
 }
-.layout { min-height: 100vh; }
 .header {
   display: flex;
   align-items: center;
@@ -102,20 +138,73 @@ body {
   border-bottom: 1px solid #ebeef5;
   padding: 0 20px;
   gap: 24px;
+  height: 56px;
 }
-.brand { font-weight: 700; font-size: 18px; white-space: nowrap; }
-.tagline { margin-left: auto; color: #909399; font-size: 13px; }
-.el-header { height: 56px; }
-.main { padding-top: 12px; }
-.app-tabs > .el-tabs__header { margin-bottom: 0; }
-.app-tabs > .el-tabs__content {
+.brand {
+  font-weight: 700;
+  font-size: 18px;
+  white-space: nowrap;
+}
+.tagline {
+  margin-left: auto;
+  color: #909399;
+  font-size: 13px;
+}
+.body {
+  min-height: calc(100vh - 56px);
+}
+.side {
+  background: #fff;
+  border-right: 1px solid #ebeef5;
+}
+.side-menu {
+  border-right: none;
+  padding-top: 8px;
+}
+.side-menu .el-menu-item {
+  height: 44px;
+  margin: 4px 8px;
+  border-radius: 8px;
+}
+.side-menu .el-menu-item.is-active {
+  background: #ecf5ff;
+}
+.main {
+  padding: 12px 16px 16px;
+  background: #f5f7fa;
+}
+.candidate-tabs :deep(.el-tabs__header) {
+  margin-bottom: 0;
+}
+.candidate-tabs :deep(.el-tabs__content) {
   background: #fff;
   border: 1px solid #e4e7ed;
   border-top: none;
   border-radius: 0 0 8px 8px;
   padding: 16px;
+  min-height: calc(100vh - 180px);
+}
+.page-panel {
+  background: #fff;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  padding: 16px;
   min-height: calc(100vh - 120px);
 }
-.tab-label { display: inline-flex; align-items: center; gap: 6px; }
-.tab-tier { transform: scale(0.9); }
+.tab-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab-tier {
+  transform: scale(0.9);
+}
+</style>
+
+<style>
+body {
+  margin: 0;
+  background: #f5f7fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
 </style>

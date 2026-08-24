@@ -33,7 +33,7 @@ const columns = computed(() =>
       <div class="tiers">
         <a-tag color="red">S {{ stats?.by_tier?.S ?? 0 }}</a-tag>
         <a-tag color="orange">A {{ stats?.by_tier?.A ?? 0 }}</a-tag>
-        <a-tag>B {{ stats?.by_tier?.B ?? 0 }}</a-tag>
+        <a-tag>淘汰 {{ stats?.by_tier?.淘汰 ?? 0 }}</a-tag>
       </div>
     </div>
   </a-spin>

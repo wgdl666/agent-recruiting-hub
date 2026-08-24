@@ -96,8 +96,6 @@ function onUploadDone() {
               <el-radio-button value="all">全部</el-radio-button>
               <el-radio-button value="S">S</el-radio-button>
               <el-radio-button value="A">A</el-radio-button>
-              <el-radio-button value="B">B</el-radio-button>
-              <el-radio-button value="C">C</el-radio-button>
               <el-radio-button value="淘汰">淘汰</el-radio-button>
             </el-radio-group>
           </div>

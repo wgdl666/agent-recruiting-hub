@@ -49,7 +49,7 @@ func MarkdownReport(candidates []models.CandidateDetail) string {
 		}
 	}
 
-	for _, tier := range []string{"A", "B", "C", "淘汰"} {
+	for _, tier := range []string{"A", "淘汰"} {
 		list := byTier[tier]
 		if len(list) == 0 {
 			continue

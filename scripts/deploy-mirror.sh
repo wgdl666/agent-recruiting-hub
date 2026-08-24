@@ -19,6 +19,7 @@ rsync -az "$ROOT/bin/hub-linux" "$HOST:$REMOTE_DIR/bin/hub"
 rsync -az --delete "$ROOT/frontend/dist/" "$HOST:$REMOTE_DIR/frontend/dist/"
 rsync -az "$ROOT/seed/" "$HOST:$REMOTE_DIR/seed/"
 rsync -az "$ROOT/docs/" "$HOST:$REMOTE_DIR/docs/"
+rsync -az "$ROOT/.env.example" "$HOST:$REMOTE_DIR/.env.example"
 rsync -az "$ROOT/data/" "$HOST:$REMOTE_DIR/data/"
 ssh "$HOST" "chmod +x '$REMOTE_DIR/bin/hub'"
 
@@ -31,6 +32,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=${REMOTE_DIR}
+EnvironmentFile=-${REMOTE_DIR}/.env
 ExecStart=${REMOTE_DIR}/bin/hub -root ${REMOTE_DIR} -addr ${ADDR}
 Restart=on-failure
 RestartSec=3
@@ -50,6 +52,8 @@ ssh "$HOST" "ln -sf /etc/nginx/sites-available/${DOMAIN} /etc/nginx/sites-enable
 if ! ssh "$HOST" "test -f /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"; then
   ssh "$HOST" "certbot --nginx -d ${DOMAIN} --non-interactive --agree-tos --register-unsafely-without-email --redirect"
 else
+  # 证书已存在但 nginx 可能未挂 SSL（仅 HTTP 时 HTTPS 会落到默认站点）
+  ssh "$HOST" "certbot install --cert-name ${DOMAIN} --nginx 2>/dev/null || true"
   ssh "$HOST" "certbot renew --quiet 2>/dev/null || true"
 fi
 ssh "$HOST" "nginx -t && systemctl reload nginx"

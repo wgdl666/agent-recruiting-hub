@@ -9,7 +9,7 @@ import (
 	"github.com/caden/agent-recruiting-hub/internal/scanner"
 )
 
-var validTiers = map[string]bool{"S": true, "A": true, "B": true, "C": true, "淘汰": true}
+var validTiers = map[string]bool{"S": true, "A": true, "淘汰": true}
 
 var validStatuses = map[string]bool{
 	models.StatusScreening:    true,
@@ -40,7 +40,7 @@ func (s *Store) PatchCandidate(id int64, patch PatchInput) error {
 	status := cand.Status
 
 	if patch.Tier != nil {
-		t := strings.TrimSpace(*patch.Tier)
+		t := scanner.NormalizeTier(*patch.Tier)
 		if !validTiers[t] {
 			return fmt.Errorf("invalid tier: %s", t)
 		}
