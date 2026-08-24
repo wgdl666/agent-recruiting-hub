@@ -25,13 +25,6 @@ const navKey = computed(() =>
 
 const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
 
-const candidateTabActive = computed({
-  get: () => (isCandidateView.value ? activeKey.value : ''),
-  set: (key: string) => {
-    if (key) activeKey.value = key
-  },
-})
-
 function onNavSelect(key: string) {
   activeKey.value = key
   syncRoute()
@@ -89,8 +82,8 @@ onMounted(() => {
 
       <el-main class="main">
         <el-tabs
-          v-if="candidateTabs.length"
-          v-model="candidateTabActive"
+          v-if="candidateTabs.length && isCandidateView"
+          v-model="activeKey"
           type="card"
           class="candidate-tabs"
           @tab-remove="onTabRemove"

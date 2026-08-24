@@ -67,12 +67,32 @@ export function useTabs() {
     if (patch.status) tab.status = patch.status
   }
 
+  function replaceActiveCandidate(c: Pick<Candidate, 'id' | 'name' | 'tier' | 'status'>) {
+    const key = `candidate-${c.id}`
+    const idx = candidateTabs.value.findIndex((t) => t.key === activeKey.value)
+    const tab = {
+      key,
+      title: c.name,
+      kind: 'candidate' as const,
+      candidateId: c.id,
+      tier: c.tier,
+      status: c.status,
+    }
+    if (idx >= 0) {
+      candidateTabs.value[idx] = tab
+    } else {
+      candidateTabs.value.push(tab)
+    }
+    activeKey.value = key
+  }
+
   return {
     activeKey,
     candidateTabs,
     allTabs,
     openCandidate,
     openCandidateById,
+    replaceActiveCandidate,
     switchTab,
     removeTab,
     updateCandidateTab,

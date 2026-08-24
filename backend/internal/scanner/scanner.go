@@ -15,7 +15,7 @@ var internPatterns = map[string]*regexp.Regexp{
 	"intern_section": regexp.MustCompile(`实习经历|实习经验|工作经历|工作/项目经历|实习单位`),
 	"intern_role":    regexp.MustCompile(`(?i)实习|实习生|intern`),
 	"ownership":      regexp.MustCompile(`(?i)独立(开发|负责|设计|实现)|主导|负责.*(开发|实现|设计|架构)|核心开发`),
-	"equivalent":     regexp.MustCompile(`(?i)上线|生产环境|真实用户|内部使用|sole dev|独立(完成|开发)|个人项目.*上线`),
+	"equivalent":     regexp.MustCompile(`(?i)上线|已上线|上线运营|投产|生产环境|真实用户|内部使用|日活|活跃用户|sole dev|独立(完成|开发|交付)|个人项目.*上线`),
 }
 
 var engPatterns = map[string]*regexp.Regexp{
@@ -158,8 +158,7 @@ func scoreHeuristic(text string) ScoreBreakdown {
 			intern++
 		}
 	}
-	hasIntern := intern >= 2
-	if !hasIntern {
+	if !hasRealInternship(text) {
 		flags = append(flags, "no_intern")
 	}
 
@@ -203,10 +202,10 @@ func tierFromScores(eng, agent, intern, depth, total int, flags []string) (strin
 	if contains(flags, "no_intern") && eng < 2 && agent < 2 {
 		return "淘汰", "no_intern"
 	}
-	if eng >= 3 && agent >= 2 && depth >= 2 && intern >= 2 {
+	if eng >= 3 && agent >= 2 && depth >= 2 && intern >= 3 && !contains(flags, "no_intern") {
 		return "S", fmt.Sprintf("eng=%d agent=%d intern=%d depth=%d", eng, agent, intern, depth)
 	}
-	if eng >= 2 && agent >= 2 && intern >= 1 {
+	if eng >= 2 && agent >= 2 && intern >= 2 && !contains(flags, "no_intern") {
 		return "A", fmt.Sprintf("eng=%d agent=%d intern=%d", eng, agent, intern)
 	}
 	if eng >= 2 || agent >= 2 {
@@ -229,6 +228,14 @@ func NormalizeTier(tier string) string {
 	default:
 		return "淘汰"
 	}
+}
+
+func hasRealInternship(text string) bool {
+	hasSection := internPatterns["intern_section"].MatchString(text)
+	hasRole := internPatterns["intern_role"].MatchString(text)
+	hasLaunch := internPatterns["equivalent"].MatchString(text) ||
+		internPatterns["ownership"].MatchString(text)
+	return hasSection && hasRole && hasLaunch
 }
 
 func ActionForTier(tier string) string {

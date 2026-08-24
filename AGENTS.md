@@ -1,6 +1,6 @@
 # Agent Recruiting Hub — Cursor Agent Guide
 
-本地 Agent 实习招聘评估台。标准：**实习经历 + 传统工程底座 + 单项目深挖**，工程落地经验优先。
+本地 Agent 实习招聘评估台。标准：**真实实习 + 项目上线**、传统工程底座、单项目深挖，工程落地经验优先。
 
 ## 启动
 
@@ -81,7 +81,7 @@ open http://localhost:8080/api/candidates/1/resume
 
 ## 评分逻辑
 
-- 配置 `HUB_MODELHUB_ADDRESS` 后走 **wgModelHub** → `gemini-3.1-pro-preview`（prompt：`backend/internal/scanner/scoring_prompt.txt`）
+- 配置 `HUB_MODELHUB_ADDRESS` 后走 **wgModelHub** → `gemini-2.5-flash`（prompt：`backend/internal/scanner/scoring_prompt.txt`）
 - 未配置或 RPC 失败时回退关键词启发式
 - `GET /api/health` 的 `scanner` 字段：`modelhub` | `heuristic`
 - `seed/questions.go`：S 档 11 人各 3 条定制面试题

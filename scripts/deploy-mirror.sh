@@ -18,6 +18,7 @@ ssh "$HOST" "mkdir -p '$REMOTE_DIR'/bin '$REMOTE_DIR'/frontend/dist '$REMOTE_DIR
 rsync -az "$ROOT/bin/hub-linux" "$HOST:$REMOTE_DIR/bin/hub"
 rsync -az --delete "$ROOT/frontend/dist/" "$HOST:$REMOTE_DIR/frontend/dist/"
 rsync -az "$ROOT/seed/" "$HOST:$REMOTE_DIR/seed/"
+rsync -az "$ROOT/backend/scripts/" "$HOST:$REMOTE_DIR/scripts/"
 rsync -az "$ROOT/docs/" "$HOST:$REMOTE_DIR/docs/"
 rsync -az "$ROOT/.env.example" "$HOST:$REMOTE_DIR/.env.example"
 rsync -az "$ROOT/data/" "$HOST:$REMOTE_DIR/data/"

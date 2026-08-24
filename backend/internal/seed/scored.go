@@ -9,6 +9,7 @@ import (
 type ScoredRecord struct {
 	Name       string   `json:"name"`
 	Batch      string   `json:"batch"`
+	Text       string   `json:"text"`
 	EngScore   int      `json:"eng_score"`
 	AgentScore int      `json:"agent_score"`
 	Total      int      `json:"total"`

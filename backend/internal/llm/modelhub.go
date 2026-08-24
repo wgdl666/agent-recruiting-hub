@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	defaultModelHubModel = "gemini-3.1-pro-preview"
+	defaultModelHubModel = "gemini-2.5-flash"
 	defaultCallerService = "agent-recruiting-hub"
 )
 

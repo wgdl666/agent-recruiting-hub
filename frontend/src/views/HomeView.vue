@@ -6,6 +6,7 @@ import {
 } from '../api/client'
 import type { Candidate, PipelineStats, Stats } from '../types'
 import { useTabs } from '../composables/useTabs'
+import { useCandidateNav } from '../composables/useCandidateNav'
 import { useActiveBatch } from '../composables/useActiveBatch'
 import { PIPELINE_ORDER, statusLabel } from '../constants/status'
 import StatsBar from '../components/StatsBar.vue'
@@ -18,6 +19,7 @@ import PipelineFunnel from '../components/pipeline/PipelineFunnel.vue'
 import PipelineKanban from '../components/pipeline/PipelineKanban.vue'
 
 const { switchTab } = useTabs()
+const { setNavFromCandidates } = useCandidateNav()
 const { activeBatchId, uploadPeriodType } = useActiveBatch()
 const tier = ref('S')
 const status = ref('screening')
@@ -43,6 +45,7 @@ async function load() {
         : Promise.resolve([] as Candidate[]),
     ])
     candidates.value = list
+    setNavFromCandidates(list, tier.value, status.value)
     stats.value = st
     pipelineStats.value = pipe
     if (viewMode.value === 'kanban') kanbanCandidates.value = allForKanban

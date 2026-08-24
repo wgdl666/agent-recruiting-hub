@@ -97,7 +97,7 @@ HUB_OSS_PREFIX=recruiting-hub/resumes
 
 ```bash
 HUB_MODELHUB_ADDRESS=127.0.0.1:50053
-HUB_MODELHUB_MODEL=gemini-3.1-pro-preview
+HUB_MODELHUB_MODEL=gemini-2.5-flash
 HUB_MODELHUB_CALLER=agent-recruiting-hub
 ```
 

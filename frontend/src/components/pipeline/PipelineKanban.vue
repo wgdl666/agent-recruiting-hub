@@ -5,6 +5,7 @@ import { updateCandidate } from '../../api/client'
 import type { Candidate } from '../../types'
 import { PIPELINE_ORDER, statusColor, statusLabel } from '../../constants/status'
 import { useTabs } from '../../composables/useTabs'
+import { useCandidateNav } from '../../composables/useCandidateNav'
 
 const props = defineProps<{
   candidates: Candidate[]
@@ -12,6 +13,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ updated: [] }>()
 const { openCandidate } = useTabs()
+const { setNavFromCandidates } = useCandidateNav()
 
 const dragId = ref<number | null>(null)
 const saving = ref(false)
@@ -84,7 +86,7 @@ function tierColor(tier: string) {
             class="card"
             draggable="true"
             @dragstart="onDragStart(c.id)"
-            @click="openCandidate(c)"
+            @click="setNavFromCandidates(candidates, 'all', 'all'); openCandidate(c)"
           >
             <div class="card-top">
               <strong>{{ c.name }}</strong>

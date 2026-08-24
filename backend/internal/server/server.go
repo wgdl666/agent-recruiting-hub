@@ -543,6 +543,11 @@ func (s *Server) rescreenAll(c *gin.Context) {
 		if err != nil || local == "" {
 			continue
 		}
+		if len(strings.TrimSpace(text)) < 300 {
+			if sc, ok := scored[cand.Name]; ok && strings.TrimSpace(sc.Text) != "" {
+				text = sc.Text
+			}
+		}
 		score := scanner.Score(text)
 		tier := scanner.NormalizeTier(score.Tier)
 		if cand.TierManual {
@@ -550,29 +555,14 @@ func (s *Server) rescreenAll(c *gin.Context) {
 		} else if t, ok := seed.ManualTier[cand.Name]; ok {
 			tier = scanner.NormalizeTier(t)
 		}
-		if score.Total < 0 {
-			if sc, ok := scored[cand.Name]; ok {
-				score.Total, score.EngScore, score.AgentScore = sc.Total, sc.EngScore, sc.AgentScore
-				score.Reason, score.Flags = sc.Reason, sc.Flags
-				if !cand.TierManual {
-					tier = scanner.NormalizeTier(cand.Tier)
-					if t, ok := seed.ManualTier[cand.Name]; ok {
-						tier = scanner.NormalizeTier(t)
-					}
-				}
-			} else if !cand.TierManual {
-				if t, ok := seed.ManualTier[cand.Name]; ok {
-					tier = scanner.NormalizeTier(t)
-					score.Reason = "manual_tier"
-				}
-			}
-		}
 		eng, proj, one := summariesFromScore(score)
 		if eng == "" {
 			eng, proj, one = cand.EngSummary, cand.ProjectSummary, cand.OneLiner
 		}
-		if sum, ok := seed.Summaries[cand.Name]; ok {
-			eng, proj, one = sum.Eng, sum.Proj, sum.One
+		if score.Source != "modelhub" {
+			if sum, ok := seed.Summaries[cand.Name]; ok {
+				eng, proj, one = sum.Eng, sum.Proj, sum.One
+			}
 		}
 		action := score.Action
 		if cand.TierManual {

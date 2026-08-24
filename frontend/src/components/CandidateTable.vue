@@ -4,16 +4,19 @@ import type { Candidate } from '../types'
 import TierEditor from './TierEditor.vue'
 import StatusEditor from './StatusEditor.vue'
 import { useTabs } from '../composables/useTabs'
+import { useCandidateNav } from '../composables/useCandidateNav'
 
-defineProps<{ candidates: Candidate[]; loading?: boolean; showOrder?: boolean }>()
+const props = defineProps<{ candidates: Candidate[]; loading?: boolean; showOrder?: boolean }>()
 const emit = defineEmits<{ updated: [] }>()
 const { openCandidate } = useTabs()
+const { setNavFromCandidates } = useCandidateNav()
 
 function rowClass({ row }: { row: Candidate }) {
   return row.tier === 'S' ? 'row-s' : ''
 }
 
 function onRowClick(row: Candidate) {
+  setNavFromCandidates(props.candidates)
   openCandidate(row)
 }
 

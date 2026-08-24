@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { fetchCandidate, updateCandidate } from '../api/client'
 import type { CandidateDetail } from '../types'
@@ -9,21 +10,54 @@ import QuestionPanel from '../components/QuestionPanel.vue'
 import StatusEditor from '../components/StatusEditor.vue'
 import ScorePanel from '../components/ScorePanel.vue'
 import { useTabs } from '../composables/useTabs'
+import { useCandidateNav } from '../composables/useCandidateNav'
 
 const props = defineProps<{ id: string }>()
-const { updateCandidateTab } = useTabs()
+const { updateCandidateTab, replaceActiveCandidate } = useTabs()
+const { hasPrev, hasNext, prevId, nextId, navLabel, ensureNav } = useCandidateNav()
 const detail = ref<CandidateDetail | null>(null)
 const loading = ref(true)
 const orderInput = ref<number | undefined>()
 
+const currentId = computed(() => Number(props.id))
+const canPrev = computed(() => hasPrev(currentId.value))
+const canNext = computed(() => hasNext(currentId.value))
+const positionLabel = computed(() => navLabel.value(currentId.value))
+
 async function load() {
   loading.value = true
   try {
-    detail.value = await fetchCandidate(Number(props.id))
+    await ensureNav(currentId.value)
+    detail.value = await fetchCandidate(currentId.value)
     orderInput.value = detail.value.interview_order || undefined
-    updateCandidateTab(detail.value.id, { name: detail.value.name, tier: detail.value.tier, status: detail.value.status })
+    updateCandidateTab(detail.value.id, {
+      name: detail.value.name,
+      tier: detail.value.tier,
+      status: detail.value.status,
+    })
   } finally {
     loading.value = false
+  }
+}
+
+function goSibling(targetId: number | null) {
+  if (!targetId || targetId === currentId.value) return
+  replaceActiveCandidate({
+    id: targetId,
+    name: `候选人 #${targetId}`,
+    tier: '',
+    status: 'screening',
+  })
+}
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+  if (e.key === 'ArrowLeft' && canPrev.value) {
+    e.preventDefault()
+    goSibling(prevId(currentId.value))
+  } else if (e.key === 'ArrowRight' && canNext.value) {
+    e.preventDefault()
+    goSibling(nextId(currentId.value))
   }
 }
 
@@ -52,74 +86,145 @@ async function resetAutoTier() {
   ElMessage.info('已恢复自动档位（下次重评生效）')
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  window.addEventListener('keydown', onKeydown)
+})
+onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 watch(() => props.id, load)
 </script>
 
 <template>
-  <div v-loading="loading" class="candidate-pane">
-    <template v-if="detail">
-      <div class="pane-title">
-        <h2>{{ detail.name }}</h2>
-        <el-tag v-if="detail.tier" :type="detail.tier === 'S' ? 'danger' : 'info'">{{ detail.tier }} 档</el-tag>
-      </div>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="面试状态">
-          <StatusEditor :candidate="detail" @updated="onStatusUpdated" />
-        </el-descriptions-item>
-        <el-descriptions-item label="档位">
-          <TierEditor :candidate="detail" @updated="onTierUpdated" />
-          <el-tag v-if="detail.tier_manual" size="small" type="warning" style="margin-left: 8px">手动</el-tag>
-          <el-button v-if="detail.tier_manual" link type="primary" size="small" @click="resetAutoTier">恢复自动</el-button>
-        </el-descriptions-item>
-        <el-descriptions-item v-if="detail.tier === 'S'" label="面试顺序">
-          <el-input-number v-model="orderInput" :min="0" :max="99" size="small" />
-          <el-button size="small" style="margin-left: 8px" @click="saveOrder">保存</el-button>
-        </el-descriptions-item>
-        <el-descriptions-item label="传统工程">{{ detail.eng_summary }}</el-descriptions-item>
-        <el-descriptions-item label="深挖项目">{{ detail.project_summary }}</el-descriptions-item>
-        <el-descriptions-item label="摘要">{{ detail.one_liner }}</el-descriptions-item>
+  <div class="candidate-shell">
+    <button
+      type="button"
+      class="nav-btn nav-prev"
+      :disabled="!canPrev"
+      title="上一个 (←)"
+      @click="goSibling(prevId(currentId))"
+    >
+      <el-icon><ArrowLeft /></el-icon>
+    </button>
+
+    <div v-loading="loading" class="candidate-pane">
+      <template v-if="detail">
+        <div class="pane-title">
+          <div>
+            <h2>{{ detail.name }}</h2>
+            <span v-if="positionLabel" class="position">{{ positionLabel }}</span>
+          </div>
+          <el-tag v-if="detail.tier" :type="detail.tier === 'S' ? 'danger' : 'info'">{{ detail.tier }} 档</el-tag>
+        </div>
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="面试状态">
+            <StatusEditor :candidate="detail" @updated="onStatusUpdated" />
+          </el-descriptions-item>
+          <el-descriptions-item label="档位">
+            <TierEditor :candidate="detail" @updated="onTierUpdated" />
+            <el-tag v-if="detail.tier_manual" size="small" type="warning" style="margin-left: 8px">手动</el-tag>
+            <el-button v-if="detail.tier_manual" link type="primary" size="small" @click="resetAutoTier">恢复自动</el-button>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="detail.tier === 'S'" label="面试顺序">
+            <el-input-number v-model="orderInput" :min="0" :max="99" size="small" />
+            <el-button size="small" style="margin-left: 8px" @click="saveOrder">保存</el-button>
+          </el-descriptions-item>
+          <el-descriptions-item label="传统工程">{{ detail.eng_summary }}</el-descriptions-item>
+          <el-descriptions-item label="深挖项目">{{ detail.project_summary }}</el-descriptions-item>
+          <el-descriptions-item label="摘要">{{ detail.one_liner }}</el-descriptions-item>
         <el-descriptions-item label="实习经历" :span="2">
           <template v-if="detail.flags?.includes('no_intern')">
-            <el-tag type="warning">未检出</el-tag>
-            <span class="field-hint">简历里没有明显的实习/上线/独立开发等关键词（可能漏检，以人工为准）</span>
+            <el-tag type="warning">未达标</el-tag>
+            <span class="field-hint">标准：真实公司实习 + 项目上线/生产落地（日活、生产环境等）。仅校内/个人项目或实习无上线描述不算。</span>
           </template>
           <template v-else>
-            <el-tag type="success">已检出</el-tag>
-            <span class="field-hint">简历有关键词信号（实习段、上线、独立项目等），不等于已核实，面试仍需确认</span>
+            <el-tag type="success">已达标</el-tag>
+            <span class="field-hint">有真实实习且简历里有上线/落地信号，面试仍需核实细节。</span>
           </template>
         </el-descriptions-item>
-        <el-descriptions-item label="建议">{{ detail.action }}</el-descriptions-item>
-        <el-descriptions-item label="自动评分" :span="2">
-          <ScorePanel :candidate="detail" />
-        </el-descriptions-item>
-        <el-descriptions-item label="来源">{{ detail.source }}</el-descriptions-item>
-      </el-descriptions>
+          <el-descriptions-item label="建议">{{ detail.action }}</el-descriptions-item>
+          <el-descriptions-item label="自动评分" :span="2">
+            <ScorePanel :candidate="detail" />
+          </el-descriptions-item>
+          <el-descriptions-item label="来源">{{ detail.source }}</el-descriptions-item>
+        </el-descriptions>
 
-      <el-row :gutter="16" style="margin-top: 16px">
-        <el-col :span="14">
-          <el-card v-if="detail.has_resume" shadow="never">
-            <template #header>简历预览</template>
-            <ResumeViewer :candidate-id="detail.id" />
-          </el-card>
-          <el-empty v-else description="暂无简历文件，可重新上传" />
-        </el-col>
-        <el-col :span="10">
-          <QuestionPanel :questions="detail.questions" />
-        </el-col>
-      </el-row>
-    </template>
+        <el-row :gutter="16" style="margin-top: 16px">
+          <el-col :span="14">
+            <el-card v-if="detail.has_resume" shadow="never">
+              <template #header>简历预览</template>
+              <ResumeViewer :candidate-id="detail.id" />
+            </el-card>
+            <el-empty v-else description="暂无简历文件，可重新上传" />
+          </el-col>
+          <el-col :span="10">
+            <QuestionPanel :questions="detail.questions" />
+          </el-col>
+        </el-row>
+      </template>
+    </div>
+
+    <button
+      type="button"
+      class="nav-btn nav-next"
+      :disabled="!canNext"
+      title="下一个 (→)"
+      @click="goSibling(nextId(currentId))"
+    >
+      <el-icon><ArrowRight /></el-icon>
+    </button>
   </div>
 </template>
 
 <style scoped>
-.candidate-pane { min-height: 400px; }
+.candidate-shell {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-height: 400px;
+}
+.candidate-pane {
+  flex: 1;
+  min-width: 0;
+}
+.nav-btn {
+  flex: 0 0 40px;
+  align-self: center;
+  height: 72px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  background: #fff;
+  color: #606266;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.nav-btn:hover:not(:disabled) {
+  background: #ecf5ff;
+  border-color: #409eff;
+  color: #409eff;
+}
+.nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 .pane-title {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 16px;
 }
-.pane-title h2 { margin: 0; font-size: 20px; font-weight: 600; }
+.pane-title h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+.position {
+  color: #909399;
+  font-size: 13px;
+}
 .field-hint { margin-left: 8px; color: #909399; font-size: 12px; }
 </style>
