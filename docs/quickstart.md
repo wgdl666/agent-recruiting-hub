@@ -10,7 +10,7 @@
 ## 首次安装
 
 ```bash
-git clone https://github.com/Zhan-boyi/agent-recruiting-hub.git
+git clone https://github.com/wgdl666/agent-recruiting-hub.git
 cd agent-recruiting-hub
 make install
 ```

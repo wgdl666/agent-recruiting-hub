@@ -53,7 +53,7 @@ onMounted(async () => {
         </a-menu>
         <div class="sider-links">
           <a
-            href="https://github.com/Zhan-boyi/agent-recruiting-hub"
+            href="https://github.com/wgdl666/agent-recruiting-hub"
             target="_blank"
             rel="noopener"
           >

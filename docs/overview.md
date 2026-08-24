@@ -20,7 +20,7 @@
 
 ## 仓库
 
-- GitHub（私有）：`https://github.com/Zhan-boyi/agent-recruiting-hub`
+- GitHub（公开）：`https://github.com/wgdl666/agent-recruiting-hub`
 - 远端实例：https://recruit.wgdl.tech（mirror_zby / 112.74.38.5）
 
 ## 文档导航
