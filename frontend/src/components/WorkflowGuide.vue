@@ -27,7 +27,7 @@ function dismiss() {
       <li><strong>选批次</strong>：顶部选择「今日/本周/本月」批次，或查看全部；新上传自动归入当前周期</li>
       <li><strong>上传</strong>：拖入 PDF/ZIP，或点「上传简历」标签</li>
       <li><strong>推进</strong>：列表改状态，或切到「看板」拖拽卡片（简历筛选 → 待约面 → 面试中 → 通过/完成/淘汰）</li>
-      <li><strong>面试</strong>：点击行打开详情；S 档可看定制题</li>
+      <li><strong>知识库</strong>：开发、部署、API 文档 — 见顶部「知识库」标签</li>
     </ol>
   </el-alert>
 </template>

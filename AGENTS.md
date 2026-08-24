@@ -99,3 +99,10 @@ open http://localhost:8080/api/candidates/1/resume
 - `ResumeViewer` — iframe 简历
 - `QuestionPanel` — 定制面试题
 - `UploadDropzone` — 拖拽 PDF/ZIP
+- `DocsView` — 开发知识库（`docs/*.md`，API `/api/docs`）
+
+## 知识库
+
+- 网页顶部 **知识库** 标签，或 `http://localhost:8080/?tab=docs`
+- 源码：`docs/` 目录（快速开始、部署、API、扩展开发）
+- 更新文档后 `make deploy` 即可，无需改前端

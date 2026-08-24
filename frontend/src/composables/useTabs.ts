@@ -4,11 +4,13 @@ import type { Candidate } from '../types'
 export type AppTab =
   | { key: 'home'; title: '候选人'; kind: 'home' }
   | { key: 'upload'; title: '上传'; kind: 'upload' }
+  | { key: 'docs'; title: '知识库'; kind: 'docs' }
   | { key: string; title: string; kind: 'candidate'; candidateId: number; tier?: string; status?: string }
 
 const fixedTabs: AppTab[] = [
   { key: 'home', title: '候选人', kind: 'home' },
   { key: 'upload', title: '上传', kind: 'upload' },
+  { key: 'docs', title: '知识库', kind: 'docs' },
 ]
 
 const candidateTabs = ref<Extract<AppTab, { kind: 'candidate' }>[]>([])
@@ -48,7 +50,7 @@ export function useTabs() {
   }
 
   function removeTab(key: string) {
-    if (key === 'home' || key === 'upload') return
+    if (key === 'home' || key === 'upload' || key === 'docs') return
     const idx = candidateTabs.value.findIndex((t) => t.key === key)
     if (idx < 0) return
     candidateTabs.value.splice(idx, 1)

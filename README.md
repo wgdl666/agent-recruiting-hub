@@ -33,4 +33,8 @@ make run
 ## 技术栈
 
 - Backend: Go, Gin, SQLite
-- Frontend: Vue 3, Element Plus, Vite
+- Frontend: Vue 3, Element Plus, Ant Design Vue, Vite
+
+## 知识库
+
+网页 **知识库** 标签，或访问 `/?tab=docs`。文档源码在 `docs/`，部署见 `docs/deploy.md`。

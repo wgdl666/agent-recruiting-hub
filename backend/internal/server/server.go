@@ -44,6 +44,8 @@ func (s *Server) Router() *gin.Engine {
 
 	api := r.Group("/api")
 	{
+		api.GET("/docs", s.listDocs)
+		api.GET("/docs/:slug", s.getDoc)
 		api.GET("/health", s.health)
 		api.GET("/batches", s.listBatches)
 		api.POST("/batches", s.createBatch)

@@ -3,6 +3,7 @@ import { onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UploadView from '../views/UploadView.vue'
+import DocsView from '../views/DocsView.vue'
 import CandidateView from '../views/CandidateView.vue'
 import { useTabs } from '../composables/useTabs'
 import { statusLabel, statusType } from '../constants/status'
@@ -34,6 +35,8 @@ onMounted(() => {
     activeKey.value = tab
   } else if (tab === 'upload') {
     activeKey.value = 'upload'
+  } else if (tab === 'docs') {
+    activeKey.value = 'docs'
   }
 })
 </script>
@@ -56,6 +59,9 @@ onMounted(() => {
         </el-tab-pane>
         <el-tab-pane label="上传" name="upload" :closable="false">
           <UploadView />
+        </el-tab-pane>
+        <el-tab-pane label="知识库" name="docs" :closable="false">
+          <DocsView />
         </el-tab-pane>
         <el-tab-pane
           v-for="tab in candidateTabs"

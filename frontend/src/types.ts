@@ -65,6 +65,18 @@ export interface PipelineStats {
   by_tier: Record<string, number>
 }
 
+export interface DocEntry {
+  slug: string
+  title: string
+  order: number
+}
+
+export interface DocDetail {
+  slug: string
+  title: string
+  markdown: string
+}
+
 export interface UploadResult {
   imported: number
   batch_id?: number

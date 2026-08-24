@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Batch, Candidate, CandidateDetail, PipelineStats, Stats, UploadResult } from '../types'
+import type { Batch, Candidate, CandidateDetail, DocDetail, DocEntry, PipelineStats, Stats, UploadResult } from '../types'
 
 const api = axios.create({ baseURL: '/api' })
 
@@ -35,6 +35,16 @@ export async function fetchPipelineStats(batchId = 0) {
   const { data } = await api.get<PipelineStats>('/pipeline/stats', {
     params: { batch_id: batchId > 0 ? batchId : undefined },
   })
+  return data
+}
+
+export async function fetchDocList() {
+  const { data } = await api.get<DocEntry[]>('/docs')
+  return data
+}
+
+export async function fetchDoc(slug: string) {
+  const { data } = await api.get<DocDetail>(`/docs/${slug}`)
   return data
 }
 
