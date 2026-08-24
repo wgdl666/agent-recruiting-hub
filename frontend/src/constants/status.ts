@@ -1,5 +1,6 @@
 export type CandidateStatus =
   | 'screening'
+  | 'read'
   | 'to_interview'
   | 'interviewing'
   | 'passed'
@@ -8,6 +9,7 @@ export type CandidateStatus =
 
 export const PIPELINE_ORDER: CandidateStatus[] = [
   'screening',
+  'read',
   'to_interview',
   'interviewing',
   'passed',
@@ -22,6 +24,7 @@ export const STATUS_OPTIONS: {
   color: string
 }[] = [
   { value: 'screening', label: '简历筛选', type: 'info', color: 'default' },
+  { value: 'read', label: '已阅', type: 'info', color: 'blue' },
   { value: 'to_interview', label: '待约面', type: 'info', color: 'processing' },
   { value: 'interviewing', label: '面试中', type: 'warning', color: 'warning' },
   { value: 'passed', label: '通过', type: 'success', color: 'success' },

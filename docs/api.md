@@ -81,6 +81,7 @@ GET /docs/quickstart           # 单篇 Markdown 正文
 | 值 | 含义 |
 |----|------|
 | `screening` | 简历筛选 |
+| `read` | 已阅 |
 | `to_interview` | 待约面 |
 | `interviewing` | 面试中 |
 | `passed` | 通过 |

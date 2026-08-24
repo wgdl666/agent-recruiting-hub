@@ -29,7 +29,11 @@ async function load() {
   loading.value = true
   try {
     await ensureNav(currentId.value)
-    detail.value = await fetchCandidate(currentId.value)
+    let data = await fetchCandidate(currentId.value)
+    if (data.status === 'screening') {
+      data = await updateCandidate(data.id, { status: 'read' })
+    }
+    detail.value = data
     orderInput.value = detail.value.interview_order || undefined
     updateCandidateTab(detail.value.id, {
       name: detail.value.name,

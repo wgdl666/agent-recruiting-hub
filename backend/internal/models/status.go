@@ -3,6 +3,7 @@ package models
 // Candidate workflow status (stored in DB as English key).
 const (
 	StatusScreening    = "screening"
+	StatusRead         = "read"
 	StatusToInterview  = "to_interview"
 	StatusInterviewing = "interviewing"
 	StatusPassed       = "passed"
@@ -13,6 +14,7 @@ const (
 func ValidStatuses() []string {
 	return []string{
 		StatusScreening,
+		StatusRead,
 		StatusToInterview,
 		StatusInterviewing,
 		StatusPassed,
@@ -25,6 +27,8 @@ func StatusLabel(s string) string {
 	switch s {
 	case StatusScreening:
 		return "简历筛选"
+	case StatusRead:
+		return "已阅"
 	case StatusToInterview:
 		return "待约面"
 	case StatusInterviewing:
@@ -44,6 +48,7 @@ func StatusLabel(s string) string {
 func PipelineOrder() []string {
 	return []string{
 		StatusScreening,
+		StatusRead,
 		StatusToInterview,
 		StatusInterviewing,
 		StatusPassed,

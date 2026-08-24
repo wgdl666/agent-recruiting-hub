@@ -118,7 +118,7 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, engFirst b
 		args = append(args, like, like, like, like)
 	}
 	if engFirst {
-		query += ` ORDER BY CASE c.status WHEN 'interviewing' THEN 0 WHEN 'to_interview' THEN 1 WHEN 'screening' THEN 2 WHEN 'passed' THEN 3 WHEN 'completed' THEN 4 ELSE 5 END,
+		query += ` ORDER BY CASE c.status WHEN 'interviewing' THEN 0 WHEN 'to_interview' THEN 1 WHEN 'read' THEN 2 WHEN 'screening' THEN 3 WHEN 'passed' THEN 4 WHEN 'completed' THEN 5 ELSE 6 END,
 			CASE c.tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN '淘汰' THEN 2 ELSE 3 END,
 			CASE WHEN c.interview_order > 0 THEN c.interview_order ELSE 999 END,
 			c.eng_score DESC, c.agent_score DESC, c.score_total DESC`

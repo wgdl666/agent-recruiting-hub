@@ -13,6 +13,7 @@ var validTiers = map[string]bool{"S": true, "A": true, "淘汰": true}
 
 var validStatuses = map[string]bool{
 	models.StatusScreening:    true,
+	models.StatusRead:         true,
 	models.StatusToInterview:  true,
 	models.StatusInterviewing: true,
 	models.StatusPassed:       true,

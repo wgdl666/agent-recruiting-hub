@@ -39,7 +39,7 @@ curl -X POST http://localhost:8080/api/batches \
   -d '{"auto":true,"period_type":"daily"}'
 curl 'http://localhost:8080/api/pipeline/stats?batch_id=1'
 
-# 调整进度状态（screening → to_interview → interviewing → passed/completed/rejected）
+# 调整进度状态（screening → read → to_interview → interviewing → passed/completed/rejected）
 curl -X PATCH http://localhost:8080/api/candidates/1 \
   -H 'Content-Type: application/json' \
   -d '{"status":"to_interview"}'
