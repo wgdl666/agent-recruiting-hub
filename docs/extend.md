@@ -64,12 +64,16 @@ export HUB_URL=http://127.0.0.1:8808/api   # 隧道后
 
 ## 提交规范
 
+日常在 **`dev`** 分支开发，详见 [分支与发布](workflow.md)。
+
 ```bash
+git checkout dev
 git add ...
 git commit -m "简述 why"
-git push origin main
-make deploy    # 需要发布时
+git push origin dev
 ```
+
+需要发布时合并到 `main` 再 `make deploy`。
 
 ## 安全提示
 

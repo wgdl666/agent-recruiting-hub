@@ -12,6 +12,7 @@
 ```bash
 git clone https://github.com/wgdl666/agent-recruiting-hub.git
 cd agent-recruiting-hub
+git checkout dev
 make install
 ```
 
