@@ -18,6 +18,7 @@ const { hasPrev, hasNext, prevId, nextId, navLabel, ensureNav } = useCandidateNa
 const detail = ref<CandidateDetail | null>(null)
 const loading = ref(true)
 const orderInput = ref<number | undefined>()
+const questionsOpen = ref(false)
 
 const currentId = computed(() => Number(props.id))
 const canPrev = computed(() => hasPrev(currentId.value))
@@ -83,7 +84,7 @@ async function onStatusUpdated(c: CandidateDetail) {
 async function resetAutoTier() {
   if (!detail.value) return
   detail.value = await updateCandidate(detail.value.id, { clear_manual: true })
-  ElMessage.info('已恢复自动档位（下次重评生效）')
+  ElMessage.success('已恢复自动档位')
 }
 
 onMounted(() => {
@@ -148,18 +149,30 @@ watch(() => props.id, load)
           <el-descriptions-item label="来源">{{ detail.source }}</el-descriptions-item>
         </el-descriptions>
 
-        <el-row :gutter="16" style="margin-top: 16px">
-          <el-col :span="14">
-            <el-card v-if="detail.has_resume" shadow="never">
+        <div class="content-row">
+          <aside class="questions-side" :class="{ open: questionsOpen }">
+            <button
+              type="button"
+              class="questions-toggle"
+              :title="questionsOpen ? '收起面试题' : '展开面试题'"
+              @click="questionsOpen = !questionsOpen"
+            >
+              <span class="toggle-icon">{{ questionsOpen ? '‹' : '›' }}</span>
+              <span v-if="!questionsOpen" class="toggle-label">面试题</span>
+            </button>
+            <div v-show="questionsOpen" class="questions-body">
+              <QuestionPanel :questions="detail.questions" />
+            </div>
+          </aside>
+
+          <div class="resume-side">
+            <el-card v-if="detail.has_resume" shadow="never" class="resume-card">
               <template #header>简历预览</template>
               <ResumeViewer :candidate-id="detail.id" />
             </el-card>
             <el-empty v-else description="暂无简历文件，可重新上传" />
-          </el-col>
-          <el-col :span="10">
-            <QuestionPanel :questions="detail.questions" />
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </template>
     </div>
 
@@ -227,4 +240,68 @@ watch(() => props.id, load)
   font-size: 13px;
 }
 .field-hint { margin-left: 8px; color: #909399; font-size: 12px; }
+
+.content-row {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 16px;
+  min-height: calc(100vh - 320px);
+}
+.questions-side {
+  flex: 0 0 auto;
+  display: flex;
+  min-width: 36px;
+  max-width: 36px;
+  transition: max-width 0.2s ease;
+}
+.questions-side.open {
+  max-width: 300px;
+  min-width: 300px;
+}
+.questions-toggle {
+  flex: 0 0 36px;
+  width: 36px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  background: #f5f7fa;
+  color: #606266;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 4px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.questions-toggle:hover {
+  background: #ecf5ff;
+  border-color: #409eff;
+  color: #409eff;
+}
+.toggle-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.toggle-label {
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+.questions-body {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+}
+.resume-side {
+  flex: 1;
+  min-width: 0;
+}
+.resume-card {
+  height: 100%;
+}
+.resume-card :deep(.el-card__body) {
+  padding: 0 12px 12px;
+}
 </style>

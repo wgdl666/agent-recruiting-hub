@@ -417,6 +417,7 @@ func (s *Server) processPDF(path, filename, source string, batchID int64) (*mode
 	resumePath, resumeKey := s.persistResume(name, resumePath)
 	id, err := s.st.UpsertCandidate(store.UpsertInput{
 		Name: name, Source: source, Tier: tier,
+		AutoTier: scanner.NormalizeTier(score.Tier),
 		EngSummary: eng, ProjectSummary: proj, OneLiner: one,
 		Action: action, ResumePath: resumePath, ResumeKey: resumeKey,
 		ScoreTotal: score.Total, EngScore: score.EngScore, AgentScore: score.AgentScore,
@@ -424,6 +425,7 @@ func (s *Server) processPDF(path, filename, source string, batchID int64) (*mode
 		InterviewOrder: seed.InterviewOrder[name],
 		BatchID:        batchID,
 		Status:         models.StatusScreening,
+		ClearManual:    true,
 	})
 	if err != nil {
 		return nil, err
@@ -549,7 +551,8 @@ func (s *Server) rescreenAll(c *gin.Context) {
 			}
 		}
 		score := scanner.Score(text)
-		tier := scanner.NormalizeTier(score.Tier)
+		autoTier := scanner.NormalizeTier(score.Tier)
+		tier := autoTier
 		if cand.TierManual {
 			tier = scanner.NormalizeTier(cand.Tier)
 		} else if t, ok := seed.ManualTier[cand.Name]; ok {
@@ -572,6 +575,7 @@ func (s *Server) rescreenAll(c *gin.Context) {
 		}
 		_, err = s.st.UpsertCandidate(store.UpsertInput{
 			Name: cand.Name, Source: cand.Source, Tier: tier,
+			AutoTier: autoTier,
 			EngSummary: eng, ProjectSummary: proj, OneLiner: one,
 			Action: action,
 			ResumePath: cand.ResumePath,

@@ -66,6 +66,10 @@ func (s *Store) PatchCandidate(id int64, patch PatchInput) error {
 	}
 	if patch.ClearManual {
 		manual = false
+		if strings.TrimSpace(cand.AutoTier) != "" {
+			tier = scanner.NormalizeTier(cand.AutoTier)
+			action = scanner.ActionForTier(tier)
+		}
 	}
 	manualInt := 0
 	if manual {

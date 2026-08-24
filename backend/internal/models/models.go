@@ -7,6 +7,7 @@ type Candidate struct {
 	Name           string    `json:"name"`
 	Source         string    `json:"source"`
 	Tier           string    `json:"tier"`
+	AutoTier       string    `json:"auto_tier,omitempty"`
 	EngSummary     string    `json:"eng_summary"`
 	ProjectSummary string    `json:"project_summary"`
 	OneLiner       string    `json:"one_liner"`

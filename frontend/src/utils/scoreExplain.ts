@@ -1,9 +1,9 @@
 import type { Candidate } from '../types'
 
-/** 自动评分说明（0–4 为关键词维度命中数，不是百分制） */
-export function explainScores(c: Pick<Candidate, 'eng_score' | 'agent_score' | 'score_total' | 'reason' | 'flags' | 'tier' | 'tier_manual'>) {
+/** 自动评分说明（0–4 为维度分，不是百分制） */
+export function explainScores(c: Pick<Candidate, 'eng_score' | 'agent_score' | 'score_total' | 'reason' | 'flags' | 'tier' | 'tier_manual' | 'auto_tier'>) {
   const engMax = 4
-  const agentMax = 3
+  const agentMax = 4
   const thin = c.flags?.includes('thin')
   const noIntern = c.flags?.includes('no_intern')
 
@@ -25,7 +25,12 @@ export function explainScores(c: Pick<Candidate, 'eng_score' | 'agent_score' | '
   } else if (thin) {
     verdict = '图片版 PDF，系统读不出文字，需人工看简历或 OCR。'
   } else if (c.tier_manual) {
-    verdict = '档位为手动调整，自动分仅供参考。'
+    const auto = c.auto_tier?.trim()
+    if (auto && auto !== c.tier) {
+      verdict = `档位已手动锁定为 ${c.tier}；自动建议 ${auto} 档。上传/重评会继续更新自动分，不改手动档位。`
+    } else {
+      verdict = '档位已手动锁定；上传/重评会继续更新自动分，不改手动档位。'
+    }
   }
 
   return {

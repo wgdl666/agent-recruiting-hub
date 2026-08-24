@@ -36,7 +36,7 @@ function levelColor(level?: string) {
 </template>
 
 <style scoped>
-.panel { margin-top: 16px; }
+.panel { margin-top: 0; }
 .qa-list { border: none; }
 .qa-title {
   display: flex;

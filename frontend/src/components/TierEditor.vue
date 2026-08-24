@@ -46,7 +46,7 @@ async function onChange(val: string) {
     <el-dropdown v-else trigger="click" @command="onChange">
       <span class="tier-trigger">
         <TierTag :tier="tier" />
-        <span v-if="candidate.tier_manual" class="lock" title="手动档位，重评不会覆盖">🔒</span>
+        <span v-if="candidate.tier_manual" class="lock" title="仅锁定档位；上传/重评仍会更新自动分">🔒</span>
       </span>
       <template #dropdown>
         <el-dropdown-menu>

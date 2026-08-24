@@ -22,7 +22,7 @@ curl -X POST http://localhost:8080/api/sync/questions
 
 `backend/internal/seed/questions.go` 中 `ManualTier`、`Summaries`、`InterviewOrder`。
 
-重评时 `tier_manual=0` 的候选人会重新自动分；`ManualTier` 在 rescreen 时仍生效。
+重评时始终更新自动分与 `auto_tier`；`tier_manual=1` 时仅锁定展示档位，不阻止自动评估。上传/重传简历会清除手动锁定并重新自动定档。
 
 ## 改评分规则
 

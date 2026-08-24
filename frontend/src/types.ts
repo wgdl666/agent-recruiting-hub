@@ -3,6 +3,7 @@ export interface Candidate {
   name: string
   source: string
   tier: string
+  auto_tier?: string
   eng_summary: string
   project_summary: string
   one_liner: string
