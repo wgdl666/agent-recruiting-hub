@@ -119,17 +119,35 @@ func ExtractName(filename, text string) string {
 }
 
 func Score(text string) ScoreBreakdown {
+	return ScoreUpload(text)
+}
+
+// ScoreUpload runs ModelHub when configured (upload / screen paths only).
+func ScoreUpload(text string) ScoreBreakdown {
 	text = strings.TrimSpace(text)
 	if len(text) < 300 {
-		return ScoreBreakdown{
-			Text: text, Total: -10, Tier: "淘汰", Reason: "thin", Flags: []string{"thin"},
-			Action: ActionForTier("淘汰"), Source: "heuristic",
-		}
+		return thinScore(text)
 	}
 	if score, ok := tryModelHubScore(text); ok {
 		return score
 	}
 	return scoreHeuristic(text)
+}
+
+// ScoreHeuristic keyword scoring without ModelHub (bulk rescreen only).
+func ScoreHeuristic(text string) ScoreBreakdown {
+	text = strings.TrimSpace(text)
+	if len(text) < 300 {
+		return thinScore(text)
+	}
+	return scoreHeuristic(text)
+}
+
+func thinScore(text string) ScoreBreakdown {
+	return ScoreBreakdown{
+		Text: text, Total: -10, Tier: "淘汰", Reason: "thin", Flags: []string{"thin"},
+		Action: ActionForTier("淘汰"), Source: "heuristic",
+	}
 }
 
 func scoreHeuristic(text string) ScoreBreakdown {

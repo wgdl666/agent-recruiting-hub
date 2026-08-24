@@ -35,8 +35,8 @@ async function onSeed() {
 
 async function onRescreen() {
   await ElMessageBox.confirm(
-    '对已存 PDF 重新自动评分。你手动调整过的档位不会被覆盖；图片 PDF 可能仍是「待人工」。',
-    '重评全部简历',
+    '用关键词启发式重算分数与档位（不走 ModelHub）。LLM 自动评估仅在上传/拖入简历时触发。手动档位不会被覆盖。',
+    '重评全部（启发式）',
     { confirmButtonText: '开始重评', cancelButtonText: '取消' },
   )
   await withBusy(async () => {
@@ -123,7 +123,7 @@ function onCommand(cmd: string) {
         <el-dropdown-menu>
           <el-dropdown-item disabled class="menu-hint">初始化 / 维护</el-dropdown-item>
           <el-dropdown-item command="seed">导入种子数据…</el-dropdown-item>
-          <el-dropdown-item command="rescreen">重评全部简历…</el-dropdown-item>
+          <el-dropdown-item command="rescreen">重评全部（启发式）…</el-dropdown-item>
           <el-dropdown-item command="questions">同步面试题与参考答案</el-dropdown-item>
           <el-dropdown-item divided disabled class="menu-hint">导出</el-dropdown-item>
           <el-dropdown-item command="md">下载 Markdown 报告</el-dropdown-item>

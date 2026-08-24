@@ -397,15 +397,9 @@ func (s *Server) processPDF(path, filename, source string, batchID int64) (*mode
 		return nil, err
 	}
 	name := scanner.ExtractName(filename, text)
-	score := scanner.Score(text)
+	score := scanner.ScoreUpload(text)
 	tier := scanner.NormalizeTier(score.Tier)
-	if t, ok := seed.ManualTier[name]; ok {
-		tier = scanner.NormalizeTier(t)
-	}
 	eng, proj, one := summariesFromScore(score)
-	if sum, ok := seed.Summaries[name]; ok {
-		eng, proj, one = sum.Eng, sum.Proj, sum.One
-	}
 	action := score.Action
 	if action == "" {
 		action = scanner.ActionForTier(tier)
@@ -518,7 +512,7 @@ func (s *Server) RunSeedImport() (int, error) {
 			in.ScoreTotal, in.EngScore, in.AgentScore = sc.Total, sc.EngScore, sc.AgentScore
 			in.Reason, in.Flags = sc.Reason, sc.Flags
 		} else {
-			score := scanner.Score(text)
+			score := scanner.ScoreHeuristic(text)
 			in.ScoreTotal, in.EngScore, in.AgentScore = score.Total, score.EngScore, score.AgentScore
 			in.Reason, in.Flags = score.Reason, score.Flags
 		}
@@ -550,22 +544,15 @@ func (s *Server) rescreenAll(c *gin.Context) {
 				text = sc.Text
 			}
 		}
-		score := scanner.Score(text)
+		score := scanner.ScoreHeuristic(text)
 		autoTier := scanner.NormalizeTier(score.Tier)
 		tier := autoTier
 		if cand.TierManual {
 			tier = scanner.NormalizeTier(cand.Tier)
-		} else if t, ok := seed.ManualTier[cand.Name]; ok {
-			tier = scanner.NormalizeTier(t)
 		}
 		eng, proj, one := summariesFromScore(score)
 		if eng == "" {
 			eng, proj, one = cand.EngSummary, cand.ProjectSummary, cand.OneLiner
-		}
-		if score.Source != "modelhub" {
-			if sum, ok := seed.Summaries[cand.Name]; ok {
-				eng, proj, one = sum.Eng, sum.Proj, sum.One
-			}
 		}
 		action := score.Action
 		if cand.TierManual {

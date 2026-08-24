@@ -31,8 +31,10 @@ curl -X POST http://localhost:8080/api/sync/questions
 改完后：
 
 ```bash
-curl -X POST http://localhost:8080/api/rescreen
+curl -X POST http://localhost:8080/api/rescreen   # 启发式重评，不走 ModelHub
 ```
+
+**ModelHub LLM 评分仅在上传 PDF/ZIP 或 `POST /api/screen` 时触发。**
 
 ## 新增 API
 
