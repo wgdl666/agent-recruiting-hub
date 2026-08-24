@@ -59,8 +59,8 @@ onMounted(async () => {
           >
             <GithubOutlined /> GitHub 仓库
           </a>
-          <a href="/api/docs/quickstart" target="_blank">
-            <LinkOutlined /> API 原始 Markdown
+          <a href="https://recruit.wgdl.tech" target="_blank" rel="noopener">
+            <LinkOutlined /> recruit.wgdl.tech
           </a>
         </div>
       </a-layout-sider>

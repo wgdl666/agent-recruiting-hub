@@ -10,7 +10,8 @@ make backend    # :8080 API + 生产静态资源（需 make build）
 make frontend   # :5173 开发前端（代理到 8080）
 ```
 
-生产单端口：`make run` → http://localhost:8080
+生产单端口：`make run` → http://localhost:8080  
+远端生产：https://recruit.wgdl.tech（`make deploy` → mirror_zby）
 
 ## 数据位置
 

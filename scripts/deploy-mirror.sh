@@ -4,7 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 HOST="${DEPLOY_HOST:-mirror_zby}"
 REMOTE_DIR="${DEPLOY_DIR:-/opt/agent-recruiting-hub}"
-ADDR="${DEPLOY_ADDR:-:8808}"
+ADDR="${DEPLOY_ADDR:-127.0.0.1:8808}"
+DOMAIN="${DEPLOY_DOMAIN:-recruit.wgdl.tech}"
 SERVICE="${DEPLOY_SERVICE:-agent-recruiting-hub}"
 
 echo "==> build frontend + linux binary"
@@ -40,9 +41,19 @@ EOF
 
 ssh "$HOST" "systemctl daemon-reload && systemctl enable ${SERVICE} && systemctl restart ${SERVICE}"
 sleep 1
-PORT="${ADDR#:}"
+PORT="${ADDR##*:}"
 ssh "$HOST" "systemctl is-active ${SERVICE} && curl -sf http://127.0.0.1:${PORT}/api/health"
 
-IP="$(ssh "$HOST" 'curl -sf --max-time 3 ifconfig.me 2>/dev/null || hostname -I | awk "{print \$1}"')"
+echo "==> configure nginx + TLS for ${DOMAIN}"
+rsync -az "$ROOT/deploy/nginx/${DOMAIN}.conf" "$HOST:/etc/nginx/sites-available/${DOMAIN}"
+ssh "$HOST" "ln -sf /etc/nginx/sites-available/${DOMAIN} /etc/nginx/sites-enabled/${DOMAIN} && nginx -t && systemctl reload nginx"
+if ! ssh "$HOST" "test -f /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"; then
+  ssh "$HOST" "certbot --nginx -d ${DOMAIN} --non-interactive --agree-tos --register-unsafely-without-email --redirect"
+else
+  ssh "$HOST" "certbot renew --quiet 2>/dev/null || true"
+fi
+ssh "$HOST" "nginx -t && systemctl reload nginx"
+
 echo ""
-echo "Deployed: http://${IP}:${PORT}"
+echo "Deployed: https://${DOMAIN}"
+echo "Direct (internal): http://127.0.0.1:${PORT}"

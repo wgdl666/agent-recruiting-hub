@@ -1,4 +1,4 @@
-.PHONY: dev backend frontend build seed run install
+.PHONY: dev backend frontend build seed run install deploy
 
 ROOT := $(shell pwd)
 
@@ -33,7 +33,7 @@ deploy:
 	chmod +x scripts/deploy-mirror.sh
 	./scripts/deploy-mirror.sh
 
-# 默认部署到 mirror_zby（112.74.38.5:8808）；可覆盖 DEPLOY_HOST
+# 默认部署到 mirror_zby → https://recruit.wgdl.tech
 
 dev:
 	@echo "Run in two terminals: make backend && make frontend"

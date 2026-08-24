@@ -1,6 +1,9 @@
 # 部署指南（mirror_zby）
 
-默认部署目标：**mirror_zby**（与 `mirror` 同机，112.74.38.5）。
+**公网域名**：https://recruit.wgdl.tech  
+**服务器**：mirror_zby（112.74.38.5）· 应用监听 `127.0.0.1:8808`（仅 nginx 对外）
+
+默认部署目标：**mirror_zby**（与 `mirror` 同机）。
 
 ## 前置条件
 
@@ -44,11 +47,23 @@ DEPLOY_ADDR=:8810 make deploy
 
 ## 访问远端
 
-公网 **8808** 可能被安全组拦截，推荐 SSH 隧道：
+```text
+https://recruit.wgdl.tech
+```
+
+DNS：`recruit.wgdl.tech` → `112.74.38.5`（阿里云解析）  
+HTTPS：nginx + Let's Encrypt（`make deploy` 自动申请/续期）
+
+内网调试（SSH 到机器后）：
+
+```bash
+curl http://127.0.0.1:8808/api/health
+```
+
+若证书未生效，可临时 SSH 隧道：
 
 ```bash
 ssh -L 8808:127.0.0.1:8808 mirror_zby
-# 浏览器 http://localhost:8808
 ```
 
 ## 远端运维

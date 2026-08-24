@@ -21,7 +21,7 @@
 ## 仓库
 
 - GitHub（私有）：`https://github.com/Zhan-boyi/agent-recruiting-hub`
-- 远端实例：`mirror_zby`（112.74.38.5:8808，建议 SSH 隧道访问）
+- 远端实例：https://recruit.wgdl.tech（mirror_zby / 112.74.38.5）
 
 ## 文档导航
 
