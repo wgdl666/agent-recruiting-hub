@@ -3,27 +3,39 @@ import type { Batch, Candidate, CandidateDetail, DocDetail, DocEntry, PipelineSt
 
 const api = axios.create({ baseURL: '/api' })
 
+function asList<T>(data: T[] | null | undefined): T[] {
+  return Array.isArray(data) ? data : []
+}
+
 export async function fetchStats() {
   const { data } = await api.get<Stats>('/stats')
   return data
 }
 
-export async function fetchCandidates(tier = 'all', q = '', status = 'all', batchId = 0) {
-  const { data } = await api.get<Candidate[]>('/candidates', {
+export type CandidateSort = 'imported_desc' | 'imported_asc' | 'eng_first'
+
+export async function fetchCandidates(
+  tier = 'all',
+  q = '',
+  status = 'all',
+  batchId = 0,
+  sort: CandidateSort = 'imported_desc',
+) {
+  const { data } = await api.get<Candidate[] | null>('/candidates', {
     params: {
       tier: tier === 'all' ? '' : tier,
       status: status === 'all' ? '' : status,
       q,
       batch_id: batchId > 0 ? batchId : undefined,
-      eng_first: true,
+      sort,
     },
   })
-  return data
+  return asList(data)
 }
 
 export async function fetchBatches(active = true) {
-  const { data } = await api.get<Batch[]>('/batches', { params: { active } })
-  return data
+  const { data } = await api.get<Batch[] | null>('/batches', { params: { active } })
+  return asList(data)
 }
 
 export async function createBatch(opts: { auto?: boolean; period_type?: string; name?: string; tag?: string }) {

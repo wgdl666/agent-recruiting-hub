@@ -91,7 +91,7 @@ func (s *Store) ListBatches(activeOnly bool) ([]models.Batch, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var out []models.Batch
+	out := make([]models.Batch, 0)
 	for rows.Next() {
 		b, err := scanBatch(rows)
 		if err != nil {

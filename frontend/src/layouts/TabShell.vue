@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { User, Upload, Notebook } from '@element-plus/icons-vue'
+import { Close, Notebook, Upload, User } from '@element-plus/icons-vue'
 import HomeView from '../views/HomeView.vue'
 import UploadView from '../views/UploadView.vue'
 import DocsView from '../views/DocsView.vue'
 import CandidateView from '../views/CandidateView.vue'
 import { useTabs } from '../composables/useTabs'
+import { useCandidateNav } from '../composables/useCandidateNav'
 import { statusLabel, statusType } from '../constants/status'
 
 const route = useRoute()
 const router = useRouter()
-const { activeKey, candidateTabs, openCandidateById, removeTab } = useTabs()
+const { activeKey, candidateTabs, openCandidate, openCandidateById, removeTab } = useTabs()
+const { navList } = useCandidateNav()
 
 const navItems = [
   { key: 'home', label: '候选人', icon: User },
@@ -25,6 +27,9 @@ const navKey = computed(() =>
 
 const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
 
+/** 打开过候选人后加宽侧栏，给便签和当前列表留出固定选择区 */
+const asideWidth = computed(() => (candidateTabs.value.length || isCandidateView.value ? '208px' : '148px'))
+
 function onNavSelect(key: string) {
   activeKey.value = key
   syncRoute()
@@ -32,6 +37,16 @@ function onNavSelect(key: string) {
 
 function onTabRemove(name: string | number) {
   removeTab(String(name))
+  syncRoute()
+}
+
+function selectOpened(key: string) {
+  activeKey.value = key
+  syncRoute()
+}
+
+function selectFromList(c: { id: number; name: string; tier: string; status: string }) {
+  openCandidate(c)
   syncRoute()
 }
 
@@ -62,12 +77,21 @@ onMounted(() => {
 <template>
   <el-container class="layout">
     <el-header class="header">
-      <div class="brand">Agent 招聘评估台</div>
+      <div class="brand">
+        <!-- 焦糖色简历夹，刻意不用工程开发平台那套蓝紫立方体 / 字母 A -->
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#C2410C" />
+          <rect x="8" y="7" width="16" height="19" rx="2" fill="#FFF7ED" />
+          <rect x="12" y="5" width="8" height="4" rx="1.2" fill="#FDBA74" />
+          <path d="M11 14h10M11 18h10M11 22h6" stroke="#9A3412" stroke-width="1.8" stroke-linecap="round" fill="none" />
+        </svg>
+        <span>Agent 招聘评估台</span>
+      </div>
       <div class="tagline">工程落地优先 · 标签页打开候选人 · 可标记面试状态</div>
     </el-header>
 
     <el-container class="body">
-      <el-aside width="148px" class="side">
+      <el-aside :width="asideWidth" class="side">
         <el-menu
           :default-active="navKey"
           class="side-menu"
@@ -78,6 +102,41 @@ onMounted(() => {
             <span>{{ item.label }}</span>
           </el-menu-item>
         </el-menu>
+
+        <div v-if="candidateTabs.length" class="sticky-panel">
+          <div class="sticky-head">已选候选人</div>
+          <button
+            v-for="tab in candidateTabs"
+            :key="tab.key"
+            type="button"
+            class="sticky-note"
+            :class="{ active: activeKey === tab.key }"
+            @click="selectOpened(tab.key)"
+          >
+            <span class="note-name">{{ tab.title }}</span>
+            <span class="note-meta">
+              <el-tag v-if="tab.tier" size="small" :type="tab.tier === 'S' ? 'danger' : 'info'">{{ tab.tier }}</el-tag>
+              <el-tag v-if="tab.status" size="small" :type="statusType(tab.status)">{{ statusLabel(tab.status) }}</el-tag>
+            </span>
+            <el-icon class="note-close" @click.stop="onTabRemove(tab.key)"><Close /></el-icon>
+          </button>
+        </div>
+
+        <div v-if="isCandidateView && navList.length" class="list-panel">
+          <div class="sticky-head">当前列表 {{ navList.length }}</div>
+          <button
+            v-for="(c, i) in navList"
+            :key="c.id"
+            type="button"
+            class="list-row"
+            :class="{ active: activeKey === `candidate-${c.id}` }"
+            @click="selectFromList(c)"
+          >
+            <span class="list-idx">{{ i + 1 }}</span>
+            <span class="list-name">{{ c.name }}</span>
+            <span class="list-tier">{{ c.tier }}</span>
+          </button>
+        </div>
       </el-aside>
 
       <el-main class="main">
@@ -134,9 +193,17 @@ onMounted(() => {
   height: 56px;
 }
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 700;
   font-size: 18px;
   white-space: nowrap;
+}
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
 .tagline {
   margin-left: auto;
@@ -147,12 +214,16 @@ onMounted(() => {
   min-height: calc(100vh - 56px);
 }
 .side {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   border-right: 1px solid #ebeef5;
+  overflow: hidden;
 }
 .side-menu {
   border-right: none;
   padding-top: 8px;
+  flex-shrink: 0;
 }
 .side-menu .el-menu-item {
   height: 44px;
@@ -162,20 +233,117 @@ onMounted(() => {
 .side-menu .el-menu-item.is-active {
   background: #ecf5ff;
 }
+.sticky-panel,
+.list-panel {
+  padding: 8px 10px 12px;
+  overflow-y: auto;
+}
+.sticky-panel {
+  flex: 0 0 auto;
+  max-height: 42%;
+  border-top: 1px solid #ebeef5;
+}
+.list-panel {
+  flex: 1 1 auto;
+  border-top: 1px dashed #ebeef5;
+}
+.sticky-head {
+  font-size: 12px;
+  color: #909399;
+  margin: 4px 2px 8px;
+}
+.sticky-note {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 10px 22px 10px 10px;
+  border: 1px solid #fde68a;
+  border-radius: 2px;
+  background: #fffbeb;
+  box-shadow: 1px 2px 0 rgba(180, 83, 9, 0.08);
+  text-align: left;
+  cursor: pointer;
+}
+.sticky-note:nth-child(odd) {
+  background: #fff7ed;
+}
+.sticky-note.active {
+  border-color: #c2410c;
+  background: #ffedd5;
+  box-shadow: 0 0 0 1px #c2410c;
+}
+.note-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3f3f46;
+}
+.note-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.note-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: #a8abb2;
+}
+.note-close:hover {
+  color: #c2410c;
+}
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin: 0 0 4px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+.list-row:hover,
+.list-row.active {
+  background: #ecf5ff;
+}
+.list-idx {
+  flex: 0 0 18px;
+  color: #909399;
+  font-size: 12px;
+}
+.list-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.list-tier {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #c2410c;
+}
 .main {
   padding: 12px 16px 16px;
   background: #f5f7fa;
 }
+/* 切换改走左侧便签，顶栏标签只保留内容区，避免两套选择器抢视线 */
 .candidate-tabs :deep(.el-tabs__header) {
-  margin-bottom: 0;
+  display: none;
 }
 .candidate-tabs :deep(.el-tabs__content) {
   background: #fff;
   border: 1px solid #e4e7ed;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   padding: 16px;
-  min-height: calc(100vh - 180px);
+  min-height: calc(100vh - 120px);
 }
 .page-panel {
   background: #fff;

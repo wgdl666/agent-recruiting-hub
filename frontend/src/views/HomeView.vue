@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { Upload } from '@element-plus/icons-vue'
 import {
-  fetchCandidates, fetchPipelineStats, fetchStats,
+  fetchCandidates, fetchPipelineStats, fetchStats, type CandidateSort,
 } from '../api/client'
 import type { Candidate, PipelineStats, Stats } from '../types'
 import { useTabs } from '../composables/useTabs'
@@ -21,9 +21,11 @@ import PipelineKanban from '../components/pipeline/PipelineKanban.vue'
 const { switchTab } = useTabs()
 const { setNavFromCandidates } = useCandidateNav()
 const { activeBatchId, uploadPeriodType } = useActiveBatch()
-const tier = ref('S')
-const status = ref('screening')
+const tier = ref('all')
+const status = ref('all')
 const query = ref('')
+// 默认新→旧：刚导进来的简历排在最上面，避免被旧数据顶下去。
+const sort = ref<CandidateSort>('imported_desc')
 const viewMode = ref<'list' | 'kanban'>('list')
 const candidates = ref<Candidate[]>([])
 const kanbanCandidates = ref<Candidate[]>([])
@@ -37,25 +39,27 @@ async function load() {
   try {
     const batchId = activeBatchId.value
     const [list, st, pipe, allForKanban] = await Promise.all([
-      fetchCandidates(tier.value, query.value, status.value, batchId),
+      fetchCandidates(tier.value, query.value, status.value, batchId, sort.value),
       fetchStats(),
       fetchPipelineStats(batchId),
       viewMode.value === 'kanban'
-        ? fetchCandidates('all', query.value, 'all', batchId)
+        ? fetchCandidates('all', query.value, 'all', batchId, sort.value)
         : Promise.resolve([] as Candidate[]),
     ])
-    candidates.value = list
-    setNavFromCandidates(list, tier.value, status.value)
     stats.value = st
     pipelineStats.value = pipe
+    candidates.value = list
+    setNavFromCandidates(list, tier.value, status.value, sort.value)
     if (viewMode.value === 'kanban') kanbanCandidates.value = allForKanban
+  } catch (err) {
+    console.error('failed to load candidates', err)
   } finally {
     loading.value = false
   }
 }
 
 onMounted(load)
-watch([tier, status, query, activeBatchId, viewMode], load)
+watch([tier, status, query, sort, activeBatchId, viewMode], load)
 
 function onUploadDone() {
   uploadExpanded.value = []
@@ -102,13 +106,21 @@ function onUploadDone() {
               <el-radio-button value="淘汰">淘汰</el-radio-button>
             </el-radio-group>
           </div>
-          <el-input
-            v-model="query"
-            placeholder="搜索姓名 / 项目"
-            clearable
-            size="small"
-            class="search"
-          />
+          <div class="filter-row">
+            <span class="filter-label">排序</span>
+            <el-select v-model="sort" size="small" class="sort-select">
+              <el-option value="imported_desc" label="导入时间（新→旧）" />
+              <el-option value="imported_asc" label="导入时间（旧→新）" />
+              <el-option value="eng_first" label="工程优先" />
+            </el-select>
+            <el-input
+              v-model="query"
+              placeholder="搜索姓名 / 项目"
+              clearable
+              size="small"
+              class="search"
+            />
+          </div>
         </div>
 
         <div class="primary-actions">
@@ -143,7 +155,7 @@ function onUploadDone() {
         />
 
         <el-empty
-          v-if="!loading && candidates.length === 0"
+          v-if="!loading && (candidates?.length ?? 0) === 0"
           description="没有匹配的候选人"
         >
           <el-button type="primary" @click="switchTab('upload')">去上传简历</el-button>
@@ -184,6 +196,7 @@ function onUploadDone() {
   min-width: 32px;
 }
 .search { max-width: 220px; }
+.sort-select { width: 180px; }
 .primary-actions {
   display: flex;
   align-items: center;

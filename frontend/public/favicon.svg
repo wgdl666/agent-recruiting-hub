@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- 招聘台专用：焦糖色简历夹，避免和工程开发平台的蓝紫立方体重叠 -->
+  <rect width="32" height="32" rx="8" fill="#C2410C"/>
+  <rect x="8" y="7" width="16" height="19" rx="2" fill="#FFF7ED"/>
+  <rect x="12" y="5" width="8" height="4" rx="1.2" fill="#FDBA74"/>
+  <path d="M11 14h10M11 18h10M11 22h6" stroke="#9A3412" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

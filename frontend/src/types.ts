@@ -20,6 +20,7 @@ export interface Candidate {
   batch_id?: number
   batch_name?: string
   has_resume: boolean
+  created_at?: string
 }
 
 export interface InterviewQuestion {

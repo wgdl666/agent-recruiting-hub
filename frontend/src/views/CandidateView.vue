@@ -14,16 +14,19 @@ import { useCandidateNav } from '../composables/useCandidateNav'
 
 const props = defineProps<{ id: string }>()
 const { updateCandidateTab, replaceActiveCandidate } = useTabs()
-const { hasPrev, hasNext, prevId, nextId, navLabel, ensureNav } = useCandidateNav()
+const { hasPrev, hasNext, prevId, nextId, navLabel, ensureNav, indexOf, reloadNav } = useCandidateNav()
 const detail = ref<CandidateDetail | null>(null)
 const loading = ref(true)
-const orderInput = ref<number | undefined>()
 const questionsOpen = ref(false)
 
 const currentId = computed(() => Number(props.id))
 const canPrev = computed(() => hasPrev(currentId.value))
 const canNext = computed(() => hasNext(currentId.value))
 const positionLabel = computed(() => navLabel.value(currentId.value))
+const autoOrder = computed(() => {
+  const i = indexOf(currentId.value)
+  return i >= 0 ? i + 1 : (detail.value?.interview_order || 0)
+})
 
 async function load() {
   loading.value = true
@@ -34,7 +37,6 @@ async function load() {
       data = await updateCandidate(data.id, { status: 'read' })
     }
     detail.value = data
-    orderInput.value = detail.value.interview_order || undefined
     updateCandidateTab(detail.value.id, {
       name: detail.value.name,
       tier: detail.value.tier,
@@ -66,13 +68,14 @@ function onKeydown(e: KeyboardEvent) {
   }
 }
 
-async function saveOrder() {
-  if (!detail.value) return
-  const updated = await updateCandidate(detail.value.id, {
-    interview_order: orderInput.value || 0,
-  })
+async function moveOrder(delta: number) {
+  if (!detail.value || detail.value.tier !== 'S') return
+  const next = autoOrder.value + delta
+  if (next < 1) return
+  const updated = await updateCandidate(detail.value.id, { interview_order: next })
   detail.value = updated
-  ElMessage.success('面试顺序已更新')
+  await reloadNav()
+  ElMessage.success(`面试顺序已调整为 ${indexOf(currentId.value) + 1}`)
 }
 
 async function onTierUpdated(c: CandidateDetail) {
@@ -130,8 +133,10 @@ watch(() => props.id, load)
             <el-button v-if="detail.tier_manual" link type="primary" size="small" @click="resetAutoTier">恢复自动</el-button>
           </el-descriptions-item>
           <el-descriptions-item v-if="detail.tier === 'S'" label="面试顺序">
-            <el-input-number v-model="orderInput" :min="0" :max="99" size="small" />
-            <el-button size="small" style="margin-left: 8px" @click="saveOrder">保存</el-button>
+            <span class="auto-order">{{ autoOrder }}</span>
+            <span class="field-hint">按当前列表自动连号</span>
+            <el-button size="small" :disabled="autoOrder <= 1" style="margin-left: 8px" @click="moveOrder(-1)">上移</el-button>
+            <el-button size="small" :disabled="!canNext" @click="moveOrder(1)">下移</el-button>
           </el-descriptions-item>
           <el-descriptions-item label="传统工程">{{ detail.eng_summary }}</el-descriptions-item>
           <el-descriptions-item label="深挖项目">{{ detail.project_summary }}</el-descriptions-item>
@@ -244,6 +249,7 @@ watch(() => props.id, load)
   font-size: 13px;
 }
 .field-hint { margin-left: 8px; color: #909399; font-size: 12px; }
+.auto-order { font-weight: 600; margin-right: 4px; }
 
 .content-row {
   display: flex;

@@ -38,6 +38,8 @@ func Open(root string) (*Store, error) {
 	if defaultBatch > 0 {
 		_ = s.AssignBatchToOrphans(defaultBatch)
 	}
+	// 启动时把历史空档序号（3、5、7）压成 1、2、3，列表「序」与面试顺序一致
+	_ = s.compactAllSInterviewOrders()
 	return s, nil
 }
 
@@ -94,7 +96,15 @@ CREATE INDEX IF NOT EXISTS idx_questions_candidate ON interview_questions(candid
 	return nil
 }
 
-func (s *Store) ListCandidates(tier, status, q string, batchID int64, engFirst bool) ([]models.Candidate, error) {
+const (
+	// SortImportedDesc 按入库时间新→旧，列表默认用这个，方便先看刚导进来的简历。
+	SortImportedDesc = "imported_desc"
+	SortImportedAsc  = "imported_asc"
+	// SortEngFirst 按面试进度 / 档位 / 面试序号 / 工程分，给排期和导出用。
+	SortEngFirst = "eng_first"
+)
+
+func (s *Store) ListCandidates(tier, status, q string, batchID int64, sortBy string) ([]models.Candidate, error) {
 	query := `SELECT c.id, c.name, c.source, c.tier, c.auto_tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
 		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
 		COALESCE(b.name,''), c.created_at, c.updated_at
@@ -117,21 +127,23 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, engFirst b
 		like := "%" + q + "%"
 		args = append(args, like, like, like, like)
 	}
-	if engFirst {
+	switch sortBy {
+	case SortImportedAsc:
+		query += ` ORDER BY c.created_at ASC, c.id ASC`
+	case SortEngFirst:
 		query += ` ORDER BY CASE c.status WHEN 'interviewing' THEN 0 WHEN 'to_interview' THEN 1 WHEN 'read' THEN 2 WHEN 'screening' THEN 3 WHEN 'passed' THEN 4 WHEN 'completed' THEN 5 ELSE 6 END,
 			CASE c.tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN '淘汰' THEN 2 ELSE 3 END,
 			CASE WHEN c.interview_order > 0 THEN c.interview_order ELSE 999 END,
 			c.eng_score DESC, c.agent_score DESC, c.score_total DESC`
-	} else {
-		query += ` ORDER BY CASE tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN '淘汰' THEN 2 ELSE 3 END,
-			score_total DESC`
+	default:
+		query += ` ORDER BY c.created_at DESC, c.id DESC`
 	}
 	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var out []models.Candidate
+	out := make([]models.Candidate, 0)
 	for rows.Next() {
 		c, err := s.scanCandidate(rows)
 		if err != nil {
@@ -177,7 +189,7 @@ func (s *Store) ListQuestions(candidateID int64) ([]models.InterviewQuestion, er
 		return nil, err
 	}
 	defer rows.Close()
-	var out []models.InterviewQuestion
+	out := make([]models.InterviewQuestion, 0)
 	for rows.Next() {
 		var q models.InterviewQuestion
 		if err := rows.Scan(&q.ID, &q.CandidateID, &q.SortOrder, &q.Question, &q.Answer, &q.Level); err != nil {
@@ -441,7 +453,7 @@ func copyFile(src, dst string) error {
 }
 
 func (s *Store) ExportAll() ([]models.CandidateDetail, error) {
-	list, err := s.ListCandidates("", "", "", 0, true)
+	list, err := s.ListCandidates("", "", "", 0, SortEngFirst)
 	if err != nil {
 		return nil, err
 	}

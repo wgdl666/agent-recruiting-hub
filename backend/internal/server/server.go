@@ -72,6 +72,7 @@ func (s *Server) Router() *gin.Engine {
 	dist := filepath.Join(s.root, "frontend", "dist")
 	if info, err := os.Stat(dist); err == nil && info.IsDir() {
 		r.Static("/assets", filepath.Join(dist, "assets"))
+		r.StaticFile("/favicon.svg", filepath.Join(dist, "favicon.svg"))
 		r.NoRoute(func(c *gin.Context) {
 			if strings.HasPrefix(c.Request.URL.Path, "/api") {
 				c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
@@ -122,9 +123,17 @@ func (s *Server) listCandidates(c *gin.Context) {
 	tier := c.Query("tier")
 	status := c.Query("status")
 	q := c.Query("q")
-	engFirst := c.DefaultQuery("eng_first", "true") == "true"
 	batchID, _ := strconv.ParseInt(c.Query("batch_id"), 10, 64)
-	list, err := s.st.ListCandidates(tier, status, q, batchID, engFirst)
+	sortBy := c.Query("sort")
+	if sortBy == "" {
+		// 旧客户端只传 eng_first；页面新默认是导入时间倒序。
+		if c.DefaultQuery("eng_first", "") == "true" {
+			sortBy = store.SortEngFirst
+		} else {
+			sortBy = store.SortImportedDesc
+		}
+	}
+	list, err := s.st.ListCandidates(tier, status, q, batchID, sortBy)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -523,7 +532,7 @@ func (s *Server) RunSeedImport() (int, error) {
 }
 
 func (s *Server) rescreenAll(c *gin.Context) {
-	list, err := s.st.ListCandidates("", "", "", 0, false)
+	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -581,7 +590,7 @@ func (s *Server) rescreenAll(c *gin.Context) {
 }
 
 func (s *Server) syncQuestions(c *gin.Context) {
-	list, err := s.st.ListCandidates("", "", "", 0, false)
+	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

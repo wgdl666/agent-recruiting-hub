@@ -35,9 +35,9 @@ function onTierUpdated() {
     style="width: 100%; cursor: pointer"
   >
     <el-table-column v-if="showOrder" label="序" width="56">
-      <template #default="{ row }">
-        <span v-if="row.interview_order">{{ row.interview_order }}</span>
-        <span v-else>—</span>
+      <!-- 序按当前筛选结果的行号连号，不展示手工 interview_order 留下的 3、5、7 空档 -->
+      <template #default="{ $index }">
+        {{ $index + 1 }}
       </template>
     </el-table-column>
     <el-table-column label="状态" width="108">
