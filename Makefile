@@ -33,6 +33,8 @@ deploy:
 	chmod +x scripts/deploy-mirror.sh
 	./scripts/deploy-mirror.sh
 
+# 默认部署到 mirror_zby（112.74.38.5:8808）；可覆盖 DEPLOY_HOST
+
 dev:
 	@echo "Run in two terminals: make backend && make frontend"
 	@echo "Or production: make run -> http://localhost:8080"

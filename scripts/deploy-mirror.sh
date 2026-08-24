@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-HOST="${DEPLOY_HOST:-mirror}"
+HOST="${DEPLOY_HOST:-mirror_zby}"
 REMOTE_DIR="${DEPLOY_DIR:-/opt/agent-recruiting-hub}"
 ADDR="${DEPLOY_ADDR:-:8808}"
 SERVICE="${DEPLOY_SERVICE:-agent-recruiting-hub}"

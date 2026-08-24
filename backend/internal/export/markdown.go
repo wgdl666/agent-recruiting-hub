@@ -35,7 +35,15 @@ func MarkdownReport(candidates []models.CandidateDetail) string {
 			}
 			fmt.Fprintf(&b, "#### %s\n\n", c.Name)
 			for i, q := range c.Questions {
-				fmt.Fprintf(&b, "%d. %s\n", i+1, q.Question)
+				level := q.Level
+				if level != "" {
+					fmt.Fprintf(&b, "%d. **[%s]** %s\n", i+1, level, q.Question)
+				} else {
+					fmt.Fprintf(&b, "%d. %s\n", i+1, q.Question)
+				}
+				if q.Answer != "" {
+					fmt.Fprintf(&b, "   - 参考：%s\n", q.Answer)
+				}
 			}
 			b.WriteByte('\n')
 		}

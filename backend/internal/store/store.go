@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/caden/agent-recruiting-hub/internal/models"
+	"github.com/caden/agent-recruiting-hub/internal/seed"
 	_ "modernc.org/sqlite"
 )
 
@@ -83,6 +84,8 @@ CREATE INDEX IF NOT EXISTS idx_questions_candidate ON interview_questions(candid
 	_, _ = s.db.Exec(`ALTER TABLE candidates ADD COLUMN tier_manual INTEGER DEFAULT 0`)
 	_, _ = s.db.Exec(`ALTER TABLE candidates ADD COLUMN status TEXT DEFAULT 'screening'`)
 	_, _ = s.db.Exec(`UPDATE candidates SET status = 'screening' WHERE status IS NULL OR status = ''`)
+	_, _ = s.db.Exec(`ALTER TABLE interview_questions ADD COLUMN answer TEXT DEFAULT ''`)
+	_, _ = s.db.Exec(`ALTER TABLE interview_questions ADD COLUMN level TEXT DEFAULT ''`)
 	return nil
 }
 
@@ -163,7 +166,7 @@ func (s *Store) GetCandidateByName(name string) (*models.Candidate, error) {
 }
 
 func (s *Store) ListQuestions(candidateID int64) ([]models.InterviewQuestion, error) {
-	rows, err := s.db.Query(`SELECT id, candidate_id, sort_order, question FROM interview_questions
+	rows, err := s.db.Query(`SELECT id, candidate_id, sort_order, question, answer, level FROM interview_questions
 		WHERE candidate_id = ? ORDER BY sort_order`, candidateID)
 	if err != nil {
 		return nil, err
@@ -172,7 +175,7 @@ func (s *Store) ListQuestions(candidateID int64) ([]models.InterviewQuestion, er
 	var out []models.InterviewQuestion
 	for rows.Next() {
 		var q models.InterviewQuestion
-		if err := rows.Scan(&q.ID, &q.CandidateID, &q.SortOrder, &q.Question); err != nil {
+		if err := rows.Scan(&q.ID, &q.CandidateID, &q.SortOrder, &q.Question, &q.Answer, &q.Level); err != nil {
 			return nil, err
 		}
 		out = append(out, q)
@@ -285,7 +288,7 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 	return id, err
 }
 
-func (s *Store) SetQuestions(candidateID int64, questions []string) error {
+func (s *Store) SetQuestions(candidateID int64, items []seed.QA) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
@@ -294,12 +297,12 @@ func (s *Store) SetQuestions(candidateID int64, questions []string) error {
 	if _, err := tx.Exec(`DELETE FROM interview_questions WHERE candidate_id = ?`, candidateID); err != nil {
 		return err
 	}
-	for i, q := range questions {
-		if strings.TrimSpace(q) == "" {
+	for i, item := range items {
+		if strings.TrimSpace(item.Question) == "" {
 			continue
 		}
-		if _, err := tx.Exec(`INSERT INTO interview_questions (candidate_id, sort_order, question) VALUES (?,?,?)`,
-			candidateID, i+1, q); err != nil {
+		if _, err := tx.Exec(`INSERT INTO interview_questions (candidate_id, sort_order, question, answer, level) VALUES (?,?,?,?,?)`,
+			candidateID, i+1, item.Question, item.Answer, item.Level); err != nil {
 			return err
 		}
 	}

@@ -26,6 +26,8 @@ export interface InterviewQuestion {
   candidate_id: number
   sort_order: number
   question: string
+  answer?: string
+  level?: string
 }
 
 export interface CandidateDetail extends Candidate {

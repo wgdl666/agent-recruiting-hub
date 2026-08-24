@@ -58,6 +58,7 @@ func (s *Server) Router() *gin.Engine {
 		api.POST("/screen", s.screenPath)
 		api.POST("/import/seed", s.importSeed)
 		api.POST("/rescreen", s.rescreenAll)
+		api.POST("/sync/questions", s.syncQuestions)
 		api.POST("/export/feishu", s.exportFeishu)
 		api.GET("/export/markdown", s.exportMarkdown)
 		api.GET("/export", s.exportAll)
@@ -155,10 +156,7 @@ func (s *Server) patchCandidate(c *gin.Context) {
 	}
 	if req.Tier != nil && *req.Tier == "S" && before != nil {
 		if qs, ok := seed.Questions[before.Name]; ok {
-			qsExisting, _ := s.st.ListQuestions(id)
-			if len(qsExisting) == 0 {
-				_ = s.st.SetQuestions(id, qs)
-			}
+			_ = s.st.SetQuestions(id, qs)
 		}
 	}
 	d, err := s.st.GetCandidate(id)
@@ -549,6 +547,25 @@ func (s *Server) rescreenAll(c *gin.Context) {
 			Status:         cand.Status,
 		})
 		if err == nil {
+			updated++
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{"updated": updated})
+}
+
+func (s *Server) syncQuestions(c *gin.Context) {
+	list, err := s.st.ListCandidates("", "", "", 0, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	updated := 0
+	for _, cand := range list {
+		qs, ok := seed.Questions[cand.Name]
+		if !ok {
+			continue
+		}
+		if err := s.st.SetQuestions(cand.ID, qs); err == nil {
 			updated++
 		}
 	}

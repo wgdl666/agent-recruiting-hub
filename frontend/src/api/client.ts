@@ -70,6 +70,11 @@ export async function rescreenAll() {
   return data
 }
 
+export async function syncQuestions() {
+  const { data } = await api.post<{ updated: number }>('/sync/questions')
+  return data
+}
+
 export async function exportFeishu() {
   const { data } = await api.post<{ ok: boolean; lark?: { data?: { document?: { url?: string } } }; markdown?: string; error?: string }>('/export/feishu')
   return data

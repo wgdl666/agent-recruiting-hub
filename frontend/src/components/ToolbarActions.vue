@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown, QuestionFilled, Refresh } from '@element-plus/icons-vue'
 import {
-  importSeed, exportAll, exportFeishu, exportMarkdown, rescreenAll,
+  importSeed, exportAll, exportFeishu, exportMarkdown, rescreenAll, syncQuestions,
 } from '../api/client'
 
 const emit = defineEmits<{ refresh: [] }>()
@@ -63,6 +63,14 @@ async function onFeishu() {
   })
 }
 
+async function onSyncQuestions() {
+  await withBusy(async () => {
+    const res = await syncQuestions()
+    ElMessage.success(`已同步 ${res.updated} 人面试题（含参考答案）`)
+    emit('refresh')
+  })
+}
+
 function onExportJson() {
   exportAll()
   ElMessage.success('JSON 已下载（可供 Cursor 读取）')
@@ -78,6 +86,7 @@ function onCommand(cmd: string) {
   const map: Record<string, () => void> = {
     seed: onSeed,
     rescreen: onRescreen,
+    questions: onSyncQuestions,
     md: onExportMd,
     feishu: onFeishu,
     json: onExportJson,
@@ -115,6 +124,7 @@ function onCommand(cmd: string) {
           <el-dropdown-item disabled class="menu-hint">初始化 / 维护</el-dropdown-item>
           <el-dropdown-item command="seed">导入种子数据…</el-dropdown-item>
           <el-dropdown-item command="rescreen">重评全部简历…</el-dropdown-item>
+          <el-dropdown-item command="questions">同步面试题与参考答案</el-dropdown-item>
           <el-dropdown-item divided disabled class="menu-hint">导出</el-dropdown-item>
           <el-dropdown-item command="md">下载 Markdown 报告</el-dropdown-item>
           <el-dropdown-item command="feishu">同步到飞书文档</el-dropdown-item>

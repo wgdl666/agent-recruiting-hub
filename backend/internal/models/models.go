@@ -32,6 +32,8 @@ type InterviewQuestion struct {
 	CandidateID int64  `json:"candidate_id"`
 	SortOrder   int    `json:"sort_order"`
 	Question    string `json:"question"`
+	Answer      string `json:"answer,omitempty"`
+	Level       string `json:"level,omitempty"`
 }
 
 type CandidateDetail struct {
