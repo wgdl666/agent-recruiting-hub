@@ -18,7 +18,7 @@ Host mirror_zby
 
 ## 一键部署
 
-在 **`main`** 分支上执行（先按 [分支与发布](workflow.md) 将 `dev` 合并到 `main`）：
+在 **`main`** 分支上执行（日常开发也在 `main`，详见 [分支与发布](workflow.md)）：
 
 ```bash
 git checkout main
