@@ -18,9 +18,7 @@ import BatchSelector from '../components/pipeline/BatchSelector.vue'
 import PipelineFunnel from '../components/pipeline/PipelineFunnel.vue'
 import PipelineKanban from '../components/pipeline/PipelineKanban.vue'
 
-const VIEW_KEY = 'recruiting-hub:view-mode'
-
-const { switchTab } = useTabs()
+const { switchTab, activeKey } = useTabs()
 const { setNavFromCandidates } = useCandidateNav()
 const { activeBatchId } = useActiveBatch()
 const tier = ref('all')
@@ -28,9 +26,7 @@ const status = ref('all')
 const query = ref('')
 const sort = ref<CandidateSort>('imported_desc')
 const createdRange = ref<CreatedRange>('')
-const viewMode = ref<'list' | 'kanban'>(
-  localStorage.getItem(VIEW_KEY) === 'kanban' ? 'kanban' : 'list',
-)
+const isKanban = computed(() => activeKey.value === 'kanban')
 const candidates = ref<Candidate[]>([])
 const kanbanCandidates = ref<Candidate[]>([])
 const loading = ref(false)
@@ -52,7 +48,7 @@ const kanbanStats = computed(() => summarize(kanbanCandidates.value))
 async function load() {
   loading.value = true
   try {
-    if (viewMode.value === 'kanban') {
+    if (isKanban.value) {
       const allForKanban = await fetchCandidates(
         'all',
         query.value,
@@ -84,11 +80,10 @@ async function load() {
 }
 
 onMounted(load)
-watch([tier, status, query, sort, createdRange, viewMode], load)
+watch([tier, status, query, sort, createdRange, isKanban], load)
 watch(activeBatchId, () => {
-  if (viewMode.value === 'kanban') load()
+  if (isKanban.value) load()
 })
-watch(viewMode, (v) => localStorage.setItem(VIEW_KEY, v))
 
 function onUploadDone() {
   uploadExpanded.value = []
@@ -99,20 +94,9 @@ function onUploadDone() {
 
 <template>
   <div>
-    <WorkflowGuide />
+    <WorkflowGuide v-if="!isKanban" />
 
-    <!-- 列表/看板是页面级子 tab：列表只办事，看板才挂批次条和漏斗。 -->
-    <div class="view-tabs">
-      <a-segmented
-        v-model:value="viewMode"
-        :options="[
-          { value: 'list', label: '列表' },
-          { value: 'kanban', label: '看板' },
-        ]"
-      />
-    </div>
-
-    <el-card v-if="viewMode === 'list'" shadow="never">
+    <el-card v-if="!isKanban" shadow="never">
       <div class="toolbar">
         <div class="filters">
           <div class="filter-row">
@@ -241,9 +225,6 @@ function onUploadDone() {
 </template>
 
 <style scoped>
-.view-tabs {
-  margin-bottom: 12px;
-}
 .batch-card {
   margin-bottom: 16px;
 }

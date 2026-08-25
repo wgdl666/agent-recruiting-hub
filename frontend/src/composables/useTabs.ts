@@ -1,26 +1,36 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { Candidate } from '../types'
 
+export type WorkspaceKey = 'list' | 'kanban'
+
 export type AppTab =
-  | { key: 'home'; title: '候选人'; kind: 'home' }
+  | { key: 'list'; title: '列表'; kind: 'list' }
+  | { key: 'kanban'; title: '看板'; kind: 'kanban' }
   | { key: 'upload'; title: '上传'; kind: 'upload' }
   | { key: 'docs'; title: '知识库'; kind: 'docs' }
   | { key: string; title: string; kind: 'candidate'; candidateId: number; tier?: string; status?: string }
 
-const fixedTabs: AppTab[] = [
-  { key: 'home', title: '候选人', kind: 'home' },
-  { key: 'upload', title: '上传', kind: 'upload' },
-  { key: 'docs', title: '知识库', kind: 'docs' },
-]
+const WORKSPACE_KEY = 'recruiting-hub:view-mode'
 
+function readWorkspace(): WorkspaceKey {
+  return localStorage.getItem(WORKSPACE_KEY) === 'kanban' ? 'kanban' : 'list'
+}
+
+const lastWorkspaceKey = ref<WorkspaceKey>(readWorkspace())
 const candidateTabs = ref<Extract<AppTab, { kind: 'candidate' }>[]>([])
-const activeKey = ref('home')
+const activeKey = ref<string>(lastWorkspaceKey.value)
+
+watch(lastWorkspaceKey, (v) => localStorage.setItem(WORKSPACE_KEY, v))
+
+function isWorkspace(key: string): key is WorkspaceKey {
+  return key === 'list' || key === 'kanban'
+}
+
+function rememberWorkspace(key: string) {
+  if (isWorkspace(key)) lastWorkspaceKey.value = key
+}
 
 export function useTabs() {
-  function allTabs(): AppTab[] {
-    return [...fixedTabs, ...candidateTabs.value]
-  }
-
   function openCandidate(c: Pick<Candidate, 'id' | 'name' | 'tier' | 'status'>) {
     const key = `candidate-${c.id}`
     const existing = candidateTabs.value.find((t) => t.key === key)
@@ -46,16 +56,21 @@ export function useTabs() {
   }
 
   function switchTab(key: string) {
+    // 旧入口 home = 候选人列表；关详情时回到上次的列表或看板。
+    if (key === 'home') key = 'list'
+    rememberWorkspace(key)
     activeKey.value = key
   }
 
   function removeTab(key: string) {
-    if (key === 'home' || key === 'upload' || key === 'docs') return
+    if (key === 'list' || key === 'kanban' || key === 'upload' || key === 'docs' || key === 'home') return
     const idx = candidateTabs.value.findIndex((t) => t.key === key)
     if (idx < 0) return
     candidateTabs.value.splice(idx, 1)
     if (activeKey.value === key) {
-      activeKey.value = candidateTabs.value.length ? candidateTabs.value[candidateTabs.value.length - 1].key : 'home'
+      activeKey.value = candidateTabs.value.length
+        ? candidateTabs.value[candidateTabs.value.length - 1].key
+        : lastWorkspaceKey.value
     }
   }
 
@@ -88,8 +103,8 @@ export function useTabs() {
 
   return {
     activeKey,
+    lastWorkspaceKey,
     candidateTabs,
-    allTabs,
     openCandidate,
     openCandidateById,
     replaceActiveCandidate,

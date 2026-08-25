@@ -6,13 +6,13 @@ import { useTabs } from '../composables/useTabs'
 const { switchTab } = useTabs()
 
 function onDone() {
-  switchTab('home')
+  switchTab('list')
 }
 </script>
 
 <template>
   <div class="upload-page">
-    <el-button :icon="ArrowLeft" link @click="switchTab('home')">返回候选人列表</el-button>
+    <el-button :icon="ArrowLeft" link @click="switchTab('list')">返回候选人列表</el-button>
     <el-card shadow="never" class="card">
       <template #header>
         <div class="header">

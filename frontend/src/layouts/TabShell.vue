@@ -12,26 +12,22 @@ import { statusLabel, statusType } from '../constants/status'
 
 const route = useRoute()
 const router = useRouter()
-const { activeKey, candidateTabs, openCandidate, openCandidateById, removeTab } = useTabs()
+const { activeKey, lastWorkspaceKey, candidateTabs, openCandidate, openCandidateById, removeTab, switchTab } = useTabs()
 const { navList } = useCandidateNav()
 
-const navItems = [
-  { key: 'home', label: '候选人', icon: User },
-  { key: 'upload', label: '上传', icon: Upload },
-  { key: 'docs', label: '知识库', icon: Notebook },
-] as const
+const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
+const isWorkspaceView = computed(() => activeKey.value === 'list' || activeKey.value === 'kanban')
 
+/** 详情页仍点亮来源子项（列表或看板），避免侧栏看起来像停在上传。 */
 const navKey = computed(() =>
-  activeKey.value.startsWith('candidate-') ? 'home' : activeKey.value,
+  isCandidateView.value ? lastWorkspaceKey.value : activeKey.value,
 )
 
-const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
-
 /** 打开过候选人后加宽侧栏，给便签和当前列表留出固定选择区 */
-const asideWidth = computed(() => (candidateTabs.value.length || isCandidateView.value ? '208px' : '148px'))
+const asideWidth = computed(() => (candidateTabs.value.length || isCandidateView.value ? '208px' : '168px'))
 
 function onNavSelect(key: string) {
-  activeKey.value = key
+  switchTab(key)
   syncRoute()
 }
 
@@ -52,7 +48,7 @@ function selectFromList(c: { id: number; name: string; tier: string; status: str
 
 function syncRoute() {
   const q: Record<string, string> = {}
-  if (activeKey.value !== 'home') {
+  if (activeKey.value !== 'list') {
     q.tab = activeKey.value
   }
   router.replace({ path: '/', query: q })
@@ -60,18 +56,18 @@ function syncRoute() {
 
 watch(activeKey, syncRoute)
 
-onMounted(() => {
-  const tab = route.query.tab as string | undefined
-  if (tab?.startsWith('candidate-')) {
-    const id = Number(tab.replace('candidate-', ''))
-    if (id) openCandidateById(id)
-    activeKey.value = tab
-  } else if (tab === 'upload') {
-    activeKey.value = 'upload'
-  } else if (tab === 'docs') {
-    activeKey.value = 'docs'
-  }
-})
+const bootTab = route.query.tab as string | undefined
+if (bootTab?.startsWith('candidate-')) {
+  const id = Number(bootTab.replace('candidate-', ''))
+  if (id) openCandidateById(id)
+  activeKey.value = bootTab
+} else if (bootTab === 'upload' || bootTab === 'docs' || bootTab === 'kanban' || bootTab === 'list') {
+  switchTab(bootTab)
+} else if (bootTab === 'home') {
+  switchTab('list')
+}
+
+onMounted(syncRoute)
 </script>
 
 <template>
@@ -92,16 +88,49 @@ onMounted(() => {
 
     <el-container class="body">
       <el-aside :width="asideWidth" class="side">
-        <el-menu
-          :default-active="navKey"
-          class="side-menu"
-          @select="onNavSelect"
-        >
-          <el-menu-item v-for="item in navItems" :key="item.key" :index="item.key">
-            <el-icon><component :is="item.icon" /></el-icon>
-            <span>{{ item.label }}</span>
-          </el-menu-item>
-        </el-menu>
+        <nav class="side-nav">
+          <!-- 候选人是一级分组，列表/看板是侧栏二级标题，不再放进页面里切。 -->
+          <div class="nav-group">
+            <div class="nav-group-title">
+              <el-icon><User /></el-icon>
+              <span>候选人</span>
+            </div>
+            <button
+              type="button"
+              class="nav-sub"
+              :class="{ active: navKey === 'list' }"
+              @click="onNavSelect('list')"
+            >
+              列表
+            </button>
+            <button
+              type="button"
+              class="nav-sub"
+              :class="{ active: navKey === 'kanban' }"
+              @click="onNavSelect('kanban')"
+            >
+              看板
+            </button>
+          </div>
+          <button
+            type="button"
+            class="nav-item"
+            :class="{ active: navKey === 'upload' }"
+            @click="onNavSelect('upload')"
+          >
+            <el-icon><Upload /></el-icon>
+            <span>上传</span>
+          </button>
+          <button
+            type="button"
+            class="nav-item"
+            :class="{ active: navKey === 'docs' }"
+            @click="onNavSelect('docs')"
+          >
+            <el-icon><Notebook /></el-icon>
+            <span>知识库</span>
+          </button>
+        </nav>
 
         <div v-if="candidateTabs.length" class="sticky-panel">
           <div class="sticky-head">已选候选人</div>
@@ -170,7 +199,7 @@ onMounted(() => {
         </el-tabs>
 
         <div v-show="!isCandidateView" class="page-panel">
-          <HomeView v-if="activeKey === 'home'" />
+          <HomeView v-if="isWorkspaceView" />
           <UploadView v-else-if="activeKey === 'upload'" />
           <DocsView v-else-if="activeKey === 'docs'" />
         </div>
@@ -220,17 +249,56 @@ onMounted(() => {
   border-right: 1px solid #ebeef5;
   overflow: hidden;
 }
-.side-menu {
-  border-right: none;
-  padding-top: 8px;
+.side-nav {
+  padding: 8px 0 4px;
   flex-shrink: 0;
 }
-.side-menu .el-menu-item {
-  height: 44px;
-  margin: 4px 8px;
-  border-radius: 8px;
+.nav-group {
+  margin-bottom: 4px;
 }
-.side-menu .el-menu-item.is-active {
+.nav-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #909399;
+  letter-spacing: 0.02em;
+}
+.nav-sub,
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(100% - 16px);
+  margin: 2px 8px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #303133;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+.nav-sub {
+  margin-left: 20px;
+  width: calc(100% - 28px);
+  padding: 7px 12px;
+}
+.nav-sub.active,
+.nav-item.active {
+  background: #ecf5ff;
+  color: #409eff;
+  font-weight: 600;
+}
+.nav-item:hover,
+.nav-sub:hover {
+  background: #f5f7fa;
+}
+.nav-sub.active:hover,
+.nav-item.active:hover {
   background: #ecf5ff;
 }
 .sticky-panel,
