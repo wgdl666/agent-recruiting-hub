@@ -15,7 +15,7 @@ export async function fetchStats() {
 export type CandidateSort = 'imported_desc' | 'imported_asc' | 'eng_first'
 export type CreatedRange = '' | '24h' | '2d' | '7d'
 
-/** 看板「最近 24h / 2天 / 一周」转成 UTC RFC3339 下界，和库里 created_at 文本比较。 */
+/** 「最近 24h / 2天 / 一周」转成 UTC RFC3339 下界，和库里 created_at 文本比较。 */
 export function createdAfterISO(range: CreatedRange): string | undefined {
   if (!range) return undefined
   const hours = range === '24h' ? 24 : range === '2d' ? 48 : 168

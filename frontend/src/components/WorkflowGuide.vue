@@ -24,10 +24,10 @@ function dismiss() {
       </span>
     </template>
     <ol class="steps">
-      <li><strong>选批次</strong>：顶部选择「今日/本周/本月」批次，或查看全部；新上传自动归入当前周期</li>
-      <li><strong>上传</strong>：拖入 PDF/ZIP，或点「上传简历」标签</li>
-      <li><strong>推进</strong>：列表改状态，或切到「看板」拖拽卡片（简历筛选 → 待约面 → 面试中 → 通过/完成/淘汰）</li>
-      <li><strong>知识库</strong>：开发、部署、API 文档 — 见顶部「知识库」标签</li>
+      <li><strong>列表筛人</strong>：按状态/档位翻候选人，点行打开详情；不跟批次汇总绑在一起</li>
+      <li><strong>看板跟进</strong>：切到「看板」再选今日/本周/本月批次，看漏斗并拖拽改状态</li>
+      <li><strong>上传</strong>：列表里拖入 PDF/ZIP，或点「上传简历」</li>
+      <li><strong>知识库</strong>：开发、部署、API 文档 — 见左侧「知识库」</li>
     </ol>
   </el-alert>
 </template>

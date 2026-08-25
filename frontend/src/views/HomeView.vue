@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Upload } from '@element-plus/icons-vue'
 import {
-  createdAfterISO, fetchCandidates, fetchPipelineStats, fetchStats,
+  createdAfterISO, fetchCandidates,
   type CandidateSort, type CreatedRange,
 } from '../api/client'
-import type { Candidate, PipelineStats, Stats } from '../types'
+import type { Candidate, PipelineStats } from '../types'
 import { useTabs } from '../composables/useTabs'
 import { useCandidateNav } from '../composables/useCandidateNav'
 import { useActiveBatch } from '../composables/useActiveBatch'
 import { PIPELINE_ORDER, statusLabel } from '../constants/status'
-import StatsBar from '../components/StatsBar.vue'
 import CandidateTable from '../components/CandidateTable.vue'
 import UploadDropzone from '../components/UploadDropzone.vue'
 import ToolbarActions from '../components/ToolbarActions.vue'
@@ -19,44 +18,63 @@ import BatchSelector from '../components/pipeline/BatchSelector.vue'
 import PipelineFunnel from '../components/pipeline/PipelineFunnel.vue'
 import PipelineKanban from '../components/pipeline/PipelineKanban.vue'
 
+const VIEW_KEY = 'recruiting-hub:view-mode'
+
 const { switchTab } = useTabs()
 const { setNavFromCandidates } = useCandidateNav()
 const { activeBatchId, uploadPeriodType } = useActiveBatch()
 const tier = ref('all')
 const status = ref('all')
 const query = ref('')
-// 默认新→旧：刚导进来的简历排在最上面，避免被旧数据顶下去。
 const sort = ref<CandidateSort>('imported_desc')
-// 只在看板展示：看板没有状态/档位行，靠时间窗口切开当前板。
 const createdRange = ref<CreatedRange>('')
-const viewMode = ref<'list' | 'kanban'>('list')
+const viewMode = ref<'list' | 'kanban'>(
+  localStorage.getItem(VIEW_KEY) === 'kanban' ? 'kanban' : 'list',
+)
 const candidates = ref<Candidate[]>([])
 const kanbanCandidates = ref<Candidate[]>([])
-const stats = ref<Stats | null>(null)
-const pipelineStats = ref<PipelineStats | null>(null)
 const loading = ref(false)
 const uploadExpanded = ref<string[]>([])
+
+function summarize(list: Candidate[]): PipelineStats {
+  const by_status: Record<string, number> = {}
+  const by_tier: Record<string, number> = {}
+  for (const c of list) {
+    by_status[c.status] = (by_status[c.status] || 0) + 1
+    by_tier[c.tier] = (by_tier[c.tier] || 0) + 1
+  }
+  return { total: list.length, by_status, by_tier }
+}
+
+const listStats = computed(() => summarize(candidates.value))
+const kanbanStats = computed(() => summarize(kanbanCandidates.value))
 
 async function load() {
   loading.value = true
   try {
-    const batchId = activeBatchId.value
-    const [list, st, pipe, allForKanban] = await Promise.all([
-      fetchCandidates(tier.value, query.value, status.value, batchId, sort.value),
-      fetchStats(),
-      fetchPipelineStats(batchId),
-      viewMode.value === 'kanban'
-        ? fetchCandidates('all', query.value, 'all', batchId, sort.value, createdAfterISO(createdRange.value))
-        : Promise.resolve([] as Candidate[]),
-    ])
-    stats.value = st
-    pipelineStats.value = pipe
-    candidates.value = list
     if (viewMode.value === 'kanban') {
+      const allForKanban = await fetchCandidates(
+        'all',
+        query.value,
+        'all',
+        activeBatchId.value,
+        sort.value,
+        createdAfterISO(createdRange.value),
+      )
       kanbanCandidates.value = allForKanban
       setNavFromCandidates(allForKanban, 'all', 'all', sort.value, createdRange.value)
     } else {
-      setNavFromCandidates(list, tier.value, status.value, sort.value, '')
+      // 列表是独立办事视图：不跟当前批次走，避免切回列表时被看板选中的批次悄悄缩小范围。
+      const list = await fetchCandidates(
+        tier.value,
+        query.value,
+        status.value,
+        0,
+        sort.value,
+        createdAfterISO(createdRange.value),
+      )
+      candidates.value = list
+      setNavFromCandidates(list, tier.value, status.value, sort.value, createdRange.value)
     }
   } catch (err) {
     console.error('failed to load candidates', err)
@@ -66,7 +84,11 @@ async function load() {
 }
 
 onMounted(load)
-watch([tier, status, query, sort, createdRange, activeBatchId, viewMode], load)
+watch([tier, status, query, sort, createdRange, viewMode], load)
+watch(activeBatchId, () => {
+  if (viewMode.value === 'kanban') load()
+})
+watch(viewMode, (v) => localStorage.setItem(VIEW_KEY, v))
 
 function onUploadDone() {
   uploadExpanded.value = []
@@ -78,24 +100,30 @@ function onUploadDone() {
 <template>
   <div>
     <WorkflowGuide />
-    <a-card :bordered="false" class="pipeline-card">
-      <BatchSelector @change="load" />
-      <PipelineFunnel :stats="pipelineStats" :loading="loading" />
-    </a-card>
 
-    <StatsBar :stats="stats" />
+    <!-- 列表/看板是页面级子 tab：列表只办事，看板才挂批次条和漏斗。 -->
+    <div class="view-tabs">
+      <a-segmented
+        v-model:value="viewMode"
+        :options="[
+          { value: 'list', label: '列表' },
+          { value: 'kanban', label: '看板' },
+        ]"
+      />
+    </div>
 
-    <el-card shadow="never">
+    <el-card v-if="viewMode === 'list'" shadow="never">
       <div class="toolbar">
         <div class="filters">
-          <a-segmented
-            v-model:value="viewMode"
-            :options="[
-              { value: 'list', label: '列表' },
-              { value: 'kanban', label: '看板' },
-            ]"
-          />
-          <div v-if="viewMode === 'list'" class="filter-row">
+          <div class="filter-row">
+            <span class="list-count">
+              当前筛选 <strong>{{ listStats.total }}</strong> 人
+            </span>
+            <a-tag color="red">S {{ listStats.by_tier?.S ?? 0 }}</a-tag>
+            <a-tag color="orange">A {{ listStats.by_tier?.A ?? 0 }}</a-tag>
+            <a-tag>淘汰 {{ listStats.by_tier?.淘汰 ?? 0 }}</a-tag>
+          </div>
+          <div class="filter-row">
             <span class="filter-label">状态</span>
             <el-radio-group v-model="status" size="small">
               <el-radio-button value="all">全部</el-radio-button>
@@ -104,7 +132,7 @@ function onUploadDone() {
               </el-radio-button>
             </el-radio-group>
           </div>
-          <div v-if="viewMode === 'list'" class="filter-row">
+          <div class="filter-row">
             <span class="filter-label">档位</span>
             <el-radio-group v-model="tier" size="small">
               <el-radio-button value="all">全部</el-radio-button>
@@ -113,7 +141,7 @@ function onUploadDone() {
               <el-radio-button value="淘汰">淘汰</el-radio-button>
             </el-radio-group>
           </div>
-          <div v-if="viewMode === 'kanban'" class="filter-row">
+          <div class="filter-row">
             <span class="filter-label">创建时间</span>
             <el-radio-group v-model="createdRange" size="small">
               <el-radio-button value="">全部</el-radio-button>
@@ -155,34 +183,72 @@ function onUploadDone() {
         </el-collapse-item>
       </el-collapse>
 
-      <PipelineKanban
-        v-if="viewMode === 'kanban'"
-        :candidates="kanbanCandidates"
+      <CandidateTable
+        :candidates="candidates"
         :loading="loading"
+        :show-order="tier === 'S' && status !== 'completed' && status !== 'rejected'"
         @updated="load"
       />
+      <el-empty
+        v-if="!loading && (candidates?.length ?? 0) === 0"
+        description="没有匹配的候选人"
+      >
+        <el-button type="primary" @click="switchTab('upload')">去上传简历</el-button>
+      </el-empty>
+    </el-card>
 
-      <template v-else>
-        <CandidateTable
-          :candidates="candidates"
+    <template v-else>
+      <a-card :bordered="false" class="batch-card">
+        <BatchSelector @change="load" />
+      </a-card>
+      <el-card shadow="never">
+        <div class="toolbar">
+          <div class="filters">
+            <div class="filter-row">
+              <span class="filter-label">创建时间</span>
+              <el-radio-group v-model="createdRange" size="small">
+                <el-radio-button value="">全部</el-radio-button>
+                <el-radio-button value="24h">最近24h</el-radio-button>
+                <el-radio-button value="2d">2天</el-radio-button>
+                <el-radio-button value="7d">一周</el-radio-button>
+              </el-radio-group>
+            </div>
+            <div class="filter-row">
+              <span class="filter-label">排序</span>
+              <el-select v-model="sort" size="small" class="sort-select">
+                <el-option value="imported_desc" label="导入时间（新→旧）" />
+                <el-option value="imported_asc" label="导入时间（旧→新）" />
+                <el-option value="eng_first" label="工程优先" />
+              </el-select>
+              <el-input
+                v-model="query"
+                placeholder="搜索姓名 / 项目"
+                clearable
+                size="small"
+                class="search"
+              />
+            </div>
+          </div>
+          <div class="primary-actions">
+            <ToolbarActions @refresh="load" />
+          </div>
+        </div>
+        <PipelineFunnel :stats="kanbanStats" :loading="loading" />
+        <PipelineKanban
+          :candidates="kanbanCandidates"
           :loading="loading"
-          :show-order="tier === 'S' && status !== 'completed' && status !== 'rejected'"
           @updated="load"
         />
-
-        <el-empty
-          v-if="!loading && (candidates?.length ?? 0) === 0"
-          description="没有匹配的候选人"
-        >
-          <el-button type="primary" @click="switchTab('upload')">去上传简历</el-button>
-        </el-empty>
-      </template>
-    </el-card>
+      </el-card>
+    </template>
   </div>
 </template>
 
 <style scoped>
-.pipeline-card {
+.view-tabs {
+  margin-bottom: 12px;
+}
+.batch-card {
   margin-bottom: 16px;
 }
 .toolbar {
@@ -210,6 +276,14 @@ function onUploadDone() {
   font-size: 13px;
   color: #909399;
   min-width: 56px;
+}
+.list-count {
+  font-size: 13px;
+  color: #606266;
+}
+.list-count strong {
+  font-size: 16px;
+  margin: 0 2px;
 }
 .search { max-width: 220px; }
 .sort-select { width: 180px; }

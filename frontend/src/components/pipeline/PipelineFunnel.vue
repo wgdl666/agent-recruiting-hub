@@ -45,10 +45,10 @@ const columns = computed(() =>
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 12px 16px;
+  padding: 10px 12px;
   background: #fafafa;
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .total { min-width: 80px; }
 .steps {

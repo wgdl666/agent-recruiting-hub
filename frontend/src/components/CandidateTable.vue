@@ -23,6 +23,14 @@ function onRowClick(row: Candidate) {
 function onTierUpdated() {
   emit('updated')
 }
+
+function formatImported(s?: string) {
+  if (!s) return '—'
+  const d = new Date(s)
+  if (Number.isNaN(d.getTime())) return '—'
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
+}
 </script>
 
 <template>
@@ -30,6 +38,8 @@ function onTierUpdated() {
     :data="candidates"
     v-loading="loading"
     stripe
+    size="small"
+    :header-cell-style="{ background: '#fafafa' }"
     @row-click="onRowClick"
     :row-class-name="rowClass"
     style="width: 100%; cursor: pointer"
@@ -51,6 +61,11 @@ function onTierUpdated() {
       </template>
     </el-table-column>
     <el-table-column prop="name" label="姓名" width="100" />
+    <el-table-column label="导入" width="108">
+      <template #default="{ row }">
+        <span class="imported">{{ formatImported(row.created_at) }}</span>
+      </template>
+    </el-table-column>
     <el-table-column prop="eng_summary" label="传统工程" min-width="160" show-overflow-tooltip />
     <el-table-column prop="project_summary" label="深挖项目" min-width="180" show-overflow-tooltip />
     <el-table-column prop="one_liner" label="摘要" min-width="120" show-overflow-tooltip />
@@ -80,4 +95,5 @@ function onTierUpdated() {
 <style scoped>
 :deep(.row-s) { background: #fef0f0 !important; }
 .score-mini { font-size: 12px; color: #606266; }
+.imported { font-size: 12px; color: #909399; white-space: nowrap; }
 </style>

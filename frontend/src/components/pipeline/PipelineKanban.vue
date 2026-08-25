@@ -75,8 +75,8 @@ function tierColor(tier: string) {
         @drop="onDrop(status)"
       >
         <div class="col-head">
+          <div class="col-count">{{ grouped[status]?.length ?? 0 }}</div>
           <a-tag :color="statusColor(status)">{{ statusLabel(status) }}</a-tag>
-          <span class="col-count">{{ grouped[status]?.length ?? 0 }}</span>
         </div>
         <div class="col-body">
           <a-card
@@ -111,7 +111,7 @@ function tierColor(tier: string) {
   min-height: 360px;
 }
 .column {
-  flex: 0 0 200px;
+  flex: 0 0 212px;
   background: #f5f5f5;
   border-radius: 8px;
   display: flex;
@@ -119,15 +119,18 @@ function tierColor(tier: string) {
   max-height: 70vh;
 }
 .col-head {
-  padding: 8px 10px;
+  padding: 10px 12px 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   border-bottom: 1px solid #e8e8e8;
 }
 .col-count {
-  font-size: 12px;
-  color: #999;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #1f1f1f;
 }
 .col-body {
   padding: 8px;
