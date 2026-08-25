@@ -19,6 +19,8 @@ export interface Candidate {
   interview_order?: number
   batch_id?: number
   batch_name?: string
+  skill_id?: string
+  skill_name?: string
   has_resume: boolean
   created_at?: string
 }
@@ -84,6 +86,12 @@ export interface UploadResult {
   batch_id?: number
   results: ScreenResult[]
   errors?: string[]
+}
+
+export interface EvalSkill {
+  id: string
+  name: string
+  description?: string
 }
 
 export interface ScreenResult {

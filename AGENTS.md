@@ -32,6 +32,9 @@ curl http://localhost:8080/api/health
 # 列表（工程优先排序：eng_first=true；按批次 batch_id）
 curl 'http://localhost:8080/api/candidates?tier=S&batch_id=1&eng_first=true'
 
+# 评估岗位标准（招聘 Skill；上传前必选）
+curl http://localhost:8080/api/skills
+
 # 招聘批次（持续上传：按日/周/月自动归批）
 curl http://localhost:8080/api/batches
 curl -X POST http://localhost:8080/api/batches \
@@ -54,14 +57,14 @@ curl -X PATCH http://localhost:8080/api/candidates/1 \
   -H 'Content-Type: application/json' \
   -d '{"clear_manual":true}'
 
-# 拖入等价：上传 PDF/ZIP（默认归入当日批次；可指定 period_type 或 batch_id）
-curl -F 'files=@resume.pdf' -F 'source=cursor' -F 'period_type=daily' http://localhost:8080/api/upload
-curl -F 'files=@resume.pdf' -F 'batch_id=2' http://localhost:8080/api/upload
+# 拖入等价：上传 PDF/ZIP（必须指定评估岗位 skill_id；默认归入当日批次；可指定 period_type 或 batch_id）
+curl -F 'files=@resume.pdf' -F 'source=cursor' -F 'skill_id=intern' -F 'period_type=daily' http://localhost:8080/api/upload
+curl -F 'files=@resume.pdf' -F 'skill_id=intern' -F 'batch_id=2' http://localhost:8080/api/upload
 
 # 批量评估本地目录（Cursor 常用）
 curl -X POST http://localhost:8080/api/screen \
   -H 'Content-Type: application/json' \
-  -d '{"path":"/Users/caden/Downloads/resumes","source":"cursor"}'
+  -d '{"path":"/Users/caden/Downloads/resumes","source":"cursor","skill_id":"intern"}'
 
 # 导入种子数据
 curl -X POST http://localhost:8080/api/import/seed

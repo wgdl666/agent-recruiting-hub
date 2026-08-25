@@ -23,6 +23,8 @@ type Candidate struct {
 	InterviewOrder int       `json:"interview_order"`
 	BatchID        int64     `json:"batch_id"`
 	BatchName      string    `json:"batch_name,omitempty"`
+	SkillID        string    `json:"skill_id,omitempty"`
+	SkillName      string    `json:"skill_name,omitempty"`
 	Status         string    `json:"status"`
 	HasResume      bool      `json:"has_resume"`
 	CreatedAt      time.Time `json:"created_at"`
@@ -44,20 +46,20 @@ type CandidateDetail struct {
 }
 
 type UploadResult struct {
-	Imported int              `json:"imported"`
-	BatchID  int64            `json:"batch_id,omitempty"`
-	Results  []ScreenResult   `json:"results"`
-	Errors   []string         `json:"errors,omitempty"`
+	Imported int            `json:"imported"`
+	BatchID  int64          `json:"batch_id,omitempty"`
+	Results  []ScreenResult `json:"results"`
+	Errors   []string       `json:"errors,omitempty"`
 }
 
 type ScreenResult struct {
-	Name       string `json:"name"`
-	Tier       string `json:"tier"`
-	ScoreTotal int    `json:"score_total"`
-	EngScore   int    `json:"eng_score"`
-	AgentScore int    `json:"agent_score"`
-	Reason     string `json:"reason"`
-	CandidateID int64 `json:"candidate_id,omitempty"`
+	Name        string `json:"name"`
+	Tier        string `json:"tier"`
+	ScoreTotal  int    `json:"score_total"`
+	EngScore    int    `json:"eng_score"`
+	AgentScore  int    `json:"agent_score"`
+	Reason      string `json:"reason"`
+	CandidateID int64  `json:"candidate_id,omitempty"`
 }
 
 type Stats struct {

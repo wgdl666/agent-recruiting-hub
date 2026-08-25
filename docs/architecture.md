@@ -42,6 +42,7 @@ flowchart LR
 | 字段 | 说明 |
 |------|------|
 | name, source, tier, status, batch_id | 姓名、来源、档位、进度、批次 |
+| skill_id | 评估岗位标准（招聘 Skill）。当前仅 `intern`（实习生） |
 | eng_summary, project_summary, one_liner, action | 传统工程 / 深挖项目 / 摘要 / 建议 |
 | score_total, eng_score, agent_score, reason, flags_json | 自动评分与标签（如 no_intern） |
 | interview_order, tier_manual | S 档面试顺序、是否手动锁定档位 |
@@ -73,7 +74,7 @@ flowchart LR
 ## 前端标签页
 
 - **候选人**：批次选择 + 漏斗 + 列表/看板  
-- **上传**：拖拽评估  
+- **上传**：拖拽评估（先选评估岗位标准 / Skill）  
 - **知识库**：本文档  
 - 动态标签：候选人详情（简历 + 面试题）  
 

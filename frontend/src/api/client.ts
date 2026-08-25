@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Batch, Candidate, CandidateDetail, DocDetail, DocEntry, PipelineStats, Stats, UploadResult } from '../types'
+import type { Batch, Candidate, CandidateDetail, DocDetail, DocEntry, EvalSkill, PipelineStats, Stats, UploadResult } from '../types'
 
 const api = axios.create({ baseURL: '/api' })
 
@@ -70,6 +70,11 @@ export async function fetchDoc(slug: string) {
   return data
 }
 
+export async function fetchSkills() {
+  const { data } = await api.get<EvalSkill[] | null>('/skills')
+  return asList(data)
+}
+
 export async function fetchCandidate(id: number) {
   const { data } = await api.get<CandidateDetail>(`/candidates/${id}`)
   return data
@@ -79,10 +84,17 @@ export function resumeUrl(id: number) {
   return `/api/candidates/${id}/resume`
 }
 
-export async function uploadFiles(files: File[], source = 'upload', opts?: { batchId?: number; periodType?: string }) {
+export async function uploadFiles(
+  files: File[],
+  source = 'upload',
+  opts?: { batchId?: number; periodType?: string; skillId?: string },
+) {
   const form = new FormData()
   files.forEach((f) => form.append('files', f))
   form.append('source', source)
+  if (opts?.skillId) {
+    form.append('skill_id', opts.skillId)
+  }
   if (opts?.batchId && opts.batchId > 0) {
     form.append('batch_id', String(opts.batchId))
   } else if (opts?.periodType) {

@@ -17,6 +17,7 @@ import (
 	"github.com/caden/agent-recruiting-hub/internal/models"
 	"github.com/caden/agent-recruiting-hub/internal/scanner"
 	"github.com/caden/agent-recruiting-hub/internal/seed"
+	"github.com/caden/agent-recruiting-hub/internal/skills"
 	"github.com/caden/agent-recruiting-hub/internal/storage"
 	"github.com/caden/agent-recruiting-hub/internal/store"
 	"github.com/gin-contrib/cors"
@@ -49,6 +50,7 @@ func (s *Server) Router() *gin.Engine {
 		api.GET("/docs", s.listDocs)
 		api.GET("/docs/:slug", s.getDoc)
 		api.GET("/health", s.health)
+		api.GET("/skills", s.listSkills)
 		api.GET("/batches", s.listBatches)
 		api.POST("/batches", s.createBatch)
 		api.GET("/pipeline/stats", s.pipelineStats)
@@ -95,6 +97,22 @@ func (s *Server) health(c *gin.Context) {
 		"resumes":    s.st.ResumeDir(),
 		"scanner":    scannerMode(),
 	})
+}
+
+func (s *Server) listSkills(c *gin.Context) {
+	c.JSON(http.StatusOK, skills.All())
+}
+
+// parseSkillID 上传/筛评必须先选定评估岗位；未知 id 直接拒绝，避免静默落到实习生岗。
+func parseSkillID(raw string) (string, error) {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return "", fmt.Errorf("skill_id required")
+	}
+	if !skills.Valid(raw) {
+		return "", fmt.Errorf("unknown skill_id")
+	}
+	return raw, nil
 }
 
 func scannerMode() string {
@@ -270,6 +288,11 @@ func (s *Server) uploadFiles(c *gin.Context) {
 		return
 	}
 	source := c.DefaultPostForm("source", "upload")
+	skillID, err := parseSkillID(c.PostForm("skill_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	batchID, err := s.resolveUploadBatch(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid batch_id"})
@@ -297,12 +320,12 @@ func (s *Server) uploadFiles(c *gin.Context) {
 		ext := strings.ToLower(filepath.Ext(fh.Filename))
 		switch ext {
 		case ".zip":
-			rs, errs := s.processZip(tmp.Name(), source, batchID)
+			rs, errs := s.processZip(tmp.Name(), source, batchID, skillID)
 			result.Results = append(result.Results, rs...)
 			result.Errors = append(result.Errors, errs...)
 			result.Imported += len(rs)
 		case ".pdf":
-			sr, err := s.processPDF(tmp.Name(), fh.Filename, source, batchID)
+			sr, err := s.processPDF(tmp.Name(), fh.Filename, source, batchID, skillID)
 			if err != nil {
 				result.Errors = append(result.Errors, fmt.Sprintf("%s: %v", fh.Filename, err))
 			} else {
@@ -321,11 +344,17 @@ func (s *Server) screenPath(c *gin.Context) {
 	var req struct {
 		Path       string `json:"path"`
 		Source     string `json:"source"`
+		SkillID    string `json:"skill_id"`
 		BatchID    int64  `json:"batch_id"`
 		PeriodType string `json:"period_type"`
 	}
 	if err := c.BindJSON(&req); err != nil || req.Path == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "path required"})
+		return
+	}
+	skillID, err := parseSkillID(req.SkillID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	if req.Source == "" {
@@ -351,7 +380,7 @@ func (s *Server) screenPath(c *gin.Context) {
 			if err != nil || fi.IsDir() || strings.ToLower(filepath.Ext(path)) != ".pdf" {
 				return nil
 			}
-			sr, e := s.processPDF(path, filepath.Base(path), req.Source, batchID)
+			sr, e := s.processPDF(path, filepath.Base(path), req.Source, batchID, skillID)
 			if e != nil {
 				errs = append(errs, e.Error())
 			} else {
@@ -360,7 +389,7 @@ func (s *Server) screenPath(c *gin.Context) {
 			return nil
 		})
 	} else {
-		sr, e := s.processPDF(req.Path, filepath.Base(req.Path), req.Source, batchID)
+		sr, e := s.processPDF(req.Path, filepath.Base(req.Path), req.Source, batchID, skillID)
 		if e != nil {
 			errs = append(errs, e.Error())
 		} else {
@@ -370,7 +399,7 @@ func (s *Server) screenPath(c *gin.Context) {
 	c.JSON(http.StatusOK, models.UploadResult{Imported: len(results), Results: results, Errors: errs})
 }
 
-func (s *Server) processZip(zipPath, source string, batchID int64) ([]models.ScreenResult, []string) {
+func (s *Server) processZip(zipPath, source string, batchID int64, skillID string) ([]models.ScreenResult, []string) {
 	r, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return nil, []string{err.Error()}
@@ -399,7 +428,7 @@ func (s *Server) processZip(zipPath, source string, batchID int64) ([]models.Scr
 		_, _ = io.Copy(tmp, rc)
 		rc.Close()
 		tmp.Close()
-		sr, err := s.processPDF(tmp.Name(), filepath.Base(f.Name), source, batchID)
+		sr, err := s.processPDF(tmp.Name(), filepath.Base(f.Name), source, batchID, skillID)
 		os.Remove(tmp.Name())
 		if err != nil {
 			errs = append(errs, fmt.Sprintf("%s: %v", f.Name, err))
@@ -410,7 +439,7 @@ func (s *Server) processZip(zipPath, source string, batchID int64) ([]models.Scr
 	return results, errs
 }
 
-func (s *Server) processPDF(path, filename, source string, batchID int64) (*models.ScreenResult, error) {
+func (s *Server) processPDF(path, filename, source string, batchID int64, skillID string) (*models.ScreenResult, error) {
 	text, err := scanner.ExtractText(path)
 	if err != nil {
 		return nil, err
@@ -437,6 +466,7 @@ func (s *Server) processPDF(path, filename, source string, batchID int64) (*mode
 		Reason: score.Reason, Flags: score.Flags,
 		InterviewOrder: seed.InterviewOrder[name],
 		BatchID:        batchID,
+		SkillID:        skillID, // 评分标准随候选人落库，重评时沿用，不按最新默认岗覆盖
 		Status:         models.StatusScreening,
 		ClearManual:    true,
 	})
@@ -484,7 +514,7 @@ func (s *Server) RunSeedImport() (int, error) {
 			Name: name, Source: row[1], Tier: scanner.NormalizeTier(row[2]),
 			EngSummary: row[3], ProjectSummary: row[4], OneLiner: row[5],
 			Action: row[6], InterviewOrder: seed.InterviewOrder[name],
-			BatchID: defaultBatch, Status: models.StatusScreening,
+			BatchID: defaultBatch, SkillID: skills.Intern, Status: models.StatusScreening,
 		}
 		if sc, ok := scored[name]; ok {
 			in.ScoreTotal = sc.Total
@@ -523,7 +553,7 @@ func (s *Server) RunSeedImport() (int, error) {
 			EngSummary: cand.EngSummary, ProjectSummary: cand.ProjectSummary,
 			OneLiner: cand.OneLiner, Action: cand.Action, ResumePath: dest, ResumeKey: resumeKey,
 			InterviewOrder: seed.InterviewOrder[name],
-			BatchID:        cand.BatchID, Status: cand.Status,
+			BatchID:        cand.BatchID, SkillID: cand.SkillID, Status: cand.Status,
 		}
 		if sc, ok := scored[name]; ok {
 			in.ScoreTotal, in.EngScore, in.AgentScore = sc.Total, sc.EngScore, sc.AgentScore
@@ -588,6 +618,7 @@ func (s *Server) rescreenAll(c *gin.Context) {
 			Reason: score.Reason, Flags: score.Flags,
 			InterviewOrder: cand.InterviewOrder,
 			BatchID:        cand.BatchID,
+			SkillID:        cand.SkillID,
 			Status:         cand.Status,
 		})
 		if err == nil {

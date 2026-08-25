@@ -13,8 +13,8 @@ case "$cmd" in
   tier)     curl -s -X PATCH "$BASE/candidates/$1" -H 'Content-Type: application/json' \
               -d "{\"tier\":\"$2\"}" | python3 -m json.tool ;;
   screen)   curl -s -X POST "$BASE/screen" -H 'Content-Type: application/json' \
-              -d "{\"path\":\"$1\",\"source\":\"cursor\"}" | python3 -m json.tool ;;
-  upload)   curl -s -X POST "$BASE/upload" -F "files=@$1" -F source=cursor | python3 -m json.tool ;;
+              -d "{\"path\":\"$1\",\"source\":\"cursor\",\"skill_id\":\"${2:-intern}\"}" | python3 -m json.tool ;;
+  upload)   curl -s -X POST "$BASE/upload" -F "files=@$1" -F source=cursor -F "skill_id=${2:-intern}" | python3 -m json.tool ;;
   seed)     curl -s -X POST "$BASE/import/seed" | python3 -m json.tool ;;
   rescreen) curl -s -X POST "$BASE/rescreen" | python3 -m json.tool ;;
   export)   curl -s "$BASE/export" -o "${1:-candidates-export.json}" && echo "saved ${1:-candidates-export.json}" ;;
@@ -29,8 +29,8 @@ Usage: scripts/hub <command> [args]
   list [tier]         List candidates (default S)
   get <id>            Candidate detail + questions
   tier <id> <S|A|B|C|淘汰>  Update candidate tier
-  screen <path>       Screen PDF dir or file
-  upload <file>       Upload PDF or ZIP
+  screen <path> [skill]  Screen PDF dir or file (default skill: intern)
+  upload <file> [skill]  Upload PDF or ZIP (default skill: intern)
   seed                Import seed/batch.json
   rescreen            Re-score all resumes with PDFs
   export [file.json]  Export all candidates

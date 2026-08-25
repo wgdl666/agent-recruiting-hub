@@ -41,16 +41,19 @@ POST /batches
 ## 上传与评估
 
 ```bash
-# 表单上传（默认归入当日批次）
+GET /skills                            # 评估岗位标准（招聘 Skill）列表；当前仅 intern/实习生
+
+# 表单上传（必须带 skill_id；默认归入当日批次）
 POST /upload
   files=@resume.pdf
+  skill_id=intern                      # 必填，对应评估岗位
   source=cursor
   period_type=daily|weekly|monthly
   batch_id=2                            # 可选，显式指定批次
 
 # 批量评估本地路径（Cursor 常用）
 POST /screen
-  {"path":"/path/to/dir","source":"cursor","period_type":"daily","batch_id":0}
+  {"path":"/path/to/dir","source":"cursor","skill_id":"intern","period_type":"daily","batch_id":0}
 ```
 
 ## 维护
