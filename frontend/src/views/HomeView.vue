@@ -22,7 +22,7 @@ const VIEW_KEY = 'recruiting-hub:view-mode'
 
 const { switchTab } = useTabs()
 const { setNavFromCandidates } = useCandidateNav()
-const { activeBatchId, uploadPeriodType } = useActiveBatch()
+const { activeBatchId } = useActiveBatch()
 const tier = ref('all')
 const status = ref('all')
 const query = ref('')
@@ -174,12 +174,8 @@ function onUploadDone() {
       </div>
 
       <el-collapse v-model="uploadExpanded" class="quick-upload">
-        <el-collapse-item name="upload" title="快速上传（拖拽 PDF / ZIP，归入当前周期批次）">
-          <UploadDropzone
-            :batch-id="activeBatchId"
-            :period-type="uploadPeriodType"
-            @done="onUploadDone"
-          />
+        <el-collapse-item name="upload" title="快速上传（拖拽 PDF / ZIP，归入今日批次）">
+          <UploadDropzone period-type="daily" @done="onUploadDone" />
         </el-collapse-item>
       </el-collapse>
 
