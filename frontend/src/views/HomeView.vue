@@ -9,6 +9,7 @@ import type { Candidate, PipelineStats } from '../types'
 import { useTabs } from '../composables/useTabs'
 import { useCandidateNav } from '../composables/useCandidateNav'
 import { useActiveBatch } from '../composables/useActiveBatch'
+import { usePositions } from '../composables/usePositions'
 import { PIPELINE_ORDER, statusLabel } from '../constants/status'
 import CandidateTable from '../components/CandidateTable.vue'
 import UploadDropzone from '../components/UploadDropzone.vue'
@@ -21,6 +22,7 @@ import PipelineKanban from '../components/pipeline/PipelineKanban.vue'
 const { switchTab, activeKey } = useTabs()
 const { setNavFromCandidates } = useCandidateNav()
 const { activeBatchId } = useActiveBatch()
+const { allPositions, listPositionId } = usePositions()
 const tier = ref('all')
 const status = ref('all')
 const query = ref('')
@@ -58,7 +60,7 @@ async function load() {
         createdAfterISO(createdRange.value),
       )
       kanbanCandidates.value = allForKanban
-      setNavFromCandidates(allForKanban, 'all', 'all', sort.value, createdRange.value)
+      setNavFromCandidates(allForKanban, 'all', 'all', sort.value, createdRange.value, 0)
     } else {
       // 列表是独立办事视图：不跟当前批次走，避免切回列表时被看板选中的批次悄悄缩小范围。
       const list = await fetchCandidates(
@@ -68,9 +70,10 @@ async function load() {
         0,
         sort.value,
         createdAfterISO(createdRange.value),
+        listPositionId.value,
       )
       candidates.value = list
-      setNavFromCandidates(list, tier.value, status.value, sort.value, createdRange.value)
+      setNavFromCandidates(list, tier.value, status.value, sort.value, createdRange.value, listPositionId.value)
     }
   } catch (err) {
     console.error('failed to load candidates', err)
@@ -80,7 +83,7 @@ async function load() {
 }
 
 onMounted(load)
-watch([tier, status, query, sort, createdRange, isKanban], load)
+watch([tier, status, query, sort, createdRange, isKanban, listPositionId], load)
 watch(activeBatchId, () => {
   if (isKanban.value) load()
 })
@@ -106,6 +109,15 @@ function onUploadDone() {
             <a-tag color="red">S {{ listStats.by_tier?.S ?? 0 }}</a-tag>
             <a-tag color="orange">A {{ listStats.by_tier?.A ?? 0 }}</a-tag>
             <a-tag>淘汰 {{ listStats.by_tier?.淘汰 ?? 0 }}</a-tag>
+          </div>
+          <div class="filter-row">
+            <span class="filter-label">岗位</span>
+            <el-radio-group v-model="listPositionId" size="small">
+              <el-radio-button :value="0">全部</el-radio-button>
+              <el-radio-button v-for="p in allPositions" :key="p.id" :value="p.id">
+                {{ p.name }}
+              </el-radio-button>
+            </el-radio-group>
           </div>
           <div class="filter-row">
             <span class="filter-label">状态</span>

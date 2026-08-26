@@ -83,6 +83,11 @@ function formatImported(s?: string) {
         <el-tag v-else size="small" type="success">有</el-tag>
       </template>
     </el-table-column>
+    <el-table-column label="岗位" width="100">
+      <template #default="{ row }">
+        <span class="position">{{ row.position_name || '实习生' }}</span>
+      </template>
+    </el-table-column>
     <el-table-column label="简历" width="72">
       <template #default="{ row }">
         <el-icon v-if="row.has_resume" color="#67c23a"><CircleCheck /></el-icon>
@@ -96,4 +101,5 @@ function formatImported(s?: string) {
 :deep(.row-s) { background: #fef0f0 !important; }
 .score-mini { font-size: 12px; color: #606266; }
 .imported { font-size: 12px; color: #909399; white-space: nowrap; }
+.position { font-size: 12px; color: #606266; }
 </style>

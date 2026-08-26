@@ -93,7 +93,9 @@ function tierColor(tier: string) {
               <a-tag :color="tierColor(c.tier)" size="small">{{ c.tier }}</a-tag>
             </div>
             <div class="card-sub">{{ c.one_liner || c.eng_summary }}</div>
-            <div v-if="c.batch_name" class="card-batch">{{ c.batch_name }}</div>
+            <div v-if="c.batch_name || c.position_name" class="card-batch">
+              {{ [c.position_name, c.batch_name].filter(Boolean).join(' · ') }}
+            </div>
           </a-card>
           <a-empty v-if="!grouped[status]?.length" :image-style="{ height: 40 }" description="暂无" />
         </div>

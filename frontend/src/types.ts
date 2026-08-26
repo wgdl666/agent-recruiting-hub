@@ -19,6 +19,8 @@ export interface Candidate {
   interview_order?: number
   batch_id?: number
   batch_name?: string
+  position_id?: number
+  position_name?: string
   skill_id?: string
   skill_name?: string
   has_resume: boolean
@@ -92,6 +94,18 @@ export interface EvalSkill {
   id: string
   name: string
   description?: string
+}
+
+export interface Position {
+  id: number
+  name: string
+  slug: string
+  skill_id: string
+  skill_name?: string
+  description?: string
+  sort_order: number
+  is_open: boolean
+  candidate_count?: number
 }
 
 export interface ScreenResult {

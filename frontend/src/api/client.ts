@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Batch, Candidate, CandidateDetail, DocDetail, DocEntry, EvalSkill, PipelineStats, Stats, UploadResult } from '../types'
+import type { Batch, Candidate, CandidateDetail, DocDetail, DocEntry, EvalSkill, PipelineStats, Position, Stats, UploadResult } from '../types'
 
 const api = axios.create({ baseURL: '/api' })
 
@@ -29,6 +29,7 @@ export async function fetchCandidates(
   batchId = 0,
   sort: CandidateSort = 'imported_desc',
   createdAfter?: string,
+  positionId = 0,
 ) {
   const { data } = await api.get<Candidate[] | null>('/candidates', {
     params: {
@@ -36,6 +37,7 @@ export async function fetchCandidates(
       status: status === 'all' ? '' : status,
       q,
       batch_id: batchId > 0 ? batchId : undefined,
+      position_id: positionId > 0 ? positionId : undefined,
       sort,
       created_after: createdAfter || undefined,
     },
@@ -75,6 +77,26 @@ export async function fetchSkills() {
   return asList(data)
 }
 
+export async function fetchPositions(openOnly = false) {
+  const { data } = await api.get<Position[] | null>('/positions', {
+    params: openOnly ? { open: 'true' } : undefined,
+  })
+  return asList(data)
+}
+
+export async function createPosition(payload: { name: string; skill_id: string; description?: string; is_open?: boolean }) {
+  const { data } = await api.post<Position>('/positions', payload)
+  return data
+}
+
+export async function updatePosition(
+  id: number,
+  patch: { name?: string; skill_id?: string; description?: string; is_open?: boolean; sort_order?: number },
+) {
+  const { data } = await api.patch<Position>(`/positions/${id}`, patch)
+  return data
+}
+
 export async function fetchCandidate(id: number) {
   const { data } = await api.get<CandidateDetail>(`/candidates/${id}`)
   return data
@@ -87,12 +109,14 @@ export function resumeUrl(id: number) {
 export async function uploadFiles(
   files: File[],
   source = 'upload',
-  opts?: { batchId?: number; periodType?: string; skillId?: string },
+  opts?: { batchId?: number; periodType?: string; positionId?: number; skillId?: string },
 ) {
   const form = new FormData()
   files.forEach((f) => form.append('files', f))
   form.append('source', source)
-  if (opts?.skillId) {
+  if (opts?.positionId && opts.positionId > 0) {
+    form.append('position_id', String(opts.positionId))
+  } else if (opts?.skillId) {
     form.append('skill_id', opts.skillId)
   }
   if (opts?.batchId && opts.batchId > 0) {

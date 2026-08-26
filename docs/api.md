@@ -13,8 +13,8 @@ GET /pipeline/stats?batch_id=1
 ## 候选人
 
 ```bash
-# 列表（eng_first 工程优先；batch_id 筛批次）
-GET /candidates?tier=S&status=screening&batch_id=1&eng_first=true&q=张三
+# 列表（eng_first 工程优先；batch_id 筛批次；position_id 筛岗位）
+GET /candidates?tier=S&status=screening&batch_id=1&position_id=1&eng_first=true&q=张三
 
 GET /candidates/:id
 GET /candidates/:id/resume          # PDF inline
@@ -38,22 +38,35 @@ POST /batches
   {"name":"校招专场","tag":"campus-2026","period_type":"custom"}
 ```
 
+## 岗位与检验标准
+
+```bash
+GET /positions                         # 岗位阶梯；?open=true 仅在招
+POST /positions
+  {"name":"实习生","skill_id":"intern","description":"...","is_open":true}
+PATCH /positions/:id
+  {"name":"...","skill_id":"intern","is_open":false}
+
+GET /skills                            # 检验标准（招聘 Skill）目录；岗位绑定后上传自动选用
+```
+
+历史候选人在迁移时岗位一律写成「实习生」。
+
 ## 上传与评估
 
 ```bash
-GET /skills                            # 评估岗位标准（招聘 Skill）列表；当前仅 intern/实习生
-
-# 表单上传（必须带 skill_id；默认归入当日批次）
+# 表单上传（网页传 position_id；CLI 仍可只传 skill_id，会映射到对应在招岗）
 POST /upload
   files=@resume.pdf
-  skill_id=intern                      # 必填，对应评估岗位
+  position_id=1                        # 推荐：招聘岗位
+  skill_id=intern                      # 兼容旧客户端
   source=cursor
   period_type=daily|weekly|monthly
   batch_id=2                            # 可选，显式指定批次
 
 # 批量评估本地路径（Cursor 常用）
 POST /screen
-  {"path":"/path/to/dir","source":"cursor","skill_id":"intern","period_type":"daily","batch_id":0}
+  {"path":"/path/to/dir","source":"cursor","position_id":1,"skill_id":"intern","period_type":"daily","batch_id":0}
 ```
 
 ## 维护

@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Close, Notebook, Upload, User } from '@element-plus/icons-vue'
+import { Briefcase, Close, Notebook, Upload, User } from '@element-plus/icons-vue'
 import HomeView from '../views/HomeView.vue'
 import UploadView from '../views/UploadView.vue'
 import DocsView from '../views/DocsView.vue'
 import CandidateView from '../views/CandidateView.vue'
+import PositionsView from '../views/PositionsView.vue'
 import { useTabs } from '../composables/useTabs'
 import { useCandidateNav } from '../composables/useCandidateNav'
+import { usePositions } from '../composables/usePositions'
 import { statusLabel, statusType } from '../constants/status'
 
 const route = useRoute()
 const router = useRouter()
 const { activeKey, lastWorkspaceKey, candidateTabs, openCandidate, openCandidateById, removeTab, switchTab } = useTabs()
 const { navList } = useCandidateNav()
+const { openPositions, listPositionId, loadPositions } = usePositions()
 
 const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
 const isWorkspaceView = computed(() => activeKey.value === 'list' || activeKey.value === 'kanban')
@@ -27,7 +30,14 @@ const navKey = computed(() =>
 const asideWidth = computed(() => (candidateTabs.value.length || isCandidateView.value ? '208px' : '168px'))
 
 function onNavSelect(key: string) {
+  if (key === 'list') listPositionId.value = 0
   switchTab(key)
+  syncRoute()
+}
+
+function onSelectOpening(id: number) {
+  listPositionId.value = id
+  switchTab('list')
   syncRoute()
 }
 
@@ -61,13 +71,16 @@ if (bootTab?.startsWith('candidate-')) {
   const id = Number(bootTab.replace('candidate-', ''))
   if (id) openCandidateById(id)
   activeKey.value = bootTab
-} else if (bootTab === 'upload' || bootTab === 'docs' || bootTab === 'kanban' || bootTab === 'list') {
+} else if (bootTab === 'upload' || bootTab === 'docs' || bootTab === 'kanban' || bootTab === 'list' || bootTab === 'positions') {
   switchTab(bootTab)
 } else if (bootTab === 'home') {
   switchTab('list')
 }
 
-onMounted(syncRoute)
+onMounted(() => {
+  syncRoute()
+  loadPositions().catch(() => {})
+})
 </script>
 
 <template>
@@ -98,7 +111,7 @@ onMounted(syncRoute)
             <button
               type="button"
               class="nav-sub"
-              :class="{ active: navKey === 'list' }"
+              :class="{ active: navKey === 'list' && listPositionId === 0 }"
               @click="onNavSelect('list')"
             >
               列表
@@ -110,6 +123,28 @@ onMounted(syncRoute)
               @click="onNavSelect('kanban')"
             >
               看板
+            </button>
+          </div>
+          <div class="nav-group">
+            <button
+              type="button"
+              class="nav-group-btn"
+              :class="{ active: navKey === 'positions' }"
+              @click="onNavSelect('positions')"
+            >
+              <el-icon><Briefcase /></el-icon>
+              <span>岗位阶梯</span>
+            </button>
+            <button
+              v-for="p in openPositions"
+              :key="p.id"
+              type="button"
+              class="nav-sub"
+              :class="{ active: navKey === 'list' && listPositionId === p.id }"
+              :title="p.skill_name ? `检验标准：${p.skill_name}` : undefined"
+              @click="onSelectOpening(p.id)"
+            >
+              {{ p.name }}
             </button>
           </div>
           <button
@@ -201,6 +236,7 @@ onMounted(syncRoute)
         <div v-show="!isCandidateView" class="page-panel">
           <HomeView v-if="isWorkspaceView" />
           <UploadView v-else-if="activeKey === 'upload'" />
+          <PositionsView v-else-if="activeKey === 'positions'" />
           <DocsView v-else-if="activeKey === 'docs'" />
         </div>
       </el-main>
@@ -256,7 +292,8 @@ onMounted(syncRoute)
 .nav-group {
   margin-bottom: 4px;
 }
-.nav-group-title {
+.nav-group-title,
+.nav-group-btn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -265,6 +302,22 @@ onMounted(syncRoute)
   font-weight: 600;
   color: #909399;
   letter-spacing: 0.02em;
+}
+.nav-group-btn {
+  width: calc(100% - 16px);
+  margin: 2px 8px 0;
+  padding: 8px 12px 4px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.nav-group-btn.active {
+  color: #409eff;
+}
+.nav-group-btn:hover {
+  background: #f5f7fa;
 }
 .nav-sub,
 .nav-item {
@@ -286,6 +339,9 @@ onMounted(syncRoute)
   margin-left: 20px;
   width: calc(100% - 28px);
   padding: 7px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .nav-sub.active,
 .nav-item.active {

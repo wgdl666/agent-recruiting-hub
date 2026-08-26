@@ -6,6 +6,7 @@ export type WorkspaceKey = 'list' | 'kanban'
 export type AppTab =
   | { key: 'list'; title: '列表'; kind: 'list' }
   | { key: 'kanban'; title: '看板'; kind: 'kanban' }
+  | { key: 'positions'; title: '岗位'; kind: 'positions' }
   | { key: 'upload'; title: '上传'; kind: 'upload' }
   | { key: 'docs'; title: '知识库'; kind: 'docs' }
   | { key: string; title: string; kind: 'candidate'; candidateId: number; tier?: string; status?: string }
@@ -63,7 +64,7 @@ export function useTabs() {
   }
 
   function removeTab(key: string) {
-    if (key === 'list' || key === 'kanban' || key === 'upload' || key === 'docs' || key === 'home') return
+    if (key === 'list' || key === 'kanban' || key === 'upload' || key === 'docs' || key === 'home' || key === 'positions') return
     const idx = candidateTabs.value.findIndex((t) => t.key === key)
     if (idx < 0) return
     candidateTabs.value.splice(idx, 1)

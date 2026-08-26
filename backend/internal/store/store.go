@@ -35,6 +35,9 @@ func Open(root string) (*Store, error) {
 	if err := s.migrateBatches(); err != nil {
 		return nil, err
 	}
+	if err := s.migratePositions(); err != nil {
+		return nil, err
+	}
 	defaultBatch, _ := s.EnsureDefaultBatch()
 	if defaultBatch > 0 {
 		_ = s.AssignBatchToOrphans(defaultBatch)
@@ -108,11 +111,15 @@ const (
 	SortEngFirst = "eng_first"
 )
 
-func (s *Store) ListCandidates(tier, status, q string, batchID int64, sortBy, createdAfter string) ([]models.Candidate, error) {
-	query := `SELECT c.id, c.name, c.source, c.tier, c.auto_tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
+const candidateSelect = `SELECT c.id, c.name, c.source, c.tier, c.auto_tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
 		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
-		COALESCE(c.skill_id,''), COALESCE(b.name,''), c.created_at, c.updated_at
-		FROM candidates c LEFT JOIN batches b ON c.batch_id = b.id WHERE 1=1`
+		COALESCE(c.skill_id,''), COALESCE(c.position_id,0), COALESCE(p.name,''), COALESCE(b.name,''), c.created_at, c.updated_at
+		FROM candidates c
+		LEFT JOIN batches b ON c.batch_id = b.id
+		LEFT JOIN positions p ON c.position_id = p.id`
+
+func (s *Store) ListCandidates(tier, status, q string, batchID, positionID int64, sortBy, createdAfter string) ([]models.Candidate, error) {
+	query := candidateSelect + ` WHERE 1=1`
 	args := []any{}
 	if tier != "" && tier != "all" {
 		query += ` AND c.tier = ?`
@@ -125,6 +132,10 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, sortBy, cr
 	if batchID > 0 {
 		query += ` AND c.batch_id = ?`
 		args = append(args, batchID)
+	}
+	if positionID > 0 {
+		query += ` AND c.position_id = ?`
+		args = append(args, positionID)
 	}
 	if q != "" {
 		query += ` AND (c.name LIKE ? OR c.eng_summary LIKE ? OR c.project_summary LIKE ? OR c.one_liner LIKE ?)`
@@ -165,10 +176,7 @@ func (s *Store) ListCandidates(tier, status, q string, batchID int64, sortBy, cr
 }
 
 func (s *Store) GetCandidate(id int64) (*models.CandidateDetail, error) {
-	row := s.db.QueryRow(`SELECT c.id, c.name, c.source, c.tier, c.auto_tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
-		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
-		COALESCE(c.skill_id,''), COALESCE(b.name,''), c.created_at, c.updated_at
-		FROM candidates c LEFT JOIN batches b ON c.batch_id = b.id WHERE c.id = ?`, id)
+	row := s.db.QueryRow(candidateSelect+` WHERE c.id = ?`, id)
 	c, err := s.scanCandidateRow(row)
 	if err != nil {
 		return nil, err
@@ -181,10 +189,7 @@ func (s *Store) GetCandidate(id int64) (*models.CandidateDetail, error) {
 }
 
 func (s *Store) GetCandidateByName(name string) (*models.Candidate, error) {
-	row := s.db.QueryRow(`SELECT c.id, c.name, c.source, c.tier, c.auto_tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
-		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
-		COALESCE(c.skill_id,''), COALESCE(b.name,''), c.created_at, c.updated_at
-		FROM candidates c LEFT JOIN batches b ON c.batch_id = b.id WHERE c.name = ?`, name)
+	row := s.db.QueryRow(candidateSelect+` WHERE c.name = ?`, name)
 	c, err := s.scanCandidateRow(row)
 	if err != nil {
 		return nil, err
@@ -263,6 +268,7 @@ type UpsertInput struct {
 	Flags          []string
 	InterviewOrder int
 	BatchID        int64
+	PositionID     int64
 	SkillID        string
 	Status         string
 	AutoTier       string
@@ -288,11 +294,11 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 		}
 		res, err := s.db.Exec(`INSERT INTO candidates
 			(name, source, tier, auto_tier, eng_summary, project_summary, one_liner, action, resume_path, resume_key,
-			 score_total, eng_score, agent_score, reason, flags_json, interview_order, status, batch_id, skill_id, created_at, updated_at)
-			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+			 score_total, eng_score, agent_score, reason, flags_json, interview_order, status, batch_id, position_id, skill_id, created_at, updated_at)
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 			in.Name, in.Source, in.Tier, autoTier, in.EngSummary, in.ProjectSummary, in.OneLiner, in.Action,
 			in.ResumePath, in.ResumeKey, in.ScoreTotal, in.EngScore, in.AgentScore, in.Reason, string(flags), in.InterviewOrder,
-			defaultStatus(in.Status), in.BatchID, in.SkillID, now, now)
+			defaultStatus(in.Status), in.BatchID, in.PositionID, in.SkillID, now, now)
 		if err != nil {
 			return 0, err
 		}
@@ -305,9 +311,10 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 	resumeKey := in.ResumeKey
 	status := defaultStatus(in.Status)
 	batchID := in.BatchID
+	positionID := in.PositionID
 	skillID := in.SkillID
-	_ = s.db.QueryRow(`SELECT resume_path, resume_key, status, batch_id, COALESCE(skill_id,'') FROM candidates WHERE id = ?`, id).
-		Scan(&resumePath, &resumeKey, &status, &batchID, &skillID)
+	_ = s.db.QueryRow(`SELECT resume_path, resume_key, status, batch_id, COALESCE(position_id,0), COALESCE(skill_id,'') FROM candidates WHERE id = ?`, id).
+		Scan(&resumePath, &resumeKey, &status, &batchID, &positionID, &skillID)
 	if in.ResumePath != "" {
 		resumePath = in.ResumePath
 	}
@@ -319,6 +326,9 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 	}
 	if in.BatchID > 0 {
 		batchID = in.BatchID
+	}
+	if in.PositionID > 0 {
+		positionID = in.PositionID
 	}
 	if in.SkillID != "" {
 		skillID = in.SkillID
@@ -333,10 +343,10 @@ func (s *Store) UpsertCandidate(in UpsertInput) (int64, error) {
 		tierManual = 0
 	}
 	_, err = s.db.Exec(`UPDATE candidates SET source=?, tier=?, auto_tier=?, eng_summary=?, project_summary=?, one_liner=?,
-		action=?, resume_path=?, resume_key=?, score_total=?, eng_score=?, agent_score=?, reason=?, flags_json=?, interview_order=?, tier_manual=?, status=?, batch_id=?, skill_id=?, updated_at=?
+		action=?, resume_path=?, resume_key=?, score_total=?, eng_score=?, agent_score=?, reason=?, flags_json=?, interview_order=?, tier_manual=?, status=?, batch_id=?, position_id=?, skill_id=?, updated_at=?
 		WHERE id=?`,
 		in.Source, in.Tier, autoTier, in.EngSummary, in.ProjectSummary, in.OneLiner, in.Action,
-		resumePath, resumeKey, in.ScoreTotal, in.EngScore, in.AgentScore, in.Reason, string(flags), in.InterviewOrder, tierManual, status, batchID, skillID, now, id)
+		resumePath, resumeKey, in.ScoreTotal, in.EngScore, in.AgentScore, in.Reason, string(flags), in.InterviewOrder, tierManual, status, batchID, positionID, skillID, now, id)
 	return id, err
 }
 
@@ -408,7 +418,7 @@ func (s *Store) scanCandidate(rows *sql.Rows) (models.Candidate, error) {
 	var batchName string
 	err := rows.Scan(&c.ID, &c.Name, &c.Source, &c.Tier, &c.AutoTier, &c.EngSummary, &c.ProjectSummary, &c.OneLiner,
 		&c.Action, &c.ResumePath, &c.ResumeKey, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
-		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &batchName, &created, &updated)
+		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &c.PositionID, &c.PositionName, &batchName, &created, &updated)
 	if err != nil {
 		return c, err
 	}
@@ -419,6 +429,13 @@ func (s *Store) scanCandidate(rows *sql.Rows) (models.Candidate, error) {
 	c.BatchName = batchName
 	if sk, ok := skills.Lookup(c.SkillID); ok {
 		c.SkillName = sk.Name
+	}
+	if c.PositionName == "" {
+		if c.SkillName != "" {
+			c.PositionName = c.SkillName
+		} else {
+			c.PositionName = "实习生"
+		}
 	}
 	_ = json.Unmarshal([]byte(flagsJSON), &c.Flags)
 	c.HasResume = s.HasResumeFile(c.ResumePath, c.ResumeKey)
@@ -436,7 +453,7 @@ func (s *Store) scanCandidateRow(row *sql.Row) (models.Candidate, error) {
 	var batchName string
 	err := row.Scan(&c.ID, &c.Name, &c.Source, &c.Tier, &c.AutoTier, &c.EngSummary, &c.ProjectSummary, &c.OneLiner,
 		&c.Action, &c.ResumePath, &c.ResumeKey, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
-		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &batchName, &created, &updated)
+		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &c.PositionID, &c.PositionName, &batchName, &created, &updated)
 	if err != nil {
 		return c, err
 	}
@@ -447,6 +464,13 @@ func (s *Store) scanCandidateRow(row *sql.Row) (models.Candidate, error) {
 	c.BatchName = batchName
 	if sk, ok := skills.Lookup(c.SkillID); ok {
 		c.SkillName = sk.Name
+	}
+	if c.PositionName == "" {
+		if c.SkillName != "" {
+			c.PositionName = c.SkillName
+		} else {
+			c.PositionName = "实习生"
+		}
 	}
 	_ = json.Unmarshal([]byte(flagsJSON), &c.Flags)
 	c.HasResume = s.HasResumeFile(c.ResumePath, c.ResumeKey)
@@ -474,7 +498,7 @@ func copyFile(src, dst string) error {
 }
 
 func (s *Store) ExportAll() ([]models.CandidateDetail, error) {
-	list, err := s.ListCandidates("", "", "", 0, SortEngFirst, "")
+	list, err := s.ListCandidates("", "", "", 0, 0, SortEngFirst, "")
 	if err != nil {
 		return nil, err
 	}

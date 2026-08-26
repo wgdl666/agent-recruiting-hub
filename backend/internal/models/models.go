@@ -23,6 +23,8 @@ type Candidate struct {
 	InterviewOrder int       `json:"interview_order"`
 	BatchID        int64     `json:"batch_id"`
 	BatchName      string    `json:"batch_name,omitempty"`
+	PositionID     int64     `json:"position_id,omitempty"`
+	PositionName   string    `json:"position_name,omitempty"`
 	SkillID        string    `json:"skill_id,omitempty"`
 	SkillName      string    `json:"skill_name,omitempty"`
 	Status         string    `json:"status"`

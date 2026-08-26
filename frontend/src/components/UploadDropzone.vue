@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
-import { fetchSkills, uploadFiles } from '../api/client'
-import type { EvalSkill } from '../types'
+import { fetchPositions, uploadFiles } from '../api/client'
+import type { Position } from '../types'
 
 const props = withDefaults(
   defineProps<{ batchId?: number; periodType?: string }>(),
@@ -12,33 +12,35 @@ const props = withDefaults(
 const emit = defineEmits<{ done: [] }>()
 const dragging = ref(false)
 const loading = ref(false)
-const skills = ref<EvalSkill[]>([])
-// 故意不预填唯一选项：上传前必须点选评估岗位，红色 * 才有约束意义。
-const skillId = ref('')
+const positions = ref<Position[]>([])
+// 故意不预填唯一选项：上传前必须点选招聘岗位，红色 * 才有约束意义。
+const positionId = ref<number | ''>('')
+
+const selected = computed(() => positions.value.find((p) => p.id === positionId.value))
 
 onMounted(async () => {
   try {
-    skills.value = await fetchSkills()
+    positions.value = await fetchPositions(true)
   } catch (e: unknown) {
-    ElMessage.error(e instanceof Error ? e.message : '加载评估岗位失败')
+    ElMessage.error(e instanceof Error ? e.message : '加载招聘岗位失败')
   }
 })
 
-function requireSkill(): boolean {
-  if (skillId.value) return true
-  ElMessage.warning('请先选择评估岗位标准')
+function requirePosition(): boolean {
+  if (positionId.value) return true
+  ElMessage.warning('请先选择招聘岗位')
   return false
 }
 
 async function handleFiles(fileList: File[]) {
   if (!fileList.length) return
-  if (!requireSkill()) return
+  if (!requirePosition()) return
   loading.value = true
   try {
     const res = await uploadFiles(fileList, 'upload', {
       batchId: props.batchId,
       periodType: props.periodType,
-      skillId: skillId.value,
+      positionId: Number(positionId.value),
     })
     ElMessage.success(`已评估 ${res.imported} 份简历`)
     if (res.errors?.length) {
@@ -66,28 +68,34 @@ function onChange(uploadFile: { raw?: File }) {
 
 <template>
   <div class="upload-block">
-    <el-form label-width="120px" class="skill-form" @submit.prevent>
+    <el-form label-width="88px" class="skill-form" @submit.prevent>
       <el-form-item required>
-        <template #label>评估岗位标准</template>
+        <template #label>招聘岗位</template>
         <el-select
-          v-model="skillId"
-          placeholder="请选择评估岗位标准"
+          v-model="positionId"
+          placeholder="请选择正在招聘的岗位"
           class="skill-select"
         >
           <el-option
-            v-for="s in skills"
-            :key="s.id"
-            :label="s.name"
-            :value="s.id"
+            v-for="p in positions"
+            :key="p.id"
+            :label="p.name"
+            :value="p.id"
           />
         </el-select>
       </el-form-item>
     </el-form>
-    <p class="skill-hint">对应招聘 Skill；当前仅「实习生」岗。未选择不能上传。</p>
+    <p class="skill-hint">
+      <template v-if="selected">
+        检验标准：{{ selected.skill_name || selected.skill_id }}
+        <span v-if="selected.description"> · {{ selected.description }}</span>
+      </template>
+      <template v-else>从左侧岗位阶梯中选择；选岗后自动套用该岗的检验标准（Skill）。未选择不能上传。</template>
+    </p>
 
     <div
       class="dropzone"
-      :class="{ dragging, loading, disabled: !skillId }"
+      :class="{ dragging, loading, disabled: !positionId }"
       @dragover.prevent="dragging = true"
       @dragleave.prevent="dragging = false"
       @drop="onDrop"
@@ -98,7 +106,7 @@ function onChange(uploadFile: { raw?: File }) {
         :show-file-list="false"
         accept=".pdf,.zip"
         :on-change="onChange"
-        :disabled="loading || !skillId"
+        :disabled="loading || !positionId"
       >
         <el-icon class="icon"><UploadFilled /></el-icon>
         <div class="title">拖入 PDF 简历或 ZIP 压缩包</div>
@@ -117,7 +125,7 @@ function onChange(uploadFile: { raw?: File }) {
   width: 280px;
 }
 .skill-hint {
-  margin: -8px 0 12px 120px;
+  margin: -8px 0 12px 88px;
   font-size: 12px;
   color: #909399;
 }

@@ -2,8 +2,8 @@ package skills
 
 import "strings"
 
-// 评估岗位标准就是招聘 Skill：上传前必须选定，评分按该岗的标准走。
-// 目前只开放实习生岗，对应仓库内 .cursor/skills/agent-intern-recruiting。
+// Skill 是检验标准（评分 prompt），不是招聘岗位本身。岗位在 positions 表，上传时选岗位再套本 Skill。
+// 目前只开放 intern，对应仓库内 .cursor/skills/agent-intern-recruiting。
 
 const Intern = "intern"
 

@@ -29,10 +29,18 @@ make frontend   # :5173 开发前端（代理到 8080）
 # 健康检查
 curl http://localhost:8080/api/health
 
-# 列表（工程优先排序：eng_first=true；按批次 batch_id）
+# 列表（工程优先排序：eng_first=true；按批次 batch_id；按岗位 position_id）
 curl 'http://localhost:8080/api/candidates?tier=S&batch_id=1&eng_first=true'
+curl 'http://localhost:8080/api/candidates?position_id=1'
 
-# 评估岗位标准（招聘 Skill；上传前必选）
+# 岗位阶梯（正在招聘的岗位；每个岗位绑定一个检验 Skill）
+curl http://localhost:8080/api/positions
+curl 'http://localhost:8080/api/positions?open=true'
+curl -X POST http://localhost:8080/api/positions \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"实习生","skill_id":"intern"}'
+
+# 检验标准（招聘 Skill；岗位绑定后上传时自动选用）
 curl http://localhost:8080/api/skills
 
 # 招聘批次（持续上传：按日/周/月自动归批）
@@ -57,11 +65,11 @@ curl -X PATCH http://localhost:8080/api/candidates/1 \
   -H 'Content-Type: application/json' \
   -d '{"clear_manual":true}'
 
-# 拖入等价：上传 PDF/ZIP（必须指定评估岗位 skill_id；默认归入当日批次；可指定 period_type 或 batch_id）
-curl -F 'files=@resume.pdf' -F 'source=cursor' -F 'skill_id=intern' -F 'period_type=daily' http://localhost:8080/api/upload
+# 拖入等价：上传 PDF/ZIP（必须指定招聘岗位 position_id，或兼容旧客户端的 skill_id；默认归入当日批次）
+curl -F 'files=@resume.pdf' -F 'source=cursor' -F 'position_id=1' -F 'period_type=daily' http://localhost:8080/api/upload
 curl -F 'files=@resume.pdf' -F 'skill_id=intern' -F 'batch_id=2' http://localhost:8080/api/upload
 
-# 批量评估本地目录（Cursor 常用）
+# 批量评估本地目录（Cursor 常用；skill_id 会映射到对应在招岗位）
 curl -X POST http://localhost:8080/api/screen \
   -H 'Content-Type: application/json' \
   -d '{"path":"/Users/caden/Downloads/resumes","source":"cursor","skill_id":"intern"}'
@@ -103,10 +111,11 @@ open http://localhost:8080/api/candidates/1/resume
 
 ## 前端组件（Vue + Element Plus）
 
-- `CandidateTable` — 列表，工程分 E / Agent 分 A
+- `CandidateTable` — 列表（含岗位列），工程分 E / Agent 分 A
 - `ResumeViewer` — iframe 简历
 - `QuestionPanel` — 定制面试题
-- `UploadDropzone` — 拖拽 PDF/ZIP
+- `UploadDropzone` — 拖拽 PDF/ZIP（先选招聘岗位，自动套用该岗 Skill）
+- `PositionsView` — 岗位阶梯：在招岗位与检验标准
 - `DocsView` — 开发知识库（`docs/*.md`，API `/api/docs`）
 
 ## 知识库

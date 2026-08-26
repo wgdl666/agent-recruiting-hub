@@ -42,7 +42,8 @@ flowchart LR
 | 字段 | 说明 |
 |------|------|
 | name, source, tier, status, batch_id | 姓名、来源、档位、进度、批次 |
-| skill_id | 评估岗位标准（招聘 Skill）。当前仅 `intern`（实习生） |
+| position_id, position_name | 招聘岗位（上传时选择；历史数据迁移为「实习生」） |
+| skill_id | 检验标准（招聘 Skill）。由岗位绑定，当前仅 `intern` |
 | eng_summary, project_summary, one_liner, action | 传统工程 / 深挖项目 / 摘要 / 建议 |
 | score_total, eng_score, agent_score, reason, flags_json | 自动评分与标签（如 no_intern） |
 | interview_order, tier_manual | S 档面试顺序、是否手动锁定档位 |
@@ -63,6 +64,14 @@ flowchart LR
 |------|------|
 | name, tag, period_type | 批次名、唯一标签、日/周/月 |
 
+**岗位 `positions`**
+
+| 字段 | 说明 |
+|------|------|
+| name, slug | 岗位名（如「实习生」）、稳定标识 |
+| skill_id | 该岗的检验标准（Skill） |
+| is_open | 是否在招；侧栏岗位阶梯只列在招岗 |
+
 不单独建「实习经历」表：实习有无用 `flags_json` 的 `no_intern` + 面试时人工确认。
 
 ## 评分逻辑（scanner）
@@ -73,9 +82,10 @@ flowchart LR
 
 ## 前端标签页
 
-- **候选人 / 列表**：筛人、打开详情  
+- **候选人 / 列表**：筛人、打开详情（含岗位列）  
 - **候选人 / 看板**：批次 + 漏斗  
-- **上传**：拖拽评估（先选评估岗位标准 / Skill）  
+- **岗位阶梯**：在招岗位；上传选岗后自动套用检验 Skill  
+- **上传**：拖拽评估（先选招聘岗位）  
 - **知识库**：本文档  
 - 动态标签：候选人详情（简历 + 面试题）  
 

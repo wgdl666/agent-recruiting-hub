@@ -11,6 +11,7 @@ const navTier = ref('all')
 const navStatus = ref('all')
 const navSort = ref<CandidateSort>('imported_desc')
 const navCreatedRange = ref<CreatedRange>('')
+const navPositionId = ref(0)
 
 export function useCandidateNav() {
   function setNavFromCandidates(
@@ -19,6 +20,7 @@ export function useCandidateNav() {
     status = navStatus.value,
     sort: CandidateSort = navSort.value,
     createdRange: CreatedRange = navCreatedRange.value,
+    positionId = navPositionId.value,
   ) {
     navList.value = (list ?? []).map((c) => ({
       id: c.id,
@@ -30,6 +32,7 @@ export function useCandidateNav() {
     navStatus.value = status
     navSort.value = sort
     navCreatedRange.value = createdRange
+    navPositionId.value = positionId
   }
 
   function indexOf(id: number) {
@@ -74,8 +77,9 @@ export function useCandidateNav() {
       activeBatchId.value,
       navSort.value,
       createdAfterISO(navCreatedRange.value),
+      navPositionId.value,
     )
-    setNavFromCandidates(list, navTier.value, navStatus.value, navSort.value, navCreatedRange.value)
+    setNavFromCandidates(list, navTier.value, navStatus.value, navSort.value, navCreatedRange.value, navPositionId.value)
   }
 
   return {

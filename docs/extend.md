@@ -38,7 +38,7 @@ curl -X POST http://localhost:8080/api/candidates/1/questions/generate
 
 用人标准（上手就做 / 聪明度 / 广度与深度 / 工程意识）见 `docs/hiring.md`。
 
-上传前必须选定 **评估岗位标准**（招聘 Skill）。当前仅 `intern` / 实习生，定义在 `backend/internal/skills/skills.go`。新增岗位时在该文件登记，并补对应评分 prompt。
+上传前必须选定 **招聘岗位**。每个岗位绑定一个检验标准（招聘 Skill）。当前仅 `intern` / 实习生，定义在 `backend/internal/skills/skills.go`；在招岗位在 `positions` 表，侧栏「岗位阶梯」可增改。新增检验标准时在 skills.go 登记并补对应评分 prompt。
 
 - LLM：`backend/internal/scanner/scoring_prompt.txt`（上传/拖入时走 ModelHub）
 - 启发式：`backend/internal/scanner/scanner.go` — 关键词与权重。

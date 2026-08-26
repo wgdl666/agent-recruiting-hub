@@ -160,7 +160,10 @@ watch(() => props.id, load)
           <el-descriptions-item label="自动评分" :span="2">
             <ScorePanel :candidate="detail" />
           </el-descriptions-item>
-          <el-descriptions-item label="评估岗位">
+          <el-descriptions-item label="岗位">
+            {{ detail.position_name || '实习生' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="检验标准">
             {{ detail.skill_name || '实习生' }}
           </el-descriptions-item>
           <el-descriptions-item label="来源">{{ detail.source }}</el-descriptions-item>

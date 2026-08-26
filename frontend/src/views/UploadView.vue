@@ -20,7 +20,7 @@ function onDone() {
           <el-tag type="info" size="small">新候选人默认进入「简历筛选」，并归入今日批次</el-tag>
         </div>
       </template>
-      <!-- 上传只办事：岗位标准在拖入区必选；批次归今日，不在本页选。 -->
+      <!-- 上传只办事：招聘岗位在拖入区必选；检验标准随岗位带上；批次归今日。 -->
       <UploadDropzone period-type="daily" @done="onDone" />
       <el-divider />
       <div class="tips">

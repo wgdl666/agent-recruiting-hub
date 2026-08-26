@@ -51,6 +51,9 @@ func (s *Server) Router() *gin.Engine {
 		api.GET("/docs/:slug", s.getDoc)
 		api.GET("/health", s.health)
 		api.GET("/skills", s.listSkills)
+		api.GET("/positions", s.listPositions)
+		api.POST("/positions", s.createPosition)
+		api.PATCH("/positions/:id", s.patchPosition)
 		api.GET("/batches", s.listBatches)
 		api.POST("/batches", s.createBatch)
 		api.GET("/pipeline/stats", s.pipelineStats)
@@ -143,6 +146,7 @@ func (s *Server) listCandidates(c *gin.Context) {
 	status := c.Query("status")
 	q := c.Query("q")
 	batchID, _ := strconv.ParseInt(c.Query("batch_id"), 10, 64)
+	positionID, _ := strconv.ParseInt(c.Query("position_id"), 10, 64)
 	sortBy := c.Query("sort")
 	if sortBy == "" {
 		// 旧客户端只传 eng_first；页面新默认是导入时间倒序。
@@ -161,7 +165,7 @@ func (s *Server) listCandidates(c *gin.Context) {
 		}
 		createdAfter = t.UTC().Format(time.RFC3339)
 	}
-	list, err := s.st.ListCandidates(tier, status, q, batchID, sortBy, createdAfter)
+	list, err := s.st.ListCandidates(tier, status, q, batchID, positionID, sortBy, createdAfter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -288,7 +292,8 @@ func (s *Server) uploadFiles(c *gin.Context) {
 		return
 	}
 	source := c.DefaultPostForm("source", "upload")
-	skillID, err := parseSkillID(c.PostForm("skill_id"))
+	posRaw, _ := strconv.ParseInt(c.PostForm("position_id"), 10, 64)
+	positionID, skillID, err := s.resolveOpening(posRaw, c.PostForm("skill_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -320,12 +325,12 @@ func (s *Server) uploadFiles(c *gin.Context) {
 		ext := strings.ToLower(filepath.Ext(fh.Filename))
 		switch ext {
 		case ".zip":
-			rs, errs := s.processZip(tmp.Name(), source, batchID, skillID)
+			rs, errs := s.processZip(tmp.Name(), source, batchID, positionID, skillID)
 			result.Results = append(result.Results, rs...)
 			result.Errors = append(result.Errors, errs...)
 			result.Imported += len(rs)
 		case ".pdf":
-			sr, err := s.processPDF(tmp.Name(), fh.Filename, source, batchID, skillID)
+			sr, err := s.processPDF(tmp.Name(), fh.Filename, source, batchID, positionID, skillID)
 			if err != nil {
 				result.Errors = append(result.Errors, fmt.Sprintf("%s: %v", fh.Filename, err))
 			} else {
@@ -344,6 +349,7 @@ func (s *Server) screenPath(c *gin.Context) {
 	var req struct {
 		Path       string `json:"path"`
 		Source     string `json:"source"`
+		PositionID int64  `json:"position_id"`
 		SkillID    string `json:"skill_id"`
 		BatchID    int64  `json:"batch_id"`
 		PeriodType string `json:"period_type"`
@@ -352,7 +358,7 @@ func (s *Server) screenPath(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "path required"})
 		return
 	}
-	skillID, err := parseSkillID(req.SkillID)
+	positionID, skillID, err := s.resolveOpening(req.PositionID, req.SkillID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -380,7 +386,7 @@ func (s *Server) screenPath(c *gin.Context) {
 			if err != nil || fi.IsDir() || strings.ToLower(filepath.Ext(path)) != ".pdf" {
 				return nil
 			}
-			sr, e := s.processPDF(path, filepath.Base(path), req.Source, batchID, skillID)
+			sr, e := s.processPDF(path, filepath.Base(path), req.Source, batchID, positionID, skillID)
 			if e != nil {
 				errs = append(errs, e.Error())
 			} else {
@@ -389,7 +395,7 @@ func (s *Server) screenPath(c *gin.Context) {
 			return nil
 		})
 	} else {
-		sr, e := s.processPDF(req.Path, filepath.Base(req.Path), req.Source, batchID, skillID)
+		sr, e := s.processPDF(req.Path, filepath.Base(req.Path), req.Source, batchID, positionID, skillID)
 		if e != nil {
 			errs = append(errs, e.Error())
 		} else {
@@ -399,7 +405,7 @@ func (s *Server) screenPath(c *gin.Context) {
 	c.JSON(http.StatusOK, models.UploadResult{Imported: len(results), Results: results, Errors: errs})
 }
 
-func (s *Server) processZip(zipPath, source string, batchID int64, skillID string) ([]models.ScreenResult, []string) {
+func (s *Server) processZip(zipPath, source string, batchID, positionID int64, skillID string) ([]models.ScreenResult, []string) {
 	r, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return nil, []string{err.Error()}
@@ -428,7 +434,7 @@ func (s *Server) processZip(zipPath, source string, batchID int64, skillID strin
 		_, _ = io.Copy(tmp, rc)
 		rc.Close()
 		tmp.Close()
-		sr, err := s.processPDF(tmp.Name(), filepath.Base(f.Name), source, batchID, skillID)
+		sr, err := s.processPDF(tmp.Name(), filepath.Base(f.Name), source, batchID, positionID, skillID)
 		os.Remove(tmp.Name())
 		if err != nil {
 			errs = append(errs, fmt.Sprintf("%s: %v", f.Name, err))
@@ -439,7 +445,7 @@ func (s *Server) processZip(zipPath, source string, batchID int64, skillID strin
 	return results, errs
 }
 
-func (s *Server) processPDF(path, filename, source string, batchID int64, skillID string) (*models.ScreenResult, error) {
+func (s *Server) processPDF(path, filename, source string, batchID, positionID int64, skillID string) (*models.ScreenResult, error) {
 	text, err := scanner.ExtractText(path)
 	if err != nil {
 		return nil, err
@@ -466,6 +472,7 @@ func (s *Server) processPDF(path, filename, source string, batchID int64, skillI
 		Reason: score.Reason, Flags: score.Flags,
 		InterviewOrder: seed.InterviewOrder[name],
 		BatchID:        batchID,
+		PositionID:     positionID,
 		SkillID:        skillID, // 评分标准随候选人落库，重评时沿用，不按最新默认岗覆盖
 		Status:         models.StatusScreening,
 		ClearManual:    true,
@@ -505,6 +512,7 @@ func (s *Server) RunSeedImport() (int, error) {
 	scored, _ := seed.LoadScored(s.root)
 	imported := 0
 	defaultBatch, _ := s.st.EnsureDefaultBatch()
+	internID, _ := s.st.EnsureInternPosition()
 	for _, row := range batch.Rows {
 		if len(row) < 7 {
 			continue
@@ -514,7 +522,7 @@ func (s *Server) RunSeedImport() (int, error) {
 			Name: name, Source: row[1], Tier: scanner.NormalizeTier(row[2]),
 			EngSummary: row[3], ProjectSummary: row[4], OneLiner: row[5],
 			Action: row[6], InterviewOrder: seed.InterviewOrder[name],
-			BatchID: defaultBatch, SkillID: skills.Intern, Status: models.StatusScreening,
+			BatchID: defaultBatch, PositionID: internID, SkillID: skills.Intern, Status: models.StatusScreening,
 		}
 		if sc, ok := scored[name]; ok {
 			in.ScoreTotal = sc.Total
@@ -553,7 +561,7 @@ func (s *Server) RunSeedImport() (int, error) {
 			EngSummary: cand.EngSummary, ProjectSummary: cand.ProjectSummary,
 			OneLiner: cand.OneLiner, Action: cand.Action, ResumePath: dest, ResumeKey: resumeKey,
 			InterviewOrder: seed.InterviewOrder[name],
-			BatchID:        cand.BatchID, SkillID: cand.SkillID, Status: cand.Status,
+			BatchID:        cand.BatchID, PositionID: cand.PositionID, SkillID: cand.SkillID, Status: cand.Status,
 		}
 		if sc, ok := scored[name]; ok {
 			in.ScoreTotal, in.EngScore, in.AgentScore = sc.Total, sc.EngScore, sc.AgentScore
@@ -570,7 +578,7 @@ func (s *Server) RunSeedImport() (int, error) {
 }
 
 func (s *Server) rescreenAll(c *gin.Context) {
-	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc, "")
+	list, err := s.st.ListCandidates("", "", "", 0, 0, store.SortImportedDesc, "")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -618,6 +626,7 @@ func (s *Server) rescreenAll(c *gin.Context) {
 			Reason: score.Reason, Flags: score.Flags,
 			InterviewOrder: cand.InterviewOrder,
 			BatchID:        cand.BatchID,
+			PositionID:     cand.PositionID,
 			SkillID:        cand.SkillID,
 			Status:         cand.Status,
 		})
@@ -629,7 +638,7 @@ func (s *Server) rescreenAll(c *gin.Context) {
 }
 
 func (s *Server) syncQuestions(c *gin.Context) {
-	list, err := s.st.ListCandidates("", "", "", 0, store.SortImportedDesc, "")
+	list, err := s.st.ListCandidates("", "", "", 0, 0, store.SortImportedDesc, "")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
