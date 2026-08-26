@@ -5,7 +5,7 @@ import TierEditor from './TierEditor.vue'
 import StatusEditor from './StatusEditor.vue'
 import { useTabs } from '../composables/useTabs'
 
-const props = defineProps<{
+defineProps<{
   candidates: Candidate[]
   loading?: boolean
   showOrder?: boolean
