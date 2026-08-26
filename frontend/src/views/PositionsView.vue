@@ -5,7 +5,7 @@ import { createPosition, fetchSkills, updatePosition } from '../api/client'
 import type { EvalSkill, Position } from '../types'
 import { usePositions } from '../composables/usePositions'
 
-const { allPositions, loadPositions } = usePositions()
+const { allPositions, jdPositionId, loadPositions } = usePositions()
 const skills = ref<EvalSkill[]>([])
 const loading = ref(false)
 const dialogOpen = ref(false)
@@ -81,6 +81,10 @@ async function save() {
   }
 }
 
+function openJd(p: Position) {
+  jdPositionId.value = p.id
+}
+
 async function toggleOpen(p: Position) {
   try {
     await updatePosition(p.id, { is_open: !p.is_open })
@@ -96,7 +100,7 @@ async function toggleOpen(p: Position) {
     <div class="head">
       <div>
         <h2>岗位阶梯</h2>
-        <p class="sub">正在招聘的岗位。上传简历时选岗位，系统按该岗绑定的检验标准（Skill）评分。</p>
+        <p class="sub">管理在招岗位。侧栏点岗位名查看该岗 JD；上传时选岗会套用对应检验标准。</p>
       </div>
       <el-button type="primary" @click="openCreate">新增岗位</el-button>
     </div>
@@ -119,8 +123,9 @@ async function toggleOpen(p: Position) {
       <el-table-column label="候选人" width="88">
         <template #default="{ row }">{{ row.candidate_count ?? 0 }}</template>
       </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="200">
         <template #default="{ row }">
+          <el-button link type="primary" size="small" @click="openJd(row)">查看 JD</el-button>
           <el-button link type="primary" size="small" @click="openEdit(row)">编辑</el-button>
           <el-button link size="small" @click="toggleOpen(row)">
             {{ row.is_open ? '停止招聘' : '重新开放' }}

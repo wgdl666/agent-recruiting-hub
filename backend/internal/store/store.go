@@ -99,6 +99,7 @@ CREATE INDEX IF NOT EXISTS idx_questions_candidate ON interview_questions(candid
 	// 评估岗位标准（招聘 Skill）。历史上只评过实习生岗，空值补 intern，避免旧行上传后无法对照。
 	_, _ = s.db.Exec(`ALTER TABLE candidates ADD COLUMN skill_id TEXT DEFAULT ''`)
 	_, _ = s.db.Exec(`UPDATE candidates SET skill_id = 'intern' WHERE skill_id IS NULL OR skill_id = ''`)
+	_, _ = s.db.Exec(`ALTER TABLE candidates ADD COLUMN interview_note TEXT DEFAULT ''`)
 	_ = s.NormalizeResumePaths()
 	return nil
 }
@@ -113,7 +114,7 @@ const (
 
 const candidateSelect = `SELECT c.id, c.name, c.source, c.tier, c.auto_tier, c.eng_summary, c.project_summary, c.one_liner, c.action,
 		c.resume_path, c.resume_key, c.score_total, c.eng_score, c.agent_score, c.reason, c.flags_json, c.interview_order, c.tier_manual, c.status, c.batch_id,
-		COALESCE(c.skill_id,''), COALESCE(c.position_id,0), COALESCE(p.name,''), COALESCE(b.name,''), c.created_at, c.updated_at
+		COALESCE(c.skill_id,''), COALESCE(c.position_id,0), COALESCE(p.name,''), COALESCE(b.name,''), COALESCE(c.interview_note,''), c.created_at, c.updated_at
 		FROM candidates c
 		LEFT JOIN batches b ON c.batch_id = b.id
 		LEFT JOIN positions p ON c.position_id = p.id`
@@ -138,9 +139,9 @@ func (s *Store) ListCandidates(tier, status, q string, batchID, positionID int64
 		args = append(args, positionID)
 	}
 	if q != "" {
-		query += ` AND (c.name LIKE ? OR c.eng_summary LIKE ? OR c.project_summary LIKE ? OR c.one_liner LIKE ?)`
+		query += ` AND (c.name LIKE ? OR c.eng_summary LIKE ? OR c.project_summary LIKE ? OR c.one_liner LIKE ? OR c.interview_note LIKE ?)`
 		like := "%" + q + "%"
-		args = append(args, like, like, like, like)
+		args = append(args, like, like, like, like, like)
 	}
 	// 看板没有状态/档位行，用入库时间窗口切开当前板，避免几个月前的简历把列铺满。
 	// created_at 存的是 UTC RFC3339 文本，与同样格式的下界按字典序比较即可。
@@ -418,7 +419,7 @@ func (s *Store) scanCandidate(rows *sql.Rows) (models.Candidate, error) {
 	var batchName string
 	err := rows.Scan(&c.ID, &c.Name, &c.Source, &c.Tier, &c.AutoTier, &c.EngSummary, &c.ProjectSummary, &c.OneLiner,
 		&c.Action, &c.ResumePath, &c.ResumeKey, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
-		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &c.PositionID, &c.PositionName, &batchName, &created, &updated)
+		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &c.PositionID, &c.PositionName, &batchName, &c.InterviewNote, &created, &updated)
 	if err != nil {
 		return c, err
 	}
@@ -453,7 +454,7 @@ func (s *Store) scanCandidateRow(row *sql.Row) (models.Candidate, error) {
 	var batchName string
 	err := row.Scan(&c.ID, &c.Name, &c.Source, &c.Tier, &c.AutoTier, &c.EngSummary, &c.ProjectSummary, &c.OneLiner,
 		&c.Action, &c.ResumePath, &c.ResumeKey, &c.ScoreTotal, &c.EngScore, &c.AgentScore, &c.Reason, &flagsJSON,
-		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &c.PositionID, &c.PositionName, &batchName, &created, &updated)
+		&interviewOrder, &tierManual, &status, &batchID, &c.SkillID, &c.PositionID, &c.PositionName, &batchName, &c.InterviewNote, &created, &updated)
 	if err != nil {
 		return c, err
 	}

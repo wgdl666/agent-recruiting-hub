@@ -63,6 +63,19 @@ func MarkdownReport(candidates []models.CandidateDetail) string {
 		}
 		b.WriteString("\n")
 	}
+
+	var notes []models.CandidateDetail
+	for _, c := range candidates {
+		if strings.TrimSpace(c.InterviewNote) != "" {
+			notes = append(notes, c)
+		}
+	}
+	if len(notes) > 0 {
+		b.WriteString("## 面评\n\n")
+		for _, c := range notes {
+			fmt.Fprintf(&b, "### %s\n\n%s\n\n", c.Name, strings.TrimSpace(c.InterviewNote))
+		}
+	}
 	return b.String()
 }
 

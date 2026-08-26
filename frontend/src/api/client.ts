@@ -84,14 +84,19 @@ export async function fetchPositions(openOnly = false) {
   return asList(data)
 }
 
-export async function createPosition(payload: { name: string; skill_id: string; description?: string; is_open?: boolean }) {
+export async function fetchPosition(id: number) {
+  const { data } = await api.get<Position>(`/positions/${id}`)
+  return data
+}
+
+export async function createPosition(payload: { name: string; skill_id: string; description?: string; jd?: string; is_open?: boolean }) {
   const { data } = await api.post<Position>('/positions', payload)
   return data
 }
 
 export async function updatePosition(
   id: number,
-  patch: { name?: string; skill_id?: string; description?: string; is_open?: boolean; sort_order?: number },
+  patch: { name?: string; skill_id?: string; description?: string; jd?: string; is_open?: boolean; sort_order?: number },
 ) {
   const { data } = await api.patch<Position>(`/positions/${id}`, patch)
   return data
@@ -166,7 +171,7 @@ export async function exportMarkdown() {
 
 export async function updateCandidate(
   id: number,
-  patch: { tier?: string; action?: string; interview_order?: number; status?: string; clear_manual?: boolean },
+  patch: { tier?: string; action?: string; interview_order?: number; status?: string; interview_note?: string; clear_manual?: boolean },
 ) {
   const { data } = await api.patch<CandidateDetail>(`/candidates/${id}`, patch)
   return data

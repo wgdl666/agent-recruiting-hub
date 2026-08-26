@@ -23,6 +23,7 @@ PATCH /candidates/:id
   {"tier":"A"}
   {"status":"to_interview"}
   {"interview_order":3}
+  {"interview_note":"工程意识清楚，建议过"}
   {"clear_manual":true}               # 恢复自动档位
 
 DELETE /candidates/:id
@@ -42,10 +43,12 @@ POST /batches
 
 ```bash
 GET /positions                         # 岗位阶梯；?open=true 仅在招
+GET /positions/:id                     # 含岗位 JD
 POST /positions
   {"name":"实习生","skill_id":"intern","description":"...","is_open":true}
 PATCH /positions/:id
   {"name":"...","skill_id":"intern","is_open":false}
+  {"jd":"# 岗位职责\\n..."}            # 更新岗位 JD
 
 GET /skills                            # 检验标准（招聘 Skill）目录；岗位绑定后上传自动选用
 ```

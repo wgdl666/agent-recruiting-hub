@@ -4,19 +4,21 @@ import type { Candidate } from '../types'
 import TierEditor from './TierEditor.vue'
 import StatusEditor from './StatusEditor.vue'
 import { useTabs } from '../composables/useTabs'
-import { useCandidateNav } from '../composables/useCandidateNav'
 
-const props = defineProps<{ candidates: Candidate[]; loading?: boolean; showOrder?: boolean }>()
+const props = defineProps<{
+  candidates: Candidate[]
+  loading?: boolean
+  showOrder?: boolean
+  orderOffset?: number
+}>()
 const emit = defineEmits<{ updated: [] }>()
 const { openCandidate } = useTabs()
-const { setNavFromCandidates } = useCandidateNav()
 
 function rowClass({ row }: { row: Candidate }) {
   return row.tier === 'S' ? 'row-s' : ''
 }
 
 function onRowClick(row: Candidate) {
-  setNavFromCandidates(props.candidates)
   openCandidate(row)
 }
 
@@ -47,7 +49,7 @@ function formatImported(s?: string) {
     <el-table-column v-if="showOrder" label="序" width="56">
       <!-- 序按当前筛选结果的行号连号，不展示手工 interview_order 留下的 3、5、7 空档 -->
       <template #default="{ $index }">
-        {{ $index + 1 }}
+        {{ (orderOffset ?? 0) + $index + 1 }}
       </template>
     </el-table-column>
     <el-table-column label="状态" width="108">
@@ -88,6 +90,11 @@ function formatImported(s?: string) {
         <span class="position">{{ row.position_name || '实习生' }}</span>
       </template>
     </el-table-column>
+    <el-table-column label="面评" min-width="140" show-overflow-tooltip>
+      <template #default="{ row }">
+        <span class="note">{{ row.interview_note || '—' }}</span>
+      </template>
+    </el-table-column>
     <el-table-column label="简历" width="72">
       <template #default="{ row }">
         <el-icon v-if="row.has_resume" color="#67c23a"><CircleCheck /></el-icon>
@@ -102,4 +109,5 @@ function formatImported(s?: string) {
 .score-mini { font-size: 12px; color: #606266; }
 .imported { font-size: 12px; color: #909399; white-space: nowrap; }
 .position { font-size: 12px; color: #606266; }
+.note { font-size: 12px; color: #606266; }
 </style>

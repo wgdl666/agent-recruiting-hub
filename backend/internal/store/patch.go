@@ -26,6 +26,7 @@ type PatchInput struct {
 	Action         *string
 	InterviewOrder *int
 	Status         *string
+	InterviewNote  *string
 	ClearManual    bool
 }
 
@@ -39,6 +40,7 @@ func (s *Store) PatchCandidate(id int64, patch PatchInput) error {
 	order := cand.InterviewOrder
 	manual := cand.TierManual
 	status := cand.Status
+	note := cand.InterviewNote
 
 	if patch.Tier != nil {
 		t := scanner.NormalizeTier(*patch.Tier)
@@ -65,6 +67,9 @@ func (s *Store) PatchCandidate(id int64, patch PatchInput) error {
 		}
 		status = st
 	}
+	if patch.InterviewNote != nil {
+		note = strings.TrimSpace(*patch.InterviewNote)
+	}
 	if patch.ClearManual {
 		manual = false
 		if strings.TrimSpace(cand.AutoTier) != "" {
@@ -77,8 +82,8 @@ func (s *Store) PatchCandidate(id int64, patch PatchInput) error {
 		manualInt = 1
 	}
 	now := time.Now().UTC().Format(time.RFC3339)
-	_, err = s.db.Exec(`UPDATE candidates SET tier=?, action=?, interview_order=?, tier_manual=?, status=?, updated_at=? WHERE id=?`,
-		tier, action, order, manualInt, status, now, id)
+	_, err = s.db.Exec(`UPDATE candidates SET tier=?, action=?, interview_order=?, tier_manual=?, status=?, interview_note=?, updated_at=? WHERE id=?`,
+		tier, action, order, manualInt, status, note, now, id)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	_ "embed"
 	"fmt"
 	"strings"
 	"time"
@@ -9,6 +10,9 @@ import (
 	"github.com/caden/agent-recruiting-hub/internal/models"
 	"github.com/caden/agent-recruiting-hub/internal/skills"
 )
+
+//go:embed intern_jd.md
+var internJD string
 
 const internPositionSlug = "intern"
 
@@ -20,6 +24,7 @@ CREATE TABLE IF NOT EXISTS positions (
   slug TEXT NOT NULL UNIQUE,
   skill_id TEXT NOT NULL,
   description TEXT DEFAULT '',
+  jd TEXT DEFAULT '',
   sort_order INTEGER DEFAULT 0,
   is_open INTEGER DEFAULT 1,
   created_at TEXT NOT NULL,
@@ -31,12 +36,15 @@ CREATE INDEX IF NOT EXISTS idx_positions_open ON positions(is_open, sort_order);
 		return err
 	}
 	_, _ = s.db.Exec(`ALTER TABLE candidates ADD COLUMN position_id INTEGER DEFAULT 0`)
+	_, _ = s.db.Exec(`ALTER TABLE positions ADD COLUMN jd TEXT DEFAULT ''`)
 	internID, err := s.EnsureInternPosition()
 	if err != nil {
 		return err
 	}
 	// 历史候选人没有岗位字段，一律归到「实习生」
 	_, _ = s.db.Exec(`UPDATE candidates SET position_id = ? WHERE position_id IS NULL OR position_id = 0`, internID)
+	// 仅给空 JD 填默认文案，已手改过的不覆盖
+	_, _ = s.db.Exec(`UPDATE positions SET jd = ? WHERE slug = ? AND (jd IS NULL OR jd = '')`, internJD, internPositionSlug)
 	return nil
 }
 
@@ -50,9 +58,9 @@ func (s *Store) EnsureInternPosition() (int64, error) {
 		return 0, err
 	}
 	now := time.Now().UTC().Format(time.RFC3339)
-	res, err := s.db.Exec(`INSERT INTO positions (name, slug, skill_id, description, sort_order, is_open, created_at, updated_at)
-		VALUES (?,?,?,?,?,?,?,?)`,
-		"实习生", internPositionSlug, skills.Intern, "Agent 工程实习：上手就能干活", 0, 1, now, now)
+	res, err := s.db.Exec(`INSERT INTO positions (name, slug, skill_id, description, jd, sort_order, is_open, created_at, updated_at)
+		VALUES (?,?,?,?,?,?,?,?,?)`,
+		"实习生", internPositionSlug, skills.Intern, "Agent 工程实习：上手就能干活", internJD, 0, 1, now, now)
 	if err != nil {
 		return 0, err
 	}
@@ -71,7 +79,7 @@ func scanPosition(scanner interface {
 	var p models.Position
 	var created, updated string
 	var isOpen int
-	err := scanner.Scan(&p.ID, &p.Name, &p.Slug, &p.SkillID, &p.Description, &p.SortOrder, &isOpen, &p.CandidateCount, &created, &updated)
+	err := scanner.Scan(&p.ID, &p.Name, &p.Slug, &p.SkillID, &p.Description, &p.JD, &p.SortOrder, &isOpen, &p.CandidateCount, &created, &updated)
 	if err != nil {
 		return p, err
 	}
@@ -82,7 +90,7 @@ func scanPosition(scanner interface {
 	return p, nil
 }
 
-const positionSelect = `SELECT p.id, p.name, p.slug, p.skill_id, p.description, p.sort_order, p.is_open,
+const positionSelect = `SELECT p.id, p.name, p.slug, p.skill_id, p.description, COALESCE(p.jd,''), p.sort_order, p.is_open,
 	(SELECT COUNT(*) FROM candidates c WHERE c.position_id = p.id), p.created_at, p.updated_at
 	FROM positions p`
 
@@ -147,6 +155,7 @@ type PositionInput struct {
 	Name        string
 	SkillID     string
 	Description string
+	JD          string
 	SortOrder   *int
 	IsOpen      *bool
 }
@@ -155,6 +164,7 @@ type PositionPatch struct {
 	Name        *string
 	SkillID     *string
 	Description *string
+	JD          *string
 	SortOrder   *int
 	IsOpen      *bool
 }
@@ -179,8 +189,8 @@ func (s *Store) CreatePosition(in PositionInput) (int64, error) {
 	}
 	now := time.Now().UTC().Format(time.RFC3339)
 	slug := fmt.Sprintf("pos-%d", time.Now().UnixNano())
-	res, err := s.db.Exec(`INSERT INTO positions (name, slug, skill_id, description, sort_order, is_open, created_at, updated_at)
-		VALUES (?,?,?,?,?,?,?,?)`, name, slug, in.SkillID, strings.TrimSpace(in.Description), sortOrder, isOpen, now, now)
+	res, err := s.db.Exec(`INSERT INTO positions (name, slug, skill_id, description, jd, sort_order, is_open, created_at, updated_at)
+		VALUES (?,?,?,?,?,?,?,?,?)`, name, slug, in.SkillID, strings.TrimSpace(in.Description), strings.TrimSpace(in.JD), sortOrder, isOpen, now, now)
 	if err != nil {
 		return 0, err
 	}
@@ -192,7 +202,7 @@ func (s *Store) PatchPosition(id int64, in PositionPatch) error {
 	if err != nil {
 		return err
 	}
-	if in.Name == nil && in.SkillID == nil && in.Description == nil && in.SortOrder == nil && in.IsOpen == nil {
+	if in.Name == nil && in.SkillID == nil && in.Description == nil && in.JD == nil && in.SortOrder == nil && in.IsOpen == nil {
 		return fmt.Errorf("no fields to update")
 	}
 	name := cur.Name
@@ -213,6 +223,10 @@ func (s *Store) PatchPosition(id int64, in PositionPatch) error {
 	if in.Description != nil {
 		desc = strings.TrimSpace(*in.Description)
 	}
+	jd := cur.JD
+	if in.JD != nil {
+		jd = strings.TrimSpace(*in.JD)
+	}
 	sortOrder := cur.SortOrder
 	if in.SortOrder != nil {
 		sortOrder = *in.SortOrder
@@ -229,7 +243,7 @@ func (s *Store) PatchPosition(id int64, in PositionPatch) error {
 		}
 	}
 	now := time.Now().UTC().Format(time.RFC3339)
-	_, err = s.db.Exec(`UPDATE positions SET name=?, skill_id=?, description=?, sort_order=?, is_open=?, updated_at=? WHERE id=?`,
-		name, skillID, desc, sortOrder, isOpen, now, id)
+	_, err = s.db.Exec(`UPDATE positions SET name=?, skill_id=?, description=?, jd=?, sort_order=?, is_open=?, updated_at=? WHERE id=?`,
+		name, skillID, desc, jd, sortOrder, isOpen, now, id)
 	return err
 }

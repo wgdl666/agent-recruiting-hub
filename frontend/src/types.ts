@@ -23,6 +23,7 @@ export interface Candidate {
   position_name?: string
   skill_id?: string
   skill_name?: string
+  interview_note?: string
   has_resume: boolean
   created_at?: string
 }
@@ -101,8 +102,9 @@ export interface Position {
   name: string
   slug: string
   skill_id: string
-  skill_name?: string
+	skill_name?: string
   description?: string
+  jd?: string
   sort_order: number
   is_open: boolean
   candidate_count?: number

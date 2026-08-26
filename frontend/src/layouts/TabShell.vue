@@ -7,6 +7,7 @@ import UploadView from '../views/UploadView.vue'
 import DocsView from '../views/DocsView.vue'
 import CandidateView from '../views/CandidateView.vue'
 import PositionsView from '../views/PositionsView.vue'
+import PositionJdView from '../views/PositionJdView.vue'
 import { useTabs } from '../composables/useTabs'
 import { useCandidateNav } from '../composables/useCandidateNav'
 import { usePositions } from '../composables/usePositions'
@@ -16,7 +17,7 @@ const route = useRoute()
 const router = useRouter()
 const { activeKey, lastWorkspaceKey, candidateTabs, openCandidate, openCandidateById, removeTab, switchTab } = useTabs()
 const { navList } = useCandidateNav()
-const { openPositions, listPositionId, loadPositions } = usePositions()
+const { openPositions, listPositionId, jdPositionId, loadPositions } = usePositions()
 
 const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
 const isWorkspaceView = computed(() => activeKey.value === 'list' || activeKey.value === 'kanban')
@@ -31,13 +32,14 @@ const asideWidth = computed(() => (candidateTabs.value.length || isCandidateView
 
 function onNavSelect(key: string) {
   if (key === 'list') listPositionId.value = 0
+  if (key === 'positions') jdPositionId.value = 0
   switchTab(key)
   syncRoute()
 }
 
 function onSelectOpening(id: number) {
-  listPositionId.value = id
-  switchTab('list')
+  jdPositionId.value = id
+  switchTab('positions')
   syncRoute()
 }
 
@@ -129,7 +131,7 @@ onMounted(() => {
             <button
               type="button"
               class="nav-group-btn"
-              :class="{ active: navKey === 'positions' }"
+              :class="{ active: navKey === 'positions' && jdPositionId === 0 }"
               @click="onNavSelect('positions')"
             >
               <el-icon><Briefcase /></el-icon>
@@ -140,8 +142,8 @@ onMounted(() => {
               :key="p.id"
               type="button"
               class="nav-sub"
-              :class="{ active: navKey === 'list' && listPositionId === p.id }"
-              :title="p.skill_name ? `检验标准：${p.skill_name}` : undefined"
+              :class="{ active: navKey === 'positions' && jdPositionId === p.id }"
+              :title="p.skill_name ? `岗位 JD · 检验标准：${p.skill_name}` : '岗位 JD'"
               @click="onSelectOpening(p.id)"
             >
               {{ p.name }}
@@ -236,6 +238,7 @@ onMounted(() => {
         <div v-show="!isCandidateView" class="page-panel">
           <HomeView v-if="isWorkspaceView" />
           <UploadView v-else-if="activeKey === 'upload'" />
+          <PositionJdView v-else-if="activeKey === 'positions' && jdPositionId" />
           <PositionsView v-else-if="activeKey === 'positions'" />
           <DocsView v-else-if="activeKey === 'docs'" />
         </div>

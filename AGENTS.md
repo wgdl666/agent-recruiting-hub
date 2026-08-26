@@ -65,6 +65,11 @@ curl -X PATCH http://localhost:8080/api/candidates/1 \
   -H 'Content-Type: application/json' \
   -d '{"clear_manual":true}'
 
+# 写面评
+curl -X PATCH http://localhost:8080/api/candidates/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"interview_note":"工程意识清楚，建议过"}'
+
 # 拖入等价：上传 PDF/ZIP（必须指定招聘岗位 position_id，或兼容旧客户端的 skill_id；默认归入当日批次）
 curl -F 'files=@resume.pdf' -F 'source=cursor' -F 'position_id=1' -F 'period_type=daily' http://localhost:8080/api/upload
 curl -F 'files=@resume.pdf' -F 'skill_id=intern' -F 'batch_id=2' http://localhost:8080/api/upload

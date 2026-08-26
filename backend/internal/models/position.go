@@ -10,6 +10,7 @@ type Position struct {
 	SkillID        string    `json:"skill_id"`
 	SkillName      string    `json:"skill_name,omitempty"`
 	Description    string    `json:"description,omitempty"`
+	JD             string    `json:"jd,omitempty"`
 	SortOrder      int       `json:"sort_order"`
 	IsOpen         bool      `json:"is_open"`
 	CandidateCount int       `json:"candidate_count,omitempty"`

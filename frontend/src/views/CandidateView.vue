@@ -9,6 +9,7 @@ import ResumeViewer from '../components/ResumeViewer.vue'
 import QuestionPanel from '../components/QuestionPanel.vue'
 import StatusEditor from '../components/StatusEditor.vue'
 import ScorePanel from '../components/ScorePanel.vue'
+import InterviewNoteEditor from '../components/InterviewNoteEditor.vue'
 import { useTabs } from '../composables/useTabs'
 import { useCandidateNav } from '../composables/useCandidateNav'
 
@@ -93,6 +94,10 @@ function onQuestionsUpdated(questions: CandidateDetail['questions']) {
   detail.value = { ...detail.value, questions }
 }
 
+async function onNoteUpdated(c: CandidateDetail) {
+  detail.value = c
+}
+
 async function resetAutoTier() {
   if (!detail.value) return
   detail.value = await updateCandidate(detail.value.id, { clear_manual: true })
@@ -157,6 +162,9 @@ watch(() => props.id, load)
           </template>
         </el-descriptions-item>
           <el-descriptions-item label="建议">{{ detail.action }}</el-descriptions-item>
+          <el-descriptions-item label="面评" :span="2">
+            <InterviewNoteEditor :candidate="detail" @updated="onNoteUpdated" />
+          </el-descriptions-item>
           <el-descriptions-item label="自动评分" :span="2">
             <ScorePanel :candidate="detail" />
           </el-descriptions-item>

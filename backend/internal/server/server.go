@@ -52,6 +52,7 @@ func (s *Server) Router() *gin.Engine {
 		api.GET("/health", s.health)
 		api.GET("/skills", s.listSkills)
 		api.GET("/positions", s.listPositions)
+		api.GET("/positions/:id", s.getPosition)
 		api.POST("/positions", s.createPosition)
 		api.PATCH("/positions/:id", s.patchPosition)
 		api.GET("/batches", s.listBatches)
@@ -198,19 +199,20 @@ func (s *Server) patchCandidate(c *gin.Context) {
 		Action         *string `json:"action"`
 		InterviewOrder *int    `json:"interview_order"`
 		Status         *string `json:"status"`
+		InterviewNote  *string `json:"interview_note"`
 		ClearManual    bool    `json:"clear_manual"`
 	}
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if req.Tier == nil && req.Action == nil && req.InterviewOrder == nil && req.Status == nil && !req.ClearManual {
+	if req.Tier == nil && req.Action == nil && req.InterviewOrder == nil && req.Status == nil && req.InterviewNote == nil && !req.ClearManual {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no fields to update"})
 		return
 	}
 	before, _ := s.st.GetCandidate(id)
 	if err := s.st.PatchCandidate(id, store.PatchInput{
-		Tier: req.Tier, Action: req.Action, InterviewOrder: req.InterviewOrder, Status: req.Status, ClearManual: req.ClearManual,
+		Tier: req.Tier, Action: req.Action, InterviewOrder: req.InterviewOrder, Status: req.Status, InterviewNote: req.InterviewNote, ClearManual: req.ClearManual,
 	}); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -27,6 +27,7 @@ type Candidate struct {
 	PositionName   string    `json:"position_name,omitempty"`
 	SkillID        string    `json:"skill_id,omitempty"`
 	SkillName      string    `json:"skill_name,omitempty"`
+	InterviewNote  string    `json:"interview_note"`
 	Status         string    `json:"status"`
 	HasResume      bool      `json:"has_resume"`
 	CreatedAt      time.Time `json:"created_at"`

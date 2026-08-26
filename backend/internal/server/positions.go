@@ -19,6 +19,20 @@ func (s *Server) listPositions(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
+func (s *Server) getPosition(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	p, err := s.st.GetPosition(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "position not found"})
+		return
+	}
+	c.JSON(http.StatusOK, p)
+}
+
 func (s *Server) createPosition(c *gin.Context) {
 	var req struct {
 		Name        string `json:"name"`
@@ -55,6 +69,7 @@ func (s *Server) patchPosition(c *gin.Context) {
 		Name        *string `json:"name"`
 		SkillID     *string `json:"skill_id"`
 		Description *string `json:"description"`
+		JD          *string `json:"jd"`
 		IsOpen      *bool   `json:"is_open"`
 		SortOrder   *int    `json:"sort_order"`
 	}
@@ -63,7 +78,7 @@ func (s *Server) patchPosition(c *gin.Context) {
 		return
 	}
 	if err := s.st.PatchPosition(id, store.PositionPatch{
-		Name: req.Name, SkillID: req.SkillID, Description: req.Description, IsOpen: req.IsOpen, SortOrder: req.SortOrder,
+		Name: req.Name, SkillID: req.SkillID, Description: req.Description, JD: req.JD, IsOpen: req.IsOpen, SortOrder: req.SortOrder,
 	}); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

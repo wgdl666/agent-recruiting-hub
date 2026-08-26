@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { Upload } from '@element-plus/icons-vue'
 import {
   createdAfterISO, fetchCandidates,
   type CandidateSort, type CreatedRange,
@@ -33,6 +32,14 @@ const candidates = ref<Candidate[]>([])
 const kanbanCandidates = ref<Candidate[]>([])
 const loading = ref(false)
 const uploadExpanded = ref<string[]>([])
+const page = ref(1)
+const pageSize = ref(20)
+
+const pagedCandidates = computed(() => {
+  const start = (page.value - 1) * pageSize.value
+  return candidates.value.slice(start, start + pageSize.value)
+})
+const orderOffset = computed(() => (page.value - 1) * pageSize.value)
 
 function summarize(list: Candidate[]): PipelineStats {
   const by_status: Record<string, number> = {}
@@ -73,6 +80,9 @@ async function load() {
         listPositionId.value,
       )
       candidates.value = list
+      if (page.value > 1 && (page.value - 1) * pageSize.value >= list.length) {
+        page.value = Math.max(1, Math.ceil(list.length / pageSize.value) || 1)
+      }
       setNavFromCandidates(list, tier.value, status.value, sort.value, createdRange.value, listPositionId.value)
     }
   } catch (err) {
@@ -83,7 +93,10 @@ async function load() {
 }
 
 onMounted(load)
-watch([tier, status, query, sort, createdRange, isKanban, listPositionId], load)
+watch([tier, status, query, sort, createdRange, isKanban, listPositionId], () => {
+  page.value = 1
+  load()
+})
 watch(activeBatchId, () => {
   if (isKanban.value) load()
 })
@@ -164,7 +177,6 @@ function onUploadDone() {
         </div>
 
         <div class="primary-actions">
-          <el-button type="primary" :icon="Upload" @click="switchTab('upload')">上传简历</el-button>
           <ToolbarActions @refresh="load" />
         </div>
       </div>
@@ -176,11 +188,23 @@ function onUploadDone() {
       </el-collapse>
 
       <CandidateTable
-        :candidates="candidates"
+        :candidates="pagedCandidates"
         :loading="loading"
         :show-order="tier === 'S' && status !== 'completed' && status !== 'rejected'"
+        :order-offset="orderOffset"
         @updated="load"
       />
+      <div v-if="candidates.length > 0" class="pager">
+        <el-pagination
+          v-model:current-page="page"
+          v-model:page-size="pageSize"
+          :total="candidates.length"
+          :page-sizes="[10, 20, 50]"
+          layout="total, sizes, prev, pager, next"
+          background
+          small
+        />
+      </div>
       <el-empty
         v-if="!loading && (candidates?.length ?? 0) === 0"
         description="没有匹配的候选人"
@@ -294,5 +318,10 @@ function onUploadDone() {
 }
 :deep(.quick-upload .el-collapse-item__wrap) {
   border-bottom: none;
+}
+.pager {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
 </style>

@@ -47,6 +47,7 @@ flowchart LR
 | eng_summary, project_summary, one_liner, action | 传统工程 / 深挖项目 / 摘要 / 建议 |
 | score_total, eng_score, agent_score, reason, flags_json | 自动评分与标签（如 no_intern） |
 | interview_order, tier_manual | S 档面试顺序、是否手动锁定档位 |
+| interview_note | 面评（面试官手写，重评不覆盖） |
 | resume_path | 相对路径 `data/resumes/姓名.pdf`（本地缓存，便于重评 OCR） |
 | resume_key | OSS 对象键（如 `recruiting-hub/resumes/何鑫奎.pdf`） |
 
@@ -70,6 +71,7 @@ flowchart LR
 |------|------|
 | name, slug | 岗位名（如「实习生」）、稳定标识 |
 | skill_id | 该岗的检验标准（Skill） |
+| jd | 岗位 JD（Markdown）；侧栏点岗位名打开 |
 | is_open | 是否在招；侧栏岗位阶梯只列在招岗 |
 
 不单独建「实习经历」表：实习有无用 `flags_json` 的 `no_intern` + 面试时人工确认。
@@ -84,7 +86,7 @@ flowchart LR
 
 - **候选人 / 列表**：筛人、打开详情（含岗位列）  
 - **候选人 / 看板**：批次 + 漏斗  
-- **岗位阶梯**：在招岗位；上传选岗后自动套用检验 Skill  
+- **岗位阶梯**：在招岗位；点岗位名看 JD；上传选岗后自动套用检验 Skill  
 - **上传**：拖拽评估（先选招聘岗位）  
 - **知识库**：本文档  
 - 动态标签：候选人详情（简历 + 面试题）  
