@@ -25,7 +25,7 @@ rsync -az --exclude 'hub.db' --exclude 'hub.db-*' --exclude '*.db-wal' --exclude
 ssh "$HOST" "chmod +x '$REMOTE_DIR/bin/hub'"
 
 echo "==> install pdf text/OCR tools"
-ssh "$HOST" "apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-chi-sim python3-pip && pip3 install -q pymupdf || true"
+ssh "$HOST" "apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-chi-sim python3-pip && pip3 install -q --break-system-packages pymupdf || true"
 
 echo "==> install systemd unit"
 ssh "$HOST" "cat > /etc/systemd/system/${SERVICE}.service" <<EOF

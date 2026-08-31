@@ -18,9 +18,12 @@ def pdftotext(path: str) -> str:
 
 def pymupdf_text(path: str) -> str:
     try:
-        import fitz
+        import pymupdf as fitz
     except Exception:
-        return ""
+        try:
+            import fitz
+        except Exception:
+            return ""
     try:
         doc = fitz.open(path)
         return "".join(page.get_text() for page in doc)
@@ -30,9 +33,12 @@ def pymupdf_text(path: str) -> str:
 
 def tesseract_pages(path: str) -> str:
     try:
-        import fitz
+        import pymupdf as fitz
     except Exception:
-        return ""
+        try:
+            import fitz
+        except Exception:
+            return ""
     try:
         doc = fitz.open(path)
         parts = []

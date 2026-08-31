@@ -604,6 +604,10 @@ func (s *Server) rescreenAll(c *gin.Context) {
 		if onlyThin && !thin {
 			continue
 		}
+		// 已定 S/A 的人即使历史 thin 也不重评，避免把人工/已通过档冲掉。
+		if onlyThin && (cand.Tier == "S" || cand.Tier == "A") {
+			continue
+		}
 		var text string
 		var score scanner.ScoreBreakdown
 		if thin && local != "" {
