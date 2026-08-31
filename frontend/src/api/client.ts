@@ -144,7 +144,7 @@ export async function importSeed() {
 }
 
 export async function rescreenAll() {
-  const { data } = await api.post<{ updated: number }>('/rescreen')
+  const { data } = await api.post<{ updated: number }>('/rescreen', null, { timeout: 600000 })
   return data
 }
 

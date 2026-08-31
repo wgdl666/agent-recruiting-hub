@@ -194,7 +194,7 @@ onMounted(() => {
           >
             <span class="note-name">{{ tab.title }}</span>
             <span class="note-meta">
-              <el-tag v-if="tab.tier" size="small" :type="tab.tier === 'S' ? 'danger' : 'info'">{{ tab.tier }}</el-tag>
+              <el-tag v-if="tab.tier" size="small" :type="tab.tier === 'S' ? 'danger' : tab.tier === '待评' ? 'warning' : 'info'">{{ tab.tier }}</el-tag>
               <el-tag v-if="tab.status" size="small" :type="statusType(tab.status)">{{ statusLabel(tab.status) }}</el-tag>
             </span>
             <el-icon class="note-close" @click.stop="onTabRemove(tab.key)"><Close /></el-icon>
@@ -236,7 +236,7 @@ onMounted(() => {
             <template #label>
               <span class="tab-label">
                 {{ tab.title }}
-                <el-tag v-if="tab.tier" size="small" :type="tab.tier === 'S' ? 'danger' : 'info'" class="tab-tier">
+                <el-tag v-if="tab.tier" size="small" :type="tab.tier === 'S' ? 'danger' : tab.tier === '待评' ? 'warning' : 'info'" class="tab-tier">
                   {{ tab.tier }}
                 </el-tag>
                 <el-tag v-if="tab.status" size="small" :type="statusType(tab.status)" class="tab-tier">

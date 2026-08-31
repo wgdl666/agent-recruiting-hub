@@ -121,6 +121,7 @@ function onUploadDone() {
             </span>
             <a-tag color="red">S {{ listStats.by_tier?.S ?? 0 }}</a-tag>
             <a-tag color="orange">A {{ listStats.by_tier?.A ?? 0 }}</a-tag>
+            <a-tag>待评 {{ listStats.by_tier?.待评 ?? 0 }}</a-tag>
             <a-tag>淘汰 {{ listStats.by_tier?.淘汰 ?? 0 }}</a-tag>
           </div>
           <div class="filter-row">
@@ -147,6 +148,7 @@ function onUploadDone() {
               <el-radio-button value="all">全部</el-radio-button>
               <el-radio-button value="S">S</el-radio-button>
               <el-radio-button value="A">A</el-radio-button>
+              <el-radio-button value="待评">待评</el-radio-button>
               <el-radio-button value="淘汰">淘汰</el-radio-button>
             </el-radio-group>
           </div>

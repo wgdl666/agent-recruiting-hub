@@ -1,14 +1,10 @@
 package scanner
 
 import (
-	"bytes"
 	"fmt"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"github.com/ledongthuc/pdf"
 )
 
 var internPatterns = map[string]*regexp.Regexp{
@@ -52,54 +48,6 @@ type ScoreBreakdown struct {
 	Source         string // "gemini" | "heuristic"
 }
 
-func ExtractText(path string) (string, error) {
-	text, err := extractPDFText(path)
-	if err != nil || len(strings.TrimSpace(text)) < 200 {
-		if ocr, ocrErr := tryOCR(path); ocrErr == nil && len(ocr) > 200 {
-			return ocr, nil
-		}
-		if err != nil {
-			return "", err
-		}
-		return text, nil
-	}
-	return text, nil
-}
-
-func extractPDFText(path string) (string, error) {
-	f, r, err := pdf.Open(path)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-
-	var buf bytes.Buffer
-	total := r.NumPage()
-	for i := 1; i <= total; i++ {
-		p := r.Page(i)
-		if p.V.IsNull() {
-			continue
-		}
-		text, err := p.GetPlainText(nil)
-		if err != nil {
-			continue
-		}
-		buf.WriteString(text)
-		buf.WriteByte('\n')
-	}
-	return buf.String(), nil
-}
-
-func tryOCR(path string) (string, error) {
-	script := filepath.Join("scripts", "ocr_resume.py")
-	cmd := exec.Command("python3", script, path)
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
-}
-
 func ExtractName(filename, text string) string {
 	base := strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename))
 	if m := regexp.MustCompile(`】(.+?)\s+\d`).FindStringSubmatch(base); len(m) > 1 {
@@ -125,7 +73,7 @@ func Score(text string) ScoreBreakdown {
 // ScoreUpload runs ModelHub when configured (upload / screen paths only).
 func ScoreUpload(text string) ScoreBreakdown {
 	text = strings.TrimSpace(text)
-	if len(text) < 300 {
+	if !textEnough(text) {
 		return thinScore(text)
 	}
 	if score, ok := tryModelHubScore(text); ok {
@@ -137,16 +85,18 @@ func ScoreUpload(text string) ScoreBreakdown {
 // ScoreHeuristic keyword scoring without ModelHub (bulk rescreen only).
 func ScoreHeuristic(text string) ScoreBreakdown {
 	text = strings.TrimSpace(text)
-	if len(text) < 300 {
+	if !textEnough(text) {
 		return thinScore(text)
 	}
 	return scoreHeuristic(text)
 }
 
 func thinScore(text string) ScoreBreakdown {
+	// 抽不出字时留在简历筛选，不把档位打成淘汰；列表用「待评」提示人工看 PDF。
 	return ScoreBreakdown{
-		Text: text, Total: -10, Tier: "淘汰", Reason: "thin", Flags: []string{"thin"},
-		Action: ActionForTier("淘汰"), Source: "heuristic",
+		Text: text, Total: -10, Tier: "待评", Reason: "thin", Flags: []string{"thin"},
+		OneLiner: "图片简历抽字不足，待筛选",
+		Action:   ActionForTier("待评"), Source: "heuristic",
 	}
 }
 
@@ -237,7 +187,7 @@ func tierFromScores(eng, agent, intern, depth, total int, flags []string) (strin
 
 func NormalizeTier(tier string) string {
 	switch strings.TrimSpace(tier) {
-	case "S", "A", "淘汰":
+	case "S", "A", "淘汰", "待评":
 		return strings.TrimSpace(tier)
 	case "B":
 		return "A"
@@ -262,6 +212,8 @@ func ActionForTier(tier string) string {
 		return "优先排期"
 	case "A":
 		return "第二批"
+	case "待评":
+		return "待人工看简历"
 	default:
 		return "暂不约"
 	}

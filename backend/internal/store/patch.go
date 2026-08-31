@@ -9,7 +9,7 @@ import (
 	"github.com/caden/agent-recruiting-hub/internal/scanner"
 )
 
-var validTiers = map[string]bool{"S": true, "A": true, "淘汰": true}
+var validTiers = map[string]bool{"S": true, "A": true, "淘汰": true, "待评": true}
 
 var validStatuses = map[string]bool{
 	models.StatusScreening:    true,

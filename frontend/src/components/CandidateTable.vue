@@ -73,7 +73,7 @@ function formatImported(s?: string) {
     <el-table-column prop="one_liner" label="摘要" min-width="120" show-overflow-tooltip />
     <el-table-column label="自动分" width="88">
       <template #default="{ row }">
-        <el-tooltip v-if="row.score_total < 0" content="图片PDF或文本过少，自动分不可信，看档位与摘要">
+        <el-tooltip v-if="row.score_total < 0" content="图片简历抽字不足，已留在简历筛选（待评），请打开 PDF 人工看">
           <el-tag size="small" type="danger">待人工</el-tag>
         </el-tooltip>
         <span v-else class="score-mini">E{{ row.eng_score }} A{{ row.agent_score }}</span>

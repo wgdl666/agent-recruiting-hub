@@ -154,7 +154,7 @@ func (s *Store) ListCandidates(tier, status, q string, batchID, positionID int64
 		query += ` ORDER BY c.created_at ASC, c.id ASC`
 	case SortEngFirst:
 		query += ` ORDER BY CASE c.status WHEN 'interviewing' THEN 0 WHEN 'to_interview' THEN 1 WHEN 'read' THEN 2 WHEN 'screening' THEN 3 WHEN 'passed' THEN 4 WHEN 'completed' THEN 5 ELSE 6 END,
-			CASE c.tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN '淘汰' THEN 2 ELSE 3 END,
+	CASE c.tier WHEN 'S' THEN 0 WHEN 'A' THEN 1 WHEN '待评' THEN 2 WHEN '淘汰' THEN 3 ELSE 4 END,
 			CASE WHEN c.interview_order > 0 THEN c.interview_order ELSE 999 END,
 			c.eng_score DESC, c.agent_score DESC, c.score_total DESC`
 	default:

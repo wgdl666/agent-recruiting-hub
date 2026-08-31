@@ -449,12 +449,11 @@ func (s *Server) processZip(zipPath, source string, batchID, positionID int64, s
 }
 
 func (s *Server) processPDF(path, filename, source string, batchID, positionID int64, skillID string) (*models.ScreenResult, error) {
-	text, err := scanner.ExtractText(path)
+	text, score, err := scanner.ScoreFromResume(path)
 	if err != nil {
 		return nil, err
 	}
 	name := scanner.ExtractName(filename, text)
-	score := scanner.ScoreUpload(text)
 	tier := scanner.NormalizeTier(score.Tier)
 	eng, proj, one := summariesFromScore(score)
 	action := score.Action
@@ -587,22 +586,41 @@ func (s *Server) rescreenAll(c *gin.Context) {
 		return
 	}
 	scored, _ := seed.LoadScored(s.root)
+	// only_thin=1：只重评抽字不足的人，避免把已有 ModelHub 分冲成启发式。
+	onlyThin := c.Query("only_thin") == "1" || c.Query("only_thin") == "true"
 	updated := 0
 	for _, cand := range list {
 		local := s.st.ResolveResumePath(cand.ResumePath)
 		if local == "" && cand.ResumeKey == "" {
 			continue
 		}
-		text, err := scanner.ExtractText(local)
-		if err != nil || local == "" {
-			continue
-		}
-		if len(strings.TrimSpace(text)) < 300 {
-			if sc, ok := scored[cand.Name]; ok && strings.TrimSpace(sc.Text) != "" {
-				text = sc.Text
+		thin := cand.ScoreTotal < 0
+		for _, f := range cand.Flags {
+			if f == "thin" {
+				thin = true
+				break
 			}
 		}
-		score := scanner.ScoreHeuristic(text)
+		if onlyThin && !thin {
+			continue
+		}
+		var text string
+		var score scanner.ScoreBreakdown
+		if thin && local != "" {
+			// 图片简历：重新抽字并看图评分，不再用启发式直接淘汰。
+			text, score, _ = scanner.ScoreFromResume(local)
+		} else {
+			text, err = scanner.ExtractText(local)
+			if err != nil || local == "" {
+				continue
+			}
+			if len([]rune(strings.TrimSpace(text))) < 300 {
+				if sc, ok := scored[cand.Name]; ok && strings.TrimSpace(sc.Text) != "" {
+					text = sc.Text
+				}
+			}
+			score = scanner.ScoreHeuristic(text)
+		}
 		autoTier := scanner.NormalizeTier(score.Tier)
 		tier := autoTier
 		if cand.TierManual {

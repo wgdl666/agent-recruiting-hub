@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/caden/agent-recruiting-hub/internal/scanner"
 	"github.com/caden/agent-recruiting-hub/internal/server"
 	"github.com/caden/agent-recruiting-hub/internal/storage"
 	"github.com/caden/agent-recruiting-hub/internal/store"
@@ -30,6 +31,7 @@ func main() {
 	defer st.Close()
 
 	srv := server.New(st, absRoot, storage.FromEnv())
+	scanner.SetRoot(absRoot)
 
 	if *seedOnStart {
 		n, _ := st.Count()

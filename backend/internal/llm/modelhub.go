@@ -127,15 +127,23 @@ func (c *ModelHub) GenerateJSON(system, user string, dest any) error {
 	return c.GenerateJSONOpts(system, user, dest, 4096, 0)
 }
 
-// GenerateJSONOpts is GenerateJSON with output budget and optional per-call timeout.
-// 面试题参考答案要写细，4096 容易被截断。
 func (c *ModelHub) GenerateJSONOpts(system, user string, dest any, maxTokens int32, timeout time.Duration) error {
+	return c.GenerateJSONParts(system, user, nil, dest, maxTokens, timeout)
+}
+
+// UserMedia 评分时把图片 PDF / 页面截图一并交给模型，避免纯文字层抽不出来。
+type UserMedia struct {
+	MIME string
+	Data []byte
+}
+
+func (c *ModelHub) GenerateJSONParts(system, user string, media []UserMedia, dest any, maxTokens int32, timeout time.Duration) error {
 	if err := c.ensure(); err != nil {
 		return err
 	}
 	system = strings.TrimSpace(system)
 	user = strings.TrimSpace(user)
-	if user == "" {
+	if user == "" && len(media) == 0 {
 		return fmt.Errorf("empty user prompt")
 	}
 	if maxTokens <= 0 {
@@ -159,9 +167,29 @@ func (c *ModelHub) GenerateJSONOpts(system, user string, dest any, maxTokens int
 			Parts: []*modelhubv2.ContentPart{{Content: &modelhubv2.ContentPart_Text{Text: system}}},
 		}}})
 	}
+	userParts := make([]*modelhubv2.ContentPart, 0, 1+len(media))
+	if user != "" {
+		userParts = append(userParts, &modelhubv2.ContentPart{Content: &modelhubv2.ContentPart_Text{Text: user}})
+	}
+	for _, m := range media {
+		if len(m.Data) == 0 || strings.TrimSpace(m.MIME) == "" {
+			continue
+		}
+		blob := &modelhubv2.Media{MimeType: m.MIME, Source: &modelhubv2.Media_Data{Data: m.Data}}
+		part := &modelhubv2.ContentPart{}
+		if strings.HasPrefix(m.MIME, "image/") {
+			part.Content = &modelhubv2.ContentPart_Image{Image: blob}
+		} else {
+			part.Content = &modelhubv2.ContentPart_File{File: blob}
+		}
+		userParts = append(userParts, part)
+	}
+	if len(userParts) == 0 {
+		return fmt.Errorf("empty user prompt")
+	}
 	items = append(items, &modelhubv2.InputItem{Item: &modelhubv2.InputItem_Message{Message: &modelhubv2.Message{
 		Role:  modelhubv2.Role_ROLE_USER,
-		Parts: []*modelhubv2.ContentPart{{Content: &modelhubv2.ContentPart_Text{Text: user}}},
+		Parts: userParts,
 	}}})
 
 	wait := timeout

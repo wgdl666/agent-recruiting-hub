@@ -131,7 +131,7 @@ watch(() => props.id, load)
             <h2>{{ detail.name }}</h2>
             <span v-if="positionLabel" class="position">{{ positionLabel }}</span>
           </div>
-          <el-tag v-if="detail.tier" :type="detail.tier === 'S' ? 'danger' : 'info'">{{ detail.tier }} 档</el-tag>
+          <el-tag v-if="detail.tier" :type="detail.tier === 'S' ? 'danger' : detail.tier === '待评' ? 'warning' : 'info'">{{ detail.tier }} 档</el-tag>
         </div>
         <el-descriptions :column="2" border>
           <el-descriptions-item label="面试状态">

@@ -65,8 +65,8 @@ export HUB_URL=http://localhost:8080/api   # 远端时改成对应地址
 
 ## 常见问题
 
-**Q：自动分显示「待人工」？**  
-A：多为图片 PDF，文本提取失败。看档位、摘要和 PDF 原文，可手动调档。
+**Q：自动分显示「待人工」、档位「待评」？**  
+A：图片 PDF 抽字不足。系统会再尝试 OCR/看图评分；仍不够则留在**简历筛选**，档位是「待评」而不是淘汰。请打开 PDF 人工看，需要时再改档。
 
 **Q：如何更新面试题？**  
 A：S 档会按简历自动生成。详情页可「按简历重新生成」；或 `POST /api/sync/questions`。生成 prompt 见 `backend/internal/scanner/questions_prompt.txt`。无模型时用 `seed/qa.go`。

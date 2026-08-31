@@ -59,6 +59,7 @@ async function onDrop(status: string) {
 function tierColor(tier: string) {
   if (tier === 'S') return 'red'
   if (tier === 'A') return 'orange'
+  if (tier === '待评') return 'gold'
   if (tier === '淘汰') return 'default'
   return 'blue'
 }
