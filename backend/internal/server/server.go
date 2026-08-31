@@ -588,8 +588,13 @@ func (s *Server) rescreenAll(c *gin.Context) {
 	scored, _ := seed.LoadScored(s.root)
 	// only_thin=1：只重评抽字不足的人，避免把已有 ModelHub 分冲成启发式。
 	onlyThin := c.Query("only_thin") == "1" || c.Query("only_thin") == "true"
+	useModelHub := c.Query("modelhub") == "1" || c.Query("modelhub") == "true"
+	posID, _ := strconv.ParseInt(c.Query("position_id"), 10, 64)
 	updated := 0
 	for _, cand := range list {
+		if posID > 0 && cand.PositionID != posID {
+			continue
+		}
 		local := s.st.ResolveResumePath(cand.ResumePath)
 		if local == "" && cand.ResumeKey == "" {
 			continue
@@ -605,13 +610,13 @@ func (s *Server) rescreenAll(c *gin.Context) {
 			continue
 		}
 		// 已定 S/A 的人即使历史 thin 也不重评，避免把人工/已通过档冲掉。
-		if onlyThin && (cand.Tier == "S" || cand.Tier == "A") {
+		if onlyThin && !useModelHub && (cand.Tier == "S" || cand.Tier == "A") {
 			continue
 		}
 		var text string
 		var score scanner.ScoreBreakdown
-		if thin && local != "" {
-			// 图片简历：重新抽字并看图评分，不再用启发式直接淘汰。
+		if local != "" && (thin || useModelHub) {
+			// 图片简历或指定走模型：重新抽字并评分，不再用启发式直接淘汰。
 			text, score, _ = scanner.ScoreFromResume(local)
 		} else {
 			text, err = scanner.ExtractText(local)
