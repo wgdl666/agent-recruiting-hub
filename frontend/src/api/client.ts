@@ -102,6 +102,11 @@ export async function updatePosition(
   return data
 }
 
+export async function deletePosition(id: number) {
+  const { data } = await api.delete<{ ok: boolean }>(`/positions/${id}`)
+  return data
+}
+
 export async function fetchCandidate(id: number) {
   const { data } = await api.get<CandidateDetail>(`/candidates/${id}`)
   return data

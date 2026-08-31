@@ -55,6 +55,7 @@ func (s *Server) Router() *gin.Engine {
 		api.GET("/positions/:id", s.getPosition)
 		api.POST("/positions", s.createPosition)
 		api.PATCH("/positions/:id", s.patchPosition)
+		api.DELETE("/positions/:id", s.deletePosition)
 		api.GET("/batches", s.listBatches)
 		api.POST("/batches", s.createBatch)
 		api.GET("/pipeline/stats", s.pipelineStats)

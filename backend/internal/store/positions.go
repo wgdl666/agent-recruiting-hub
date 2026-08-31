@@ -14,7 +14,12 @@ import (
 //go:embed intern_jd.md
 var internJD string
 
+//go:embed image_software_test_jd.md
+var imageSoftwareTestJD string
+
 const internPositionSlug = "intern"
+const imageSoftwareTestSlug = "image-software-test"
+const imageSoftwareTestName = "影像 && 软件 测试"
 
 func (s *Store) migratePositions() error {
 	_, err := s.db.Exec(`
@@ -45,7 +50,25 @@ CREATE INDEX IF NOT EXISTS idx_positions_open ON positions(is_open, sort_order);
 	_, _ = s.db.Exec(`UPDATE candidates SET position_id = ? WHERE position_id IS NULL OR position_id = 0`, internID)
 	// 仅给空 JD 填默认文案，已手改过的不覆盖
 	_, _ = s.db.Exec(`UPDATE positions SET jd = ? WHERE slug = ? AND (jd IS NULL OR jd = '')`, internJD, internPositionSlug)
+	if err := s.cleanupEmptyInternDuplicates(); err != nil {
+		return err
+	}
+	if _, err := s.EnsureImageSoftwareTestPosition(); err != nil {
+		return err
+	}
 	return nil
+}
+
+// cleanupEmptyInternDuplicates 清掉误点「新增岗位」留下的空实习生岗（已停、无人），避免侧栏/列表出现两条同名岗。
+func (s *Store) cleanupEmptyInternDuplicates() error {
+	_, err := s.db.Exec(`
+DELETE FROM positions
+ WHERE name = ?
+   AND slug != ?
+   AND is_open = 0
+   AND NOT EXISTS (SELECT 1 FROM candidates c WHERE c.position_id = positions.id)`,
+		"实习生", internPositionSlug)
+	return err
 }
 
 func (s *Store) EnsureInternPosition() (int64, error) {
@@ -61,6 +84,34 @@ func (s *Store) EnsureInternPosition() (int64, error) {
 	res, err := s.db.Exec(`INSERT INTO positions (name, slug, skill_id, description, jd, sort_order, is_open, created_at, updated_at)
 		VALUES (?,?,?,?,?,?,?,?,?)`,
 		"实习生", internPositionSlug, skills.Intern, "Agent 工程实习：上手就能干活", internJD, 0, 1, now, now)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
+}
+
+func (s *Store) EnsureImageSoftwareTestPosition() (int64, error) {
+	// 启动时补齐「影像 && 软件 测试」在招岗；已有同名岗只填空 JD，不覆盖手改。
+	var id int64
+	err := s.db.QueryRow(`SELECT id FROM positions WHERE slug = ? OR name = ? ORDER BY id ASC LIMIT 1`,
+		imageSoftwareTestSlug, imageSoftwareTestName).Scan(&id)
+	if err == nil {
+		// 已有同名岗时只补空 JD / 技能，不覆盖手改过的文案
+		_, _ = s.db.Exec(`UPDATE positions SET skill_id = ?, updated_at = ? WHERE id = ? AND skill_id != ?`,
+			skills.ImageSoftwareTest, time.Now().UTC().Format(time.RFC3339), id, skills.ImageSoftwareTest)
+		_, _ = s.db.Exec(`UPDATE positions SET jd = ? WHERE id = ? AND (jd IS NULL OR jd = '')`, imageSoftwareTestJD, id)
+		return id, nil
+	}
+	if err != sql.ErrNoRows {
+		return 0, err
+	}
+	now := time.Now().UTC().Format(time.RFC3339)
+	sortOrder := 1
+	_ = s.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) + 1 FROM positions`).Scan(&sortOrder)
+	res, err := s.db.Exec(`INSERT INTO positions (name, slug, skill_id, description, jd, sort_order, is_open, created_at, updated_at)
+		VALUES (?,?,?,?,?,?,?,?,?)`,
+		imageSoftwareTestName, imageSoftwareTestSlug, skills.ImageSoftwareTest,
+		"影像质量与软件测试：上手就能验", imageSoftwareTestJD, sortOrder, 1, now, now)
 	if err != nil {
 		return 0, err
 	}
@@ -245,5 +296,17 @@ func (s *Store) PatchPosition(id int64, in PositionPatch) error {
 	now := time.Now().UTC().Format(time.RFC3339)
 	_, err = s.db.Exec(`UPDATE positions SET name=?, skill_id=?, description=?, jd=?, sort_order=?, is_open=?, updated_at=? WHERE id=?`,
 		name, skillID, desc, jd, sortOrder, isOpen, now, id)
+	return err
+}
+
+// DeletePosition 先解绑候选人再删岗，避免列表还挂着已不存在的岗位名；候选人本身不删。
+func (s *Store) DeletePosition(id int64) error {
+	if _, err := s.GetPosition(id); err != nil {
+		return err
+	}
+	if _, err := s.db.Exec(`UPDATE candidates SET position_id = 0 WHERE position_id = ?`, id); err != nil {
+		return err
+	}
+	_, err := s.db.Exec(`DELETE FROM positions WHERE id = ?`, id)
 	return err
 }

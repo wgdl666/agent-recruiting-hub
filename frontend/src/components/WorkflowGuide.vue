@@ -26,7 +26,7 @@ function dismiss() {
     <ol class="steps">
       <li><strong>列表筛人</strong>：左侧「列表」按岗位/状态/档位翻人，点行打开详情</li>
       <li><strong>看板跟进</strong>：左侧「看板」选今日/本周/本月批次，看漏斗并拖拽改状态</li>
-      <li><strong>岗位阶梯</strong>：左侧在招岗位；上传时选岗，系统套用该岗的检验标准</li>
+      <li><strong>岗位阶梯</strong>：左侧在招岗位；点岗位名或「查看 JD」在右侧打开详情；上传时选岗，系统套用该岗的检验标准</li>
       <li><strong>上传</strong>：左侧「上传」，或列表里快速拖入 PDF/ZIP</li>
       <li><strong>知识库</strong>：开发、部署、API 文档 — 见左侧「知识库」</li>
     </ol>

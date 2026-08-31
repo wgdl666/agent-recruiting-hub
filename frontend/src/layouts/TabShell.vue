@@ -17,7 +17,7 @@ const route = useRoute()
 const router = useRouter()
 const { activeKey, lastWorkspaceKey, candidateTabs, openCandidate, openCandidateById, removeTab, switchTab } = useTabs()
 const { navList } = useCandidateNav()
-const { openPositions, listPositionId, jdPositionId, loadPositions } = usePositions()
+const { openPositions, allPositions, listPositionId, jdPositionId, loadPositions } = usePositions()
 
 const isCandidateView = computed(() => activeKey.value.startsWith('candidate-'))
 const isWorkspaceView = computed(() => activeKey.value === 'list' || activeKey.value === 'kanban')
@@ -38,6 +38,7 @@ function onNavSelect(key: string) {
 }
 
 function onSelectOpening(id: number) {
+  // 侧栏点岗位名：仍停在岗位列表，只打开右侧 JD 抽屉，不再整页跳进 JD。
   jdPositionId.value = id
   switchTab('positions')
   syncRoute()
@@ -78,6 +79,18 @@ if (bootTab?.startsWith('candidate-')) {
 } else if (bootTab === 'home') {
   switchTab('list')
 }
+
+const drawerTitle = computed(() => {
+  const p = allPositions.value.find((x) => x.id === jdPositionId.value)
+  return p ? `${p.name} · JD` : '岗位 JD'
+})
+
+const jdDrawerOpen = computed({
+  get: () => jdPositionId.value > 0,
+  set: (open: boolean) => {
+    if (!open) jdPositionId.value = 0
+  },
+})
 
 onMounted(() => {
   syncRoute()
@@ -238,12 +251,26 @@ onMounted(() => {
         <div v-show="!isCandidateView" class="page-panel">
           <HomeView v-if="isWorkspaceView" />
           <UploadView v-else-if="activeKey === 'upload'" />
-          <PositionJdView v-else-if="activeKey === 'positions' && jdPositionId" />
           <PositionsView v-else-if="activeKey === 'positions'" />
           <DocsView v-else-if="activeKey === 'docs'" />
         </div>
       </el-main>
     </el-container>
+
+    <!-- 非模态：岗位列表和侧栏仍可点，避免整页跳进 JD。 -->
+    <el-drawer
+      v-model="jdDrawerOpen"
+      :title="drawerTitle"
+      direction="rtl"
+      size="46%"
+      append-to-body
+      destroy-on-close
+      :modal="false"
+      modal-class="jd-drawer-host"
+      class="jd-drawer"
+    >
+      <PositionJdView />
+    </el-drawer>
   </el-container>
 </template>
 
@@ -494,5 +521,12 @@ body {
   margin: 0;
   background: #f5f7fa;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+/* 外壳全屏但不拦截点击，只让抽屉面板自己接收鼠标，侧栏换岗才换得了 JD。 */
+.jd-drawer-host {
+  pointer-events: none;
+}
+.jd-drawer-host .el-drawer {
+  pointer-events: auto;
 }
 </style>

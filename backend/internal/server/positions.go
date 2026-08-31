@@ -38,6 +38,7 @@ func (s *Server) createPosition(c *gin.Context) {
 		Name        string `json:"name"`
 		SkillID     string `json:"skill_id"`
 		Description string `json:"description"`
+		JD          string `json:"jd"`
 		IsOpen      *bool  `json:"is_open"`
 	}
 	if err := c.BindJSON(&req); err != nil {
@@ -45,7 +46,7 @@ func (s *Server) createPosition(c *gin.Context) {
 		return
 	}
 	id, err := s.st.CreatePosition(store.PositionInput{
-		Name: req.Name, SkillID: req.SkillID, Description: req.Description, IsOpen: req.IsOpen,
+		Name: req.Name, SkillID: req.SkillID, Description: req.Description, JD: req.JD, IsOpen: req.IsOpen,
 	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -89,6 +90,19 @@ func (s *Server) patchPosition(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, p)
+}
+
+func (s *Server) deletePosition(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	if err := s.st.DeletePosition(id); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"ok": true})
 }
 
 // resolveOpening 上传优先用岗位；岗位上绑了检验 Skill。旧客户端只传 skill_id 时按该 Skill 找在招岗。

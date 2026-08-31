@@ -49,6 +49,7 @@ POST /positions
 PATCH /positions/:id
   {"name":"...","skill_id":"intern","is_open":false}
   {"jd":"# 岗位职责\\n..."}            # 更新岗位 JD
+DELETE /positions/:id                  # 删岗；候选人解绑，记录保留
 
 GET /skills                            # 检验标准（招聘 Skill）目录；岗位绑定后上传自动选用
 ```

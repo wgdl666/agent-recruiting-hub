@@ -16,19 +16,24 @@ const saving = ref(false)
 const html = computed(() => renderMarkdown(position.value?.jd || ''))
 
 async function load() {
-  if (!jdPositionId.value) {
+  const id = jdPositionId.value
+  if (!id) {
     position.value = null
     return
   }
   loading.value = true
   editing.value = false
   try {
-    position.value = await fetchPosition(jdPositionId.value)
-    draft.value = position.value.jd || ''
+    const next = await fetchPosition(id)
+    // 抽屉里连点两个岗位时，只采用仍指向当前岗的响应，避免旧 JD 盖住新岗。
+    if (jdPositionId.value !== id) return
+    position.value = next
+    draft.value = next.jd || ''
   } catch (e: unknown) {
+    if (jdPositionId.value !== id) return
     ElMessage.error(e instanceof Error ? e.message : '加载岗位 JD 失败')
   } finally {
-    loading.value = false
+    if (jdPositionId.value === id) loading.value = false
   }
 }
 
@@ -61,21 +66,18 @@ async function save() {
 </script>
 
 <template>
-  <div v-loading="loading" class="jd-page">
+  <div v-loading="loading" class="jd-body">
     <template v-if="position">
-      <div class="head">
-        <div>
-          <h2>{{ position.name }}</h2>
-          <p class="sub">岗位 JD · 检验标准 {{ position.skill_name || position.skill_id }}</p>
-        </div>
+      <div class="toolbar">
+        <p class="sub">检验标准 {{ position.skill_name || position.skill_id }}</p>
         <div class="actions">
           <el-tag :type="position.is_open ? 'success' : 'info'" size="small">
             {{ position.is_open ? '在招' : '已停' }}
           </el-tag>
-          <el-button v-if="!editing" type="primary" @click="startEdit">编辑 JD</el-button>
+          <el-button v-if="!editing" type="primary" size="small" @click="startEdit">编辑 JD</el-button>
           <template v-else>
-            <el-button @click="cancelEdit">取消</el-button>
-            <el-button type="primary" :loading="saving" @click="save">保存</el-button>
+            <el-button size="small" @click="cancelEdit">取消</el-button>
+            <el-button type="primary" size="small" :loading="saving" @click="save">保存</el-button>
           </template>
         </div>
       </div>
@@ -96,15 +98,14 @@ async function save() {
 </template>
 
 <style scoped>
-.jd-page { max-width: 800px; }
-.head {
+.jd-body { min-height: 240px; }
+.toolbar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 16px;
 }
-h2 { margin: 0 0 6px; font-size: 20px; }
 .sub { margin: 0; font-size: 13px; color: #909399; }
 .actions {
   display: flex;
@@ -113,11 +114,12 @@ h2 { margin: 0 0 6px; font-size: 20px; }
   flex-shrink: 0;
 }
 .markdown-body :deep(h1) {
-  font-size: 1.5em;
-  margin: 0.4em 0 0.6em;
+  font-size: 1.45em;
+  margin: 0 0 0.7em;
+  line-height: 1.35;
 }
 .markdown-body :deep(h2) {
-  font-size: 1.2em;
+  font-size: 1.15em;
   margin: 1.3em 0 0.5em;
   padding-bottom: 0.3em;
   border-bottom: 1px solid #eee;
@@ -131,10 +133,12 @@ h2 { margin: 0 0 6px; font-size: 20px; }
   line-height: 1.75;
   color: #434343;
 }
+.markdown-body :deep(strong) { color: #303133; }
 .markdown-body :deep(table) {
   border-collapse: collapse;
   margin: 12px 0;
   width: 100%;
+  font-size: 13px;
 }
 .markdown-body :deep(th),
 .markdown-body :deep(td) {
@@ -143,4 +147,10 @@ h2 { margin: 0 0 6px; font-size: 20px; }
   text-align: left;
 }
 .markdown-body :deep(th) { background: #fafafa; }
+.markdown-body :deep(code) {
+  background: #f5f5f5;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
 </style>

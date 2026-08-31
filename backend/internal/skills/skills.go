@@ -3,9 +3,10 @@ package skills
 import "strings"
 
 // Skill 是检验标准（评分 prompt），不是招聘岗位本身。岗位在 positions 表，上传时选岗位再套本 Skill。
-// 目前只开放 intern，对应仓库内 .cursor/skills/agent-intern-recruiting。
+// intern 对应仓库内 .cursor/skills/agent-intern-recruiting；影像测试岗先登记独立 Skill，评分 prompt 仍共用 intern，避免测开岗被静默标成实习生。
 
 const Intern = "intern"
+const ImageSoftwareTest = "image_software_test"
 
 type Skill struct {
 	ID          string `json:"id"`
@@ -19,6 +20,11 @@ func All() []Skill {
 			ID:          Intern,
 			Name:        "实习生",
 			Description: "Agent 工程实习：上手就能干活",
+		},
+		{
+			ID:          ImageSoftwareTest,
+			Name:        "影像 && 软件 测试",
+			Description: "影像质量与软件测试：上手就能验、能写清坏例",
 		},
 	}
 }

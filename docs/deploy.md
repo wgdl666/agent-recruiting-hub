@@ -113,7 +113,7 @@ HUB_MODELHUB_CALLER=agent-recruiting-hub
 | `/opt/agent-recruiting-hub/data/hub.db` | SQLite 主库 |
 | `/opt/agent-recruiting-hub/data/resumes/` | 简历 PDF |
 
-**注意**：`make deploy` 会 rsync 本地 `data/`，部署前确认不会覆盖远端新数据。生产环境建议先备份 `hub.db`。
+**注意**：`make deploy` 会同步本地 `data/` 下的简历文件，但 **排除 `hub.db`**，避免覆盖远端候选人库。岗位变更走服务启动迁移。生产环境仍建议先备份 `hub.db`。
 
 ## 回滚
 

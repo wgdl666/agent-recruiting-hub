@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import { createPosition, fetchSkills, updatePosition } from '../api/client'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { createPosition, deletePosition, fetchSkills, updatePosition } from '../api/client'
 import type { EvalSkill, Position } from '../types'
 import { usePositions } from '../composables/usePositions'
 
@@ -82,6 +82,7 @@ async function save() {
 }
 
 function openJd(p: Position) {
+  // 只改共享的 jdPositionId，由外壳右侧抽屉承接，避免把岗位列表整页换成 JD。
   jdPositionId.value = p.id
 }
 
@@ -93,6 +94,28 @@ async function toggleOpen(p: Position) {
     ElMessage.error(e instanceof Error ? e.message : '更新失败')
   }
 }
+
+async function remove(p: Position) {
+  const n = p.candidate_count ?? 0
+  const extra = n > 0 ? `该岗下有 ${n} 位候选人，删岗后他们会从该岗解绑，候选人记录本身保留。` : '此操作不可恢复。'
+  try {
+    await ElMessageBox.confirm(`${extra}`, `删除岗位「${p.name}」？`, {
+      confirmButtonText: '删除',
+      cancelButtonText: '取消',
+      type: 'warning',
+      confirmButtonClass: 'el-button--danger',
+    })
+  } catch {
+    return
+  }
+  try {
+    await deletePosition(p.id)
+    ElMessage.success('已删除岗位')
+    await loadPositions()
+  } catch (e: unknown) {
+    ElMessage.error(e instanceof Error ? e.message : '删除失败')
+  }
+}
 </script>
 
 <template>
@@ -100,17 +123,20 @@ async function toggleOpen(p: Position) {
     <div class="head">
       <div>
         <h2>岗位阶梯</h2>
-        <p class="sub">管理在招岗位。侧栏点岗位名查看该岗 JD；上传时选岗会套用对应检验标准。</p>
+        <p class="sub">点「查看 JD」或侧栏岗位名，在右侧打开详情。上传时选岗会套用对应检验标准。</p>
       </div>
       <el-button type="primary" @click="openCreate">新增岗位</el-button>
     </div>
 
     <el-table :data="allPositions" v-loading="loading" stripe size="small" :header-cell-style="{ background: '#fafafa' }">
-      <el-table-column prop="name" label="岗位" min-width="140" />
+      <el-table-column label="岗位" min-width="140">
+        <template #default="{ row }">
+          <el-button link type="primary" class="pos-name" @click="openJd(row)">{{ row.name }}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="检验标准" min-width="160">
         <template #default="{ row }">
-          <span>{{ row.skill_name || skillLabel(row.skill_id) }}</span>
-          <span v-if="row.description" class="skill-desc">{{ row.description }}</span>
+          <el-tag size="small" type="info">{{ row.skill_name || skillLabel(row.skill_id) }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="招聘中" width="100">
@@ -123,13 +149,14 @@ async function toggleOpen(p: Position) {
       <el-table-column label="候选人" width="88">
         <template #default="{ row }">{{ row.candidate_count ?? 0 }}</template>
       </el-table-column>
-      <el-table-column label="操作" width="200">
+      <el-table-column label="操作" width="280">
         <template #default="{ row }">
           <el-button link type="primary" size="small" @click="openJd(row)">查看 JD</el-button>
           <el-button link type="primary" size="small" @click="openEdit(row)">编辑</el-button>
           <el-button link size="small" @click="toggleOpen(row)">
             {{ row.is_open ? '停止招聘' : '重新开放' }}
           </el-button>
+          <el-button link type="danger" size="small" @click="remove(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -163,7 +190,7 @@ async function toggleOpen(p: Position) {
 </template>
 
 <style scoped>
-.positions-page { max-width: 880px; }
+.positions-page { max-width: 960px; }
 .head {
   display: flex;
   justify-content: space-between;
@@ -173,12 +200,7 @@ async function toggleOpen(p: Position) {
 }
 h2 { margin: 0 0 6px; font-size: 18px; }
 .sub { margin: 0; font-size: 13px; color: #909399; line-height: 1.5; }
-.skill-desc {
-  display: block;
-  font-size: 12px;
-  color: #909399;
-  margin-top: 2px;
-}
+.pos-name { font-weight: 600; padding: 0; }
 .full { width: 100%; }
 .opt-desc {
   margin-left: 8px;

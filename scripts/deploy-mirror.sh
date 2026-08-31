@@ -21,7 +21,7 @@ rsync -az "$ROOT/seed/" "$HOST:$REMOTE_DIR/seed/"
 rsync -az "$ROOT/backend/scripts/" "$HOST:$REMOTE_DIR/scripts/"
 rsync -az "$ROOT/docs/" "$HOST:$REMOTE_DIR/docs/"
 rsync -az "$ROOT/.env.example" "$HOST:$REMOTE_DIR/.env.example"
-rsync -az "$ROOT/data/" "$HOST:$REMOTE_DIR/data/"
+rsync -az --exclude 'hub.db' --exclude 'hub.db-*' --exclude '*.db-wal' --exclude '*.db-shm' "$ROOT/data/" "$HOST:$REMOTE_DIR/data/"
 ssh "$HOST" "chmod +x '$REMOTE_DIR/bin/hub'"
 
 echo "==> install systemd unit"
