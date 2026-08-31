@@ -187,6 +187,10 @@ func tryModelHubScore(text string) (ScoreBreakdown, bool) {
 	}
 	score, err := scoreWithModelHub(text)
 	if err != nil {
+		// port-forward 偶发 reset，重试一次再退回启发式。
+		score, err = scoreWithModelHub(text)
+	}
+	if err != nil {
 		log.Printf("scanner: modelhub score failed, fallback heuristic: %v", err)
 		return ScoreBreakdown{}, false
 	}
