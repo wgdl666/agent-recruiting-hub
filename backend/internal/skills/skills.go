@@ -3,7 +3,8 @@ package skills
 import "strings"
 
 // Skill 是检验标准（评分 prompt），不是招聘岗位本身。岗位在 positions 表，上传时选岗位再套本 Skill。
-// intern 对应仓库内 .cursor/skills/agent-intern-recruiting；影像测试岗先登记独立 Skill，评分 prompt 仍共用 intern，避免测开岗被静默标成实习生。
+// intern 对应仓库内 .cursor/skills/agent-intern-recruiting。
+// image_software_test 用独立评分 prompt，禁止按 Agent 实习生标准把测试简历整批打成淘汰。
 
 const Intern = "intern"
 const ImageSoftwareTest = "image_software_test"

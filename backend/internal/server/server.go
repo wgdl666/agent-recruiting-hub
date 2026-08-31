@@ -449,7 +449,7 @@ func (s *Server) processZip(zipPath, source string, batchID, positionID int64, s
 }
 
 func (s *Server) processPDF(path, filename, source string, batchID, positionID int64, skillID string) (*models.ScreenResult, error) {
-	text, score, err := scanner.ScoreFromResume(path)
+	text, score, err := scanner.ScoreFromResume(path, skillID)
 	if err != nil {
 		return nil, err
 	}
@@ -617,7 +617,7 @@ func (s *Server) rescreenAll(c *gin.Context) {
 		var score scanner.ScoreBreakdown
 		if local != "" && (thin || useModelHub) {
 			// 图片简历或指定走模型：重新抽字并评分，不再用启发式直接淘汰。
-			text, score, _ = scanner.ScoreFromResume(local)
+			text, score, _ = scanner.ScoreFromResume(local, cand.SkillID)
 		} else {
 			text, err = scanner.ExtractText(local)
 			if err != nil || local == "" {

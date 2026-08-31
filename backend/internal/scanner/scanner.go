@@ -72,12 +72,20 @@ func Score(text string) ScoreBreakdown {
 
 // ScoreUpload runs ModelHub when configured (upload / screen paths only).
 func ScoreUpload(text string) ScoreBreakdown {
+	return ScoreUploadForSkill(text, "")
+}
+
+// ScoreUploadForSkill 上传/看图评分走对应 Skill 的 ModelHub prompt；测开岗不回落到实习生关键词启发式。
+func ScoreUploadForSkill(text, skillID string) ScoreBreakdown {
 	text = strings.TrimSpace(text)
 	if !textEnough(text) {
 		return thinScore(text)
 	}
-	if score, ok := tryModelHubScore(text); ok {
+	if score, ok := tryModelHubScore(text, skillID); ok {
 		return score
+	}
+	if strings.TrimSpace(skillID) == "image_software_test" {
+		return pendingScore(text)
 	}
 	return scoreHeuristic(text)
 }
@@ -96,6 +104,15 @@ func thinScore(text string) ScoreBreakdown {
 	return ScoreBreakdown{
 		Text: text, Total: -10, Tier: "待评", Reason: "thin", Flags: []string{"thin"},
 		OneLiner: "图片简历抽字不足，待筛选",
+		Action:   ActionForTier("待评"), Source: "heuristic",
+	}
+}
+
+func pendingScore(text string) ScoreBreakdown {
+	// 测开岗模型不可用时不要用实习生启发式误淘汰，留给人工看。
+	return ScoreBreakdown{
+		Text: text, Total: -10, Tier: "待评", Reason: "pending_skill", Flags: []string{"pending"},
+		OneLiner: "测试岗待模型评分，先留在筛选",
 		Action:   ActionForTier("待评"), Source: "heuristic",
 	}
 }

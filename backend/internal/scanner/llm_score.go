@@ -51,28 +51,28 @@ type llmScorePayload struct {
 const visionScoreUser = `这是候选人简历的 PDF/页面截图（可能是图片版简历，文字层为空）。请阅读图像内容，按系统要求的 JSON 打分。看不清的字段不要编造。`
 
 // ScoreFromResume 先抽文字；不够再把 PDF/截图交给模型看图评分。仍不够才标待评，不淘汰。
-func ScoreFromResume(path string) (text string, score ScoreBreakdown, err error) {
+func ScoreFromResume(path, skillID string) (text string, score ScoreBreakdown, err error) {
 	text, err = ExtractText(path)
 	if err != nil {
 		text = ""
 	}
 	if textEnough(text) {
-		return text, ScoreUpload(text), nil
+		return text, ScoreUploadForSkill(text, skillID), nil
 	}
-	if score, ok := tryModelHubScorePDF(path); ok {
+	if score, ok := tryModelHubScorePDF(path, skillID); ok {
 		if strings.TrimSpace(score.Text) != "" {
 			text = betterText(text, score.Text)
 		}
 		return text, score, nil
 	}
-	if score, ok := tryModelHubScorePages(path); ok {
+	if score, ok := tryModelHubScorePages(path, skillID); ok {
 		return text, score, nil
 	}
 	log.Printf("scanner: resume text thin (%d runes), leave in screening: %s", len([]rune(strings.TrimSpace(text))), path)
 	return text, thinScore(text), nil
 }
 
-func scoreWithModelHub(text string) (ScoreBreakdown, error) {
+func scoreWithModelHub(text, skillID string) (ScoreBreakdown, error) {
 	client := modelHubClient()
 	if client == nil {
 		return ScoreBreakdown{}, errNoModelHub
@@ -80,13 +80,13 @@ func scoreWithModelHub(text string) (ScoreBreakdown, error) {
 
 	user := truncateResume(text, 120000)
 	var out llmScorePayload
-	if err := client.GenerateJSON(scoringPrompt, user, &out); err != nil {
+	if err := client.GenerateJSON(scoringPromptFor(skillID), user, &out); err != nil {
 		return ScoreBreakdown{}, err
 	}
 	return normalizeLLMScore(text, out, false), nil
 }
 
-func tryModelHubScorePDF(path string) (ScoreBreakdown, bool) {
+func tryModelHubScorePDF(path, skillID string) (ScoreBreakdown, bool) {
 	client := modelHubClient()
 	if client == nil {
 		return ScoreBreakdown{}, false
@@ -96,7 +96,7 @@ func tryModelHubScorePDF(path string) (ScoreBreakdown, bool) {
 		return ScoreBreakdown{}, false
 	}
 	var out llmScorePayload
-	if err := client.GenerateJSONParts(scoringPrompt, visionScoreUser, []llm.UserMedia{{
+	if err := client.GenerateJSONParts(scoringPromptFor(skillID), visionScoreUser, []llm.UserMedia{{
 		MIME: "application/pdf",
 		Data: data,
 	}}, &out, 4096, 120*time.Second); err != nil {
@@ -118,6 +118,16 @@ func normalizeLLMScore(text string, out llmScorePayload, fromDocument bool) Scor
 		out.Tier = "待评"
 		out.ScoreTotal = -10
 		out.Reason = "thin"
+		if strings.TrimSpace(out.OneLiner) == "" {
+			out.OneLiner = "图片简历抽字不足，待筛选"
+		}
+	}
+	if contains(flags, "thin") || looksUnreadable(out.Reason, out.OneLiner) {
+		flags = appendUnique(flags, "thin")
+		out.Tier = "待评"
+		if out.ScoreTotal >= 0 {
+			out.ScoreTotal = -10
+		}
 		if strings.TrimSpace(out.OneLiner) == "" {
 			out.OneLiner = "图片简历抽字不足，待筛选"
 		}
@@ -181,14 +191,14 @@ func appendUnique(flags []string, s string) []string {
 	return append(flags, s)
 }
 
-func tryModelHubScore(text string) (ScoreBreakdown, bool) {
+func tryModelHubScore(text, skillID string) (ScoreBreakdown, bool) {
 	if modelHubClient() == nil {
 		return ScoreBreakdown{}, false
 	}
-	score, err := scoreWithModelHub(text)
+	score, err := scoreWithModelHub(text, skillID)
 	if err != nil {
 		// port-forward 偶发 reset，重试一次再退回启发式。
-		score, err = scoreWithModelHub(text)
+		score, err = scoreWithModelHub(text, skillID)
 	}
 	if err != nil {
 		log.Printf("scanner: modelhub score failed, fallback heuristic: %v", err)
@@ -197,7 +207,7 @@ func tryModelHubScore(text string) (ScoreBreakdown, bool) {
 	return score, true
 }
 
-func tryModelHubScorePages(path string) (ScoreBreakdown, bool) {
+func tryModelHubScorePages(path, skillID string) (ScoreBreakdown, bool) {
 	client := modelHubClient()
 	if client == nil {
 		return ScoreBreakdown{}, false
@@ -211,9 +221,19 @@ func tryModelHubScorePages(path string) (ScoreBreakdown, bool) {
 		media = append(media, llm.UserMedia{MIME: "image/png", Data: p})
 	}
 	var out llmScorePayload
-	if err := client.GenerateJSONParts(scoringPrompt, visionScoreUser, media, &out, 4096, 0); err != nil {
+	if err := client.GenerateJSONParts(scoringPromptFor(skillID), visionScoreUser, media, &out, 4096, 0); err != nil {
 		log.Printf("scanner: modelhub page score failed: %v", err)
 		return ScoreBreakdown{}, false
 	}
 	return normalizeLLMScore("", out, true), true
+}
+
+func looksUnreadable(parts ...string) bool {
+	blob := strings.Join(parts, " ")
+	for _, k := range []string{"内容极少", "内容为空", "无法评估", "抽字不足", "看不清"} {
+		if strings.Contains(blob, k) {
+			return true
+		}
+	}
+	return false
 }
