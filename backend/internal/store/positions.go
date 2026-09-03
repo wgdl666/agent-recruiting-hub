@@ -91,15 +91,14 @@ func (s *Store) EnsureInternPosition() (int64, error) {
 }
 
 func (s *Store) EnsureImageSoftwareTestPosition() (int64, error) {
-	// 启动时补齐「影像 && 软件 测试」在招岗；已有同名岗只填空 JD，不覆盖手改。
+	// 启动时补齐「影像 && 软件 测试」在招岗；内置岗 JD 以仓库为准，部署重启后覆盖库内文案。
 	var id int64
 	err := s.db.QueryRow(`SELECT id FROM positions WHERE slug = ? OR name = ? ORDER BY id ASC LIMIT 1`,
 		imageSoftwareTestSlug, imageSoftwareTestName).Scan(&id)
 	if err == nil {
-		// 已有同名岗时只补空 JD / 技能，不覆盖手改过的文案
-		_, _ = s.db.Exec(`UPDATE positions SET skill_id = ?, updated_at = ? WHERE id = ? AND skill_id != ?`,
-			skills.ImageSoftwareTest, time.Now().UTC().Format(time.RFC3339), id, skills.ImageSoftwareTest)
-		_, _ = s.db.Exec(`UPDATE positions SET jd = ? WHERE id = ? AND (jd IS NULL OR jd = '')`, imageSoftwareTestJD, id)
+		now := time.Now().UTC().Format(time.RFC3339)
+		_, _ = s.db.Exec(`UPDATE positions SET skill_id = ?, description = ?, jd = ?, updated_at = ? WHERE id = ?`,
+			skills.ImageSoftwareTest, skills.ImageSoftwareTestDescription, imageSoftwareTestJD, now, id)
 		return id, nil
 	}
 	if err != sql.ErrNoRows {
@@ -111,7 +110,7 @@ func (s *Store) EnsureImageSoftwareTestPosition() (int64, error) {
 	res, err := s.db.Exec(`INSERT INTO positions (name, slug, skill_id, description, jd, sort_order, is_open, created_at, updated_at)
 		VALUES (?,?,?,?,?,?,?,?,?)`,
 		imageSoftwareTestName, imageSoftwareTestSlug, skills.ImageSoftwareTest,
-		"影像质量与软件测试：上手就能验", imageSoftwareTestJD, sortOrder, 1, now, now)
+		skills.ImageSoftwareTestDescription, imageSoftwareTestJD, sortOrder, 1, now, now)
 	if err != nil {
 		return 0, err
 	}

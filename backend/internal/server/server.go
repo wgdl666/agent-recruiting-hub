@@ -482,7 +482,7 @@ func (s *Server) processPDF(path, filename, source string, batchID, positionID i
 	if err != nil {
 		return nil, err
 	}
-	s.tryWriteInterviewQuestions(id, name, tier, eng, proj, text)
+	s.tryWriteInterviewQuestions(id, name, tier, eng, proj, text, skillID)
 	return &models.ScreenResult{
 		Name: name, Tier: tier, ScoreTotal: score.Total,
 		EngScore: score.EngScore, AgentScore: score.AgentScore,
@@ -680,7 +680,7 @@ func (s *Server) syncQuestions(c *gin.Context) {
 		}
 		text := s.resumeTextOf(&cand)
 		before := updated
-		s.tryWriteInterviewQuestions(cand.ID, cand.Name, cand.Tier, cand.EngSummary, cand.ProjectSummary, text)
+		s.tryWriteInterviewQuestions(cand.ID, cand.Name, cand.Tier, cand.EngSummary, cand.ProjectSummary, text, cand.SkillID)
 		if scanner.NormalizeTier(cand.Tier) == "S" || seed.Questions[cand.Name] != nil {
 			updated = before + 1
 		}

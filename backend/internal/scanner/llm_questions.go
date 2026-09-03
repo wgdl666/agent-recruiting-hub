@@ -22,7 +22,7 @@ type llmQuestionsPayload struct {
 }
 
 // GenerateInterviewQA writes L1–L3 questions a non-specialist interviewer can run.
-func GenerateInterviewQA(name, engSummary, projectSummary, resumeText string) ([]InterviewQA, error) {
+func GenerateInterviewQA(name, engSummary, projectSummary, resumeText, skillID string) ([]InterviewQA, error) {
 	client := modelHubClient()
 	if client == nil {
 		return nil, errNoModelHub
@@ -45,7 +45,7 @@ func GenerateInterviewQA(name, engSummary, projectSummary, resumeText string) ([
 
 	var out llmQuestionsPayload
 	// 参考答案要写细，输出比评分 JSON 长很多。
-	if err := client.GenerateJSONOpts(questionsPrompt, b.String(), &out, 8192, 120*time.Second); err != nil {
+	if err := client.GenerateJSONOpts(questionsPromptFor(skillID), b.String(), &out, 8192, 120*time.Second); err != nil {
 		return nil, err
 	}
 	items := normalizeInterviewQA(out)

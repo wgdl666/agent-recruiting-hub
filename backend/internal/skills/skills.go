@@ -9,6 +9,9 @@ import "strings"
 const Intern = "intern"
 const ImageSoftwareTest = "image_software_test"
 
+// ImageSoftwareTestDescription 内置岗简述，positions 表启动时与此对齐。
+const ImageSoftwareTestDescription = "约3年执行型 QA：IQ 画质（AWB/AE/清晰度/影调 + 实验室指标）+ 完整安卓测试"
+
 type Skill struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -25,7 +28,7 @@ func All() []Skill {
 		{
 			ID:          ImageSoftwareTest,
 			Name:        "影像 && 软件 测试",
-			Description: "影像质量与软件测试：上手就能验、能写清坏例",
+			Description: ImageSoftwareTestDescription,
 		},
 	}
 }

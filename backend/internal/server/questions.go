@@ -37,8 +37,8 @@ func (s *Server) resumeTextOf(c *models.Candidate) string {
 }
 
 // tryWriteInterviewQuestions 给 S 档出题：优先 LLM 写细答案，失败再回落种子题。
-func (s *Server) tryWriteInterviewQuestions(id int64, name, tier, eng, proj, resumeText string) {
-	qs, err := s.buildInterviewQuestions(name, tier, eng, proj, resumeText)
+func (s *Server) tryWriteInterviewQuestions(id int64, name, tier, eng, proj, resumeText, skillID string) {
+	qs, err := s.buildInterviewQuestions(name, tier, eng, proj, resumeText, skillID)
 	if err != nil {
 		log.Printf("interview questions %s: %v", name, err)
 		return
@@ -51,12 +51,12 @@ func (s *Server) tryWriteInterviewQuestions(id int64, name, tier, eng, proj, res
 	}
 }
 
-func (s *Server) buildInterviewQuestions(name, tier, eng, proj, resumeText string) ([]seed.QA, error) {
+func (s *Server) buildInterviewQuestions(name, tier, eng, proj, resumeText, skillID string) ([]seed.QA, error) {
 	resumeText = strings.TrimSpace(resumeText)
 	var genErr error
 	// 只有 S 档走模型：题要务实，答案要写给不一定懂这块的面试官。
 	if scanner.NormalizeTier(tier) == "S" && resumeText != "" && scanner.ModelHubEnabled() {
-		items, err := scanner.GenerateInterviewQA(name, eng, proj, resumeText)
+		items, err := scanner.GenerateInterviewQA(name, eng, proj, resumeText, skillID)
 		if err == nil && len(items) > 0 {
 			return toSeedQA(items), nil
 		}
@@ -92,7 +92,7 @@ func (s *Server) generateQuestions(c *gin.Context) {
 		return
 	}
 	text := s.resumeTextOf(&d.Candidate)
-	qs, err := s.buildInterviewQuestions(d.Name, d.Tier, d.EngSummary, d.ProjectSummary, text)
+	qs, err := s.buildInterviewQuestions(d.Name, d.Tier, d.EngSummary, d.ProjectSummary, text, d.SkillID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
